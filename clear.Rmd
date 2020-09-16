@@ -26,5 +26,7 @@ df_full %>% filter(country=='China') %>% head(10)%>% kable(caption = 'Raw data(w
 # df_long <- gather(df_full,key=date,value = count,new_cases:biweekly_deaths)
 # df_long <- mutate(df_long,date = date)
 # df_long <- group_by(country,date) %>% summarise(count=sum(count,na.rm=T))%>%as.data.frame()
+df_full %>% ggplot(aes(x=date,y=count))
+
 
 ```
