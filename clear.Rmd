@@ -1,0 +1,30 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r}
+library(lubridate)
+library(dplyr)
+library(ggplot2)
+library(kableExtra)
+library(tidyr)
+df <- read.csv("C:\\Users\\UNS_CT\\Desktop\\oenggii\\project\\New folder\\total_cases.csv")
+df$date <- as.Date(df$date)
+df
+df %>% ggplot(aes(x=date, y=World))+geom_line(colour="red")+labs(title=paste0('Numbers of Cases Worldwide (log scale) '))
+
+```
+```{r}
+df_full <- read.csv("C:\\Users\\UNS_CT\\Desktop\\oenggii\\project\\New folder\\full_data.csv")
+df_full
+df_full$date <- as.Date(df_full$date,tryFormats = c("%m/%d/%Y", "%Y-%m-%d"))
+df_full
+df_full <- rename(df_full,c(country=location))
+df_full %>% filter(country=='China') %>% head(10)%>% kable(caption = 'Raw data(with first 10 Columns Only)',format.args=list(big.mark=','))%>%kable_styling(latex_options = c('striped', 'hold_position', 'repeat_header'))
+# df_long <- gather(df_full,key=date,value = count,new_cases:biweekly_deaths)
+# df_long <- mutate(df_long,date = date)
+# df_long <- group_by(country,date) %>% summarise(count=sum(count,na.rm=T))%>%as.data.frame()
+
+```
