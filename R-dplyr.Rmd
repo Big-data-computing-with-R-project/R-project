@@ -1,5 +1,5 @@
 ---
-title: ""
+title: "Noey"
 output: html_notebook
 ---
 ```{r}
@@ -25,12 +25,34 @@ library(leaflet)
 raw.data.full_data <- read.csv("~/R-project/full_datas.csv")
 View(raw.data.full_data)
 dim(raw.data.full_data) # row 31978 column 10
+raw.data.full_data %>% ggplot(aes(total_cases))+geom_histogram()
 ```
 ```{r}
 raw.data.full_data[1:10,1:10] %>%
   kable('latex',booktabs=T,caption='Raw Data (first 10 columns only)') %>%
   kable_styling(font_size=5,latex_options = c('striped','hold_position','repeat_header'))
-View(raw.data.full_data)
+#View(raw.data.full_data)
+```
+
+```{r}
+##find missing values
+is.na(raw.data.full_data)
+##count missing values
+sum(is.na(raw.data.full_data))
+##Omit missing values
+na.omit(raw.data.full_data)
+##Remove missing values
+mean(raw.data.full_data$date,na.rm = TRUE)
+
+#type data
+str(raw.data.full_data)
+##convert from character to date
+data <- raw.data.full_data$date %>% as.Date(raw.data.full_data$date,"%Y-%m-%d")
+str(data)
+#View(data)
+#remove some columns
+data <- raw.data.full_data %>% select(-c(weekly_cases,weekly_deaths,biweekly_cases,biweekly_deaths))
+View(data)
 ```
 
 ```{r}
@@ -67,21 +89,34 @@ data.latest %<>% select(c(location,total_cases,new_cases,total_deaths,new_deaths
 
 
 
+
 ```
 ```{r}
 
-x <- raw.data.full_data
-x$total_cases <- x[,ncol(x)]
-x %<>% select(c(location,total_cases)) %>%
-  mutate(txt=paste0(location, '-',total_cases))
-m <- leaflet(width = 1200,height = 800) %>% addTiles()
-m %<>% addCircleMarkers(x$)
+##ranking by total_cases top 10 country
+data <- raw.data.full_data %>% filter(date == max(date))%>%
+  select(location,date,new_cases,new_deaths,total_cases,total_deaths) %>%
+  mutate(ranking = dense_rank(desc(total_cases)))
+#view(data)
+n <- 9
+top_country <- data %>% filter(ranking <= n+1) %>%
+  arrange(ranking) %>% pull(location) %>% as.character()
+top_country %>% setdiff('World') %>% print()
+#view(top_country)
+
+data.latest <- data %>% filter(!is.na(location)) %>%
+  mutate(location=ifelse(ranking <= n+1,as.character(location),'0ther')) %>%
+  mutate(location = location %>% factor(levels=c(top_country),'0ther'))
+#view(data.latest)
+
+data.latest %<>% group_by(location) %>%
+  summarise(total_cases = sum(total_cases),new_cases = sum(new_cases), 
+            total_deaths = sum(total_deaths),new_deaths = sum(new_deaths))%>%
+  mutate(death.rate = (100*total_deaths/total_cases) %>% round(1))
+data.latest %<>% select(c(location,total_cases,new_cases,total_deaths,new_deaths ))
+view(data.latest)
 
 ```
-
-
-
-
 ```{r}
 data.world <- raw.data.full_data %>% filter(location=='World') 
 n <- nrow(data.world)
@@ -93,6 +128,16 @@ plot2 <- ggplot(data.world, aes(x=date, y=new_cases)) +
 xlab('') + ylab('Count') + labs(title='Daily New  Cases') + theme(axis.text.x=element_text(angle=45, hjust=1))
 ## show two plots side by side
 grid.arrange(plot1, plot2, ncol=2)
+```
+```{r}
+test_totalcase <- aggregate(total_cases~location,raw.data.full_data,mean)
+test_totalcase
+barplot(test_totalcase$total_cases,names.arg = test_totalcase$location)
+```
+```{r}
+raw.data.full_data %>% group_by(date(date)) %>%
+  summarize(avg_totalcase = total_cases) %>%
+  ggplot(aes(avg_totalcase))+geom_histogram()
 ```
 
 
