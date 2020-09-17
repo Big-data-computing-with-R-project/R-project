@@ -16,7 +16,7 @@ library(kableExtra)
 library(leaflet)
 
 ##load data into R
-raw.data.full_data <- read.csv("~/R-project/full_data.csv")
+raw.data.full_data <- read.csv("~/R-project/full_datas.csv")
 View(raw.data.full_data)
 dim(raw.data.full_data) # row 31978 column 10
 raw.data.full_data %>% ggplot(aes(total_cases))+geom_histogram()
@@ -96,23 +96,17 @@ view(data.latest)
 
 
 
-#ranking
-top <- raw.data.full_data %>%
-  filter(date >= as.Date("2020-04-01") & date <= as.Date("2020-04-30")) 
-  #filter(date >= as.Date("4/%d/%Y")) %in% c("Thailand","Angola") %>%
-  select(date:total_deaths)  %>%
-  arrange(location,desc(total_deaths))
-view(top)
-ranktop <- 
-  top %>%
-  group_by(location)%>%
-  mutate(row_num = row_number(desc(total_deaths))) %>%
-  filter(row_num == 1) %>%
-  arrange(location,row_num)
-view(ranktop)
-
-
-hist(ranktop$total_deaths)
+#current tatal cases
+data.world <- raw.data.full_data %>% filter(location=='World') 
+n <- nrow(data.world)
+## current confirmed and daily new confirmed
+plot1 <- ggplot(data.world, aes(x=date, y=total_cases)) + geom_point() + geom_smooth() +
+  xlab('') + ylab('Count') + labs(title='total Cases') + theme(axis.text.x=element_text(angle=45, hjust=1))
+plot2 <- ggplot(data.world, aes(x=date, y=new_cases)) +
+  geom_point() + geom_smooth() +
+  xlab('') + ylab('Count') + labs(title='Daily New  Cases') + theme(axis.text.x=element_text(angle=45, hjust=1))
+## show two plots side by side
+grid.arrange(plot1, plot2, ncol=2)
 
 
 
