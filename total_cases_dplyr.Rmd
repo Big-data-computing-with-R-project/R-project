@@ -23,19 +23,20 @@ library(dplyr)
 #packageVersion("dplyr") # check version
 ```
 ```{r}
-data <- read.csv("new_death.csv") 
+data <- read.csv("total_deaths.csv") 
 View(data)
 
 format_date <- as.Date(data$date, "%Y-%m-%d")
 range(format_date)
 
 # Wolrd's new case 
-world_deaths <- data %>% 
+world_new <- data %>% 
   select(date, World) 
-world_dates %>% 
+world_new %>% 
   ggplot(aes(date, World, group = 1)) + geom_line()
 World_top10 <- top_n(world_new, 10, wt = World) #top 10 World new case at one day 
-
+```
+```{r}
 # New cases in April
 apr_new <- data %>%
   filter(date >= as.Date("2020-04-01") & date <= as.Date("2020-04-30")) 
@@ -56,14 +57,15 @@ apr_new <- data %>%
   apr_format <-
     apr_new %>%
     select(date, Afghanistan:Zimbabwe) %>%
-    gather(key = country, value = new_deaths, Afghanistan:Zimbabwe)
-  
+    gather(key = country, value = new_cases, Afghanistan:Zimbabwe)
+```
+```{r}
   # Sum of case of each country
   apr_country <-
     apr_format %>% 
     #arrange(country) %>%
     group_by(country) %>%
-    mutate(total_cases = cumsum(new_deaths)) %>%
+    mutate(total_cases = cumsum(new_cases)) %>%
     filter(date == as.Date("2020-04-30")) %>%
     select(country, total_cases)
   
@@ -72,7 +74,21 @@ apr_new <- data %>%
   # Top 10 new cases
  apr_top10 <- 
    apr_format %>% 
-   mutate(total_cases = cumsum(new_deaths)) %>%
+   mutate(total_cases = cumsum(new_cases)) %>%
+   filter(date == as.Date("2020-04-30")) %>%
+   top_n(10, wt = total_cases)
+  
+  View(apr_top10)
+  
+  ggplot(apr_country, aes(country, total_cases, group = 1)) + geom_line()
+  #ggplot(apr_country, aes(date, total_cases, color = country)) + geom_line()
+
+```
+```{r}
+  # Top 10 new cases
+ apr_top10 <- 
+   apr_format %>% 
+   mutate(total_cases = cumsum(new_cases)) %>%
    filter(date == as.Date("2020-04-30")) %>%
    top_n(10, wt = total_cases)
   
