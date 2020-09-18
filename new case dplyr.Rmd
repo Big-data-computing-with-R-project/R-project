@@ -23,7 +23,7 @@ library(dplyr)
 #packageVersion("dplyr") # check version
 ```
 ```{r}
-data <- read.csv("new_cases.csv") 
+data <- read.csv("new_death.csv") 
 View(data)
 
 format_date <- as.Date(data$date, "%Y-%m-%d")
@@ -56,14 +56,14 @@ apr_new <- data %>%
   apr_format <-
     apr_new %>%
     select(date, Afghanistan:Zimbabwe) %>%
-    gather(key = country, value = new_cases, Afghanistan:Zimbabwe)
+    gather(key = country, value = new_deaths, Afghanistan:Zimbabwe)
   
   # Sum of case of each country
   apr_country <-
     apr_format %>% 
     #arrange(country) %>%
     group_by(country) %>%
-    mutate(total_cases = cumsum(new_cases)) %>%
+    mutate(total_cases = cumsum(new_deaths)) %>%
     filter(date == as.Date("2020-04-30")) %>%
     select(country, total_cases)
   
@@ -72,7 +72,7 @@ apr_new <- data %>%
   # Top 10 new cases
  apr_top10 <- 
    apr_format %>% 
-   mutate(total_cases = cumsum(new_cases)) %>%
+   mutate(total_cases = cumsum(new_deaths)) %>%
    filter(date == as.Date("2020-04-30")) %>%
    top_n(10, wt = total_cases)
   
