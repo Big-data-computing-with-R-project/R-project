@@ -23,7 +23,7 @@ library(dplyr)
 #packageVersion("dplyr") # check version
 ```
 ```{r}
-data <- read.csv("new_death.csv") 
+data <- read.csv("new_deaths.csv") 
 View(data)
 
 format_date <- as.Date(data$date, "%Y-%m-%d")
@@ -32,10 +32,12 @@ range(format_date)
 # Wolrd's new case 
 world_deaths <- data %>% 
   select(date, World) 
-world_dates %>% 
+world_deaths %>% 
   ggplot(aes(date, World, group = 1)) + geom_line()
 World_top10 <- top_n(world_new, 10, wt = World) #top 10 World new case at one day 
 
+```
+```{r}
 # New cases in April
 apr_new <- data %>%
   filter(date >= as.Date("2020-04-01") & date <= as.Date("2020-04-30")) 
@@ -68,7 +70,9 @@ apr_new <- data %>%
     select(country, total_cases)
   
   View(apr_country)
-  
+
+```
+```{r}
   # Top 10 new cases
  apr_top10 <- 
    apr_format %>% 
@@ -82,6 +86,7 @@ apr_new <- data %>%
   #ggplot(apr_country, aes(date, total_cases, color = country)) + geom_line()
 
 ```
+
 ```{r}
 may_new <- data %>%
   filter(date >= as.Date("2020-05-01") & date <= as.Date("2020-05-31"))
