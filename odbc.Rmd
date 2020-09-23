@@ -1,0 +1,59 @@
+---
+title: "ODBC with SQL"
+output: html_notebook
+---
+```{r}
+#install.packages("DBI")
+#install.packages("odbc")
+install.packages("RODBC")
+```
+
+```{r}
+#library(DBI)
+library(odbc)
+#library(RODBC)
+```
+
+```{r}
+con <- dbConnect(odbc::odbc(), "MYSQL_ODBC")
+```
+
+```{r}
+dbListTables(con)
+
+# List tables beginning with f
+dbListTables(con, table_name = "%f")
+
+# List all fields in the 'flights' database
+```
+
+```{r}
+# Reading data
+data <- dbReadTable(con, "flights")
+```
+
+```{r}
+# Writing data
+data <- dbWriteTable(con, "iris", iris)
+```
+
+```{r}
+# Querying
+result <- dbSendQuery(con, "SELECT * FROM full_datas")
+
+# Retrieve the first 100 results
+first_100 <- dbFetch(result, n = 100)
+first_100
+
+# Retrieve the rest of the results
+rest <- dbFetch(result)
+```
+
+```{r}
+# Reading Tables
+library(DBI)
+library(RODBCDBI)
+rodbc <- dbConnect(RODBCDBI::ODBC(), dsn = "PostgreSQL")
+system.time(rodbc_result <- dbReadTable(rodbc, "flights"))
+```
+
