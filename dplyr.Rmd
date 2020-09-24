@@ -1,0 +1,46 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(dplyr)
+??src_mysql
+my_db <- src_mysql(
+  dbname = "covid",
+  host = "localhost",
+  user = "root",
+  password = "1234"
+)
+my_db
+df_full <- tbl(my_db,
+         sql("select * from full_data"))
+df_full
+```
+```{r}
+#clear
+library(lubridate)
+df_full$date <- as.Date(df_full$date,tryFormats = c("%m/%d/%Y", "%Y-%m-%d"))
+df_full <- rename(df_full,c(country=location))
+df_full <- select(df_full, -c (weekly_cases,weekly_deaths,biweekly_cases,biweekly_deaths))
+df_full
+```
+```{r}
+#world case
+df_world <- df_full %>% group_by(date) %>% summarise(country='World',
+                                         new_cases= sum(new_cases, na.rm=T),
+                                         new_deaths=sum(new_deaths,na.rm = T),
+                                         total_cases=sum(total_cases,na.rm = T),
+                                         total_deaths=sum(total_deaths,na.rm=T))
+df_world
+df_total <-rbind(df_world) 
+df_total
+```
+```{r}
+#Daily Increases and Death Rates
+df_full %<>% arrange(country, date)
+
+
+```
+
+
