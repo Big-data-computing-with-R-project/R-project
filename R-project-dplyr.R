@@ -114,16 +114,3 @@ order(raw.data.full_data$date)
 sorted <- raw.data.full_data[order(raw.data.full_data$date),]
 view(raw.data.full_data)
 
-cleanData <- function(data){
-  ##remove some columns
-  data %<>% select(-c(new_cases,new_deaths,total_cases,total_deaths))%>% rename(weekly_cases,weekly_deaths,biweekly_cases,biweekly_deaths)
-  ##convert from character to date
-  data %<>% gather(key=date,value = count, -location)
-  ##convert from character to date
-  data %<>% mutate(date = date %>% substr(2,8) %>% mdy())
-  ##aggregate by country
-  data %<>% group_by(location,date) %>% summarise(count,na.rm=T) %>% as.date.frame()
-  return(data)
-}
-
-data.fulldata <- raw.data.full_data %>% cleanData() %>% rename(fulldata=count)
