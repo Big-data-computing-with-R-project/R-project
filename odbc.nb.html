@@ -1751,39 +1751,119 @@ summary {
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2luc3RhbGwucGFja2FnZXMoXCJEQklcIilcbiNpbnN0YWxsLnBhY2thZ2VzKFwib2RiY1wiKVxuaW5zdGFsbC5wYWNrYWdlcyhcIlJPREJDXCIpXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2luc3RhbGwucGFja2FnZXMoXCJEQklcIilcbiNpbnN0YWxsLnBhY2thZ2VzKFwib2RiY1wiKVxuI2luc3RhbGwucGFja2FnZXMoXCJsdWJyaWRhdGVcIilcbiNpbnN0YWxsLnBhY2thZ2VzKFwiUk9EQkNcIilcbiNpbnN0YWxsLnBhY2thZ2VzKFwiZ2dwbG90MlwiKVxuI2luc3RhbGwucGFja2FnZXMoXCJ0aWR5clwiKVxuI2luc3RhbGwucGFja2FnZXMoXCJwbHlyXCIpXG4jaW5zdGFsbC5wYWNrYWdlcyhcIm1hZ3JpdHRyXCIpXG5pbnN0YWxsLnBhY2thZ2VzKFwia2FibGVFeHRyYVwiKVxuYGBgIn0= -->
 <pre class="r"><code>#install.packages(&quot;DBI&quot;)
 #install.packages(&quot;odbc&quot;)
-install.packages(&quot;RODBC&quot;)</code></pre>
+#install.packages(&quot;lubridate&quot;)
+#install.packages(&quot;RODBC&quot;)
+#install.packages(&quot;ggplot2&quot;)
+#install.packages(&quot;tidyr&quot;)
+#install.packages(&quot;plyr&quot;)
+#install.packages(&quot;magrittr&quot;)
+install.packages(&quot;kableExtra&quot;)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiSW5zdGFsbGluZyBwYWNrYWdlIGludG8g46S847ixQzovVXNlcnMvQVNVUy9Eb2N1bWVudHMvUi93aW4tbGlicmFyeS80LjDjpLzjuLJcbihhcyDjpLzjuLFsaWLjpLzjuLIgaXMgdW5zcGVjaWZpZWQpXG50cnlpbmcgVVJMICdodHRwczovL2NyYW4ucnN0dWRpby5jb20vYmluL3dpbmRvd3MvY29udHJpYi80LjAvUk9EQkNfMS4zLTE3LnppcCdcbkNvbnRlbnQgdHlwZSAnYXBwbGljYXRpb24vemlwJyBsZW5ndGggODc4NTQwIGJ5dGVzICg4NTcgS0IpXG5kb3dubG9hZGVkIDg1NyBLQlxuIn0= -->
-<pre><code>Installing package into 㤼㸱C:/Users/ASUS/Documents/R/win-library/4.0㤼㸲
-(as 㤼㸱lib㤼㸲 is unspecified)
-trying URL &#39;https://cran.rstudio.com/bin/windows/contrib/4.0/RODBC_1.3-17.zip&#39;
-Content type &#39;application/zip&#39; length 878540 bytes (857 KB)
-downloaded 857 KB</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoicGFja2FnZSDigJhST0RCQ+KAmSBzdWNjZXNzZnVsbHkgdW5wYWNrZWQgYW5kIE1ENSBzdW1zIGNoZWNrZWRcblxuVGhlIGRvd25sb2FkZWQgYmluYXJ5IHBhY2thZ2VzIGFyZSBpblxuXHRDOlxcVXNlcnNcXEFTVVNcXEFwcERhdGFcXExvY2FsXFxUZW1wXFxSdG1wZ05kUjFrXFxkb3dubG9hZGVkX3BhY2thZ2VzXG4ifQ== -->
-<pre><code>package ‘RODBC’ successfully unpacked and MD5 sums checked
-
-The downloaded binary packages are in
-    C:\Users\ASUS\AppData\Local\Temp\RtmpgNdR1k\downloaded_packages</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2xpYnJhcnkoREJJKVxubGlicmFyeShvZGJjKVxuI2xpYnJhcnkoUk9EQkMpXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2xpYnJhcnkoREJJKVxubGlicmFyeShvZGJjKVxubGlicmFyeShsdWJyaWRhdGUpXG4jbGlicmFyeShST0RCQylcbmxpYnJhcnkoZ2dwbG90MilcbiNsaWJyYXJ5KHRpZHlyKVxubGlicmFyeShwbHlyKVxubGlicmFyeShtYWdyaXR0cilcbmxpYnJhcnkoa2FibGVFeHRyYSlcbmBgYCJ9 -->
 <pre class="r"><code>#library(DBI)
 library(odbc)
-#library(RODBC)</code></pre>
+library(lubridate)
+#library(RODBC)
+library(ggplot2)
+#library(tidyr)
+library(plyr)
+library(magrittr)
+library(kableExtra)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29uIDwtIGRiQ29ubmVjdChvZGJjOjpvZGJjKCksIFwiTVlTUUxfT0RCQ1wiKVxuYGBgIn0= -->
-<pre class="r"><code>con &lt;- dbConnect(odbc::odbc(), &quot;MYSQL_ODBC&quot;)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29uIDwtIGRiQ29ubmVjdChvZGJjOjpvZGJjKCksIFwiTVlTUUxfT0RCQ1wiKVxub2RiY0Nvbm5lY3Rpb25JY29uKGNvbilcbmBgYCJ9 -->
+<pre class="r"><code>con &lt;- dbConnect(odbc::odbc(), &quot;MYSQL_ODBC&quot;)
+odbcConnectionIcon(con)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI0Z1bGwgZGF0YVxucS5jb25maXJtZWQgPC0gZGJTZW5kUXVlcnkoY29uLCBcIlNFTEVDVCAqIEZST00gdGltZV9zZXJpZXNfY292aWQxOV9jb25maXJtZWRfZ2xvYmFsXCIpXG5jb25maXJtZWRfY2FzZXMgPC0gZGJGZXRjaChxLmNvbmZpcm1lZCkgJT4lIFxuICByZW5hbWUoYyhcIkNvdW50cnkuUmVnaW9uXCIgPSBcIkNvdW50cnlcIikpXG5WaWV3KGNvbmZpcm1lZF9jYXNlcylcbmBgYCJ9 -->
+<pre class="r"><code>#Full data
+q.confirmed &lt;- dbSendQuery(con, &quot;SELECT * FROM time_series_covid19_confirmed_global&quot;)
+confirmed_cases &lt;- dbFetch(q.confirmed) %&gt;% 
+  rename(c(&quot;Country.Region&quot; = &quot;Country&quot;))
+View(confirmed_cases)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0ZXMgPC0gbmFtZXMoY29uZmlybWVkX2Nhc2VzKVs1Om5jb2woY29uZmlybWVkX2Nhc2VzKV0gJT4lIG1keSgpXG5yYW5nZShkYXRlcylcbmBgYCJ9 -->
+<pre class="r"><code>dates &lt;- names(confirmed_cases)[5:ncol(confirmed_cases)] %&gt;% mdy()
+range(dates)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiMjAyMC0wNC0wMVwiIFwiMjAyMC0wOC0zMVwiXG4ifQ== -->
+<pre><code>[1] &quot;2020-04-01&quot; &quot;2020-08-31&quot;</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucS5kZWF0aHMgPC0gZGJTZW5kUXVlcnkoY29uLCBcIlNFTEVDVCAqIEZST00gdGltZV9zZXJpZXNfY292aWQxOV9kZWF0aHNfZ2xvYmFsXCIpXG5kZWF0aHNfY2FzZXMgPC0gZGJGZXRjaChxLmRlYXRocykgJT4lIFxuICByZW5hbWUoYyhcIkNvdW50cnkuUmVnaW9uXCIgPSBcIkNvdW50cnlcIikpXG5WaWV3KGRlYXRoc19jYXNlcylcbmBgYCJ9 -->
+<pre class="r"><code>q.deaths &lt;- dbSendQuery(con, &quot;SELECT * FROM time_series_covid19_deaths_global&quot;)
+deaths_cases &lt;- dbFetch(q.deaths) %&gt;% 
+  rename(c(&quot;Country.Region&quot; = &quot;Country&quot;))
+View(deaths_cases)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucS5yZWNvdmVyZWQgPC0gZGJTZW5kUXVlcnkoY29uLCBcIlNFTEVDVCAqIEZST00gdGltZV9zZXJpZXNfY292aWQxOV9yZWNvdmVyZWRfZ2xvYmFsXCIpXG5yZWNvdmVyZWRfY2FzZXMgPC0gZGJGZXRjaChxLnJlY292ZXJlZCkgJT4lIFxuICByZW5hbWUoYyhcIkNvdW50cnkuUmVnaW9uXCIgPSBcIkNvdW50cnlcIikpXG5WaWV3KHJlY292ZXJlZF9jYXNlcylcbmBgYCJ9 -->
+<pre class="r"><code>q.recovered &lt;- dbSendQuery(con, &quot;SELECT * FROM time_series_covid19_recovered_global&quot;)
+recovered_cases &lt;- dbFetch(q.recovered) %&gt;% 
+  rename(c(&quot;Country.Region&quot; = &quot;Country&quot;))
+View(recovered_cases)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI1RvcCAxMCBhbGwgdGltZVxudG9wMTAuYWxsIDwtIGRiU2VuZFF1ZXJ5KHEuY29uZmlybWVkLCBcIlNFTEVDVCBDb3VudHJ5LCAyMDIwLTA4LTMxXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEZST00gY29uZmlybWVkX2Nhc2VzXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEdST1VQIEJZIENvdW50cnlcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgI09SREVSIEJZIDgvMzEvMjAyMCBERVNDXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFwiKVxuYGBgIn0= -->
+<pre class="r"><code>#Top 10 all time
+top10.all &lt;- dbSendQuery(q.confirmed, &quot;SELECT Country, 2020-08-31
+                                FROM confirmed_cases
+                                GROUP BY Country
+                                #ORDER BY 8/31/2020 DESC
+                                &quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gKGZ1bmN0aW9uIChjbGFzc2VzLCBmZGVmLCBtdGFibGUpICA6IFxuICB1bmFibGUgdG8gZmluZCBhbiBpbmhlcml0ZWQgbWV0aG9kIGZvciBmdW5jdGlvbiDigJhkYlNlbmRRdWVyeeKAmSBmb3Igc2lnbmF0dXJlIOKAmFwiT2RiY1Jlc3VsdFwiLCBcImNoYXJhY3Rlclwi4oCZXG4ifQ== -->
+<pre><code>Error in (function (classes, fdef, mtable)  : 
+  unable to find an inherited method for function ‘dbSendQuery’ for signature ‘&quot;OdbcResult&quot;, &quot;character&quot;’</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudG9wMTAuYWxsX2Nhc2VzdG9wMTAuRGVhdGhQZXJDYXNlIDwtIGRiU2VuZFF1ZXJ5KGNvbiwgXCJcIilcbmBgYCJ9 -->
+<pre class="r"><code>top10.all_casestop10.DeathPerCase &lt;- dbSendQuery(con, &quot;&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI1dlZWtseSBUb3AgMTBcbnRvcDEwLndlZWsgPC0gZGJTZW5kUXVlcnkoY29uLCBcIlNFTEVDVCBsb2NhdGlvbiwgQVZHKHdlZWtseV9jYXNlcylcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgRlJPTSBmdWxsX2RhdGFzXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFdIRVJFIE5PVCBsb2NhdGlvbiA9ICdXb3JsZCdcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgR1JPVVAgQlkgbG9jYXRpb25cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgT1JERVIgQlkgQVZHKHdlZWtseV9jYXNlcykgREVTQ1xuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcIilcbnRvcDEwLndlZWtseV9jYXNlcyA8LSBkYkZldGNoKHRvcDEwLndlZWssIG4gPSAxMClcbnRvcDEwLndlZWtseV9jYXNlc1xuXG5nZ3Bsb3QodG9wMTAud2Vla2x5X2Nhc2VzLCBhZXMoeCA9IGxvY2F0aW9uLCB5ID0gd2Vla2x5X2Nhc2VzLCBncm91cCA9IDEpKSArIGdlb21fbGluZSgpXG5gYGAifQ== -->
+<pre class="r"><code>#Weekly Top 10
+top10.week &lt;- dbSendQuery(con, &quot;SELECT location, AVG(weekly_cases)
+                                FROM full_datas
+                                WHERE NOT location = &#39;World&#39;
+                                GROUP BY location
+                                ORDER BY AVG(weekly_cases) DESC
+                                &quot;)
+top10.weekly_cases &lt;- dbFetch(top10.week, n = 10)
+top10.weekly_cases
+
+ggplot(top10.weekly_cases, aes(x = location, y = weekly_cases, group = 1)) + geom_line()</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -1801,41 +1881,9 @@ dbListTables(con, table_name = &quot;%f&quot;)
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBSZWFkaW5nIGRhdGFcbmRhdGEgPC0gZGJSZWFkVGFibGUoY29uLCBcImZsaWdodHNcIilcbmBgYCJ9 -->
-<pre class="r"><code># Reading data
-data &lt;- dbReadTable(con, &quot;flights&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBXcml0aW5nIGRhdGFcbmRhdGEgPC0gZGJXcml0ZVRhYmxlKGNvbiwgXCJpcmlzXCIsIGlyaXMpXG5gYGAifQ== -->
 <pre class="r"><code># Writing data
 data &lt;- dbWriteTable(con, &quot;iris&quot;, iris)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBRdWVyeWluZ1xucmVzdWx0IDwtIGRiU2VuZFF1ZXJ5KGNvbiwgXCJTRUxFQ1QgKiBGUk9NIGZ1bGxfZGF0YXNcIilcblxuIyBSZXRyaWV2ZSB0aGUgZmlyc3QgMTAwIHJlc3VsdHNcbmZpcnN0XzEwMCA8LSBkYkZldGNoKHJlc3VsdCwgbiA9IDEwMClcbmZpcnN0XzEwMFxuYGBgIn0= -->
-<pre class="r"><code># Querying
-result &lt;- dbSendQuery(con, &quot;SELECT * FROM full_datas&quot;)
-
-# Retrieve the first 100 results
-first_100 &lt;- dbFetch(result, n = 100)
-first_100</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6MTAwLCJuY29sIjoxMH0sInJkZiI6Ikg0c0lBQUFBQUFBQUJ1MlplV3hjVnhYR3ozdHZOby9IOW5qc3BMR2J6VWs4YVVwalBPTzhOd2xiVTlMU1VrRzNRSnZTTFJON0VodTdZMk03VGVnYVduWmF0WlJGZ0VBc1pTdXJRQUlFaUIyeEl6WlJFUHNTUUdMZnhGSlF5dS9PTzQrTzUxVGlILzUwcEUvM3ZUTjNPZmVjN3p2M1B1ZXljdzlNNUEva1JTU1FsUGdTcEhtVTlMNUxkdGQyaWFSOFhqeCs2SEx0Y1RvTjhPQjZGOEdVL3BDdmpsZkhkNDd2MmpsZU1aYXFzVXdZeXk1akNZMGxNcGFhc2V3MmxqMmRsc3E0c1JpZks4Ym5pdkc1WW55dUdKOHJ4dWVLOGJsaWZLNFluNnZHNTZyeHVXcDhyaHFmcThibnF2RzVhbnl1R3Arcnh1ZXE4WG1pdytmUWNDTTAzQWdOTjBMRGpkQndJelRjQ0EwM1FzT04wSEFqTk53SURUZEN3NDNRY0NNMDNBZ05OMExEamRCd0l6VGNDQTAzUXNPTjBIQWpOTndJRFRkQ3c0M1FjQ00wM0FnTk4wTERqZEJ3STN3RWJreDArQndadGtTR0xaRmhTMlRZRWhtMlJJWXRrV0ZMWk5nU0diWkVoaTJSWVV0azJCSVp0a1NHTFpGaFMyVFlFaG0yUklZdGtXRkxaTmdTR2JaRWhpMlJZVXRrMkJJWnRrU0dMWkZoUzJUWUVobTJSSVl0TmNPTm11Rkd6WENqWnJoUk05eW9HVzdVRERkcWhoczF4NDJWNTJIM09ZZVBUTmViTTB2TDllYXFhZFcwYWxvMXJacFdUYXVtLzZkSnBLZDE1b29NZ1dId0tJbi9iUVViUUJsc0JMdkI0OEVvMkFMNHNKWEhnQXA0a3NUZnN4UGdiSEJBeDd2K1R3TXoybWNCbkF2ZUJXNEdONElmZ1RlRDU0UGZnSS96alh3aDdkdkJPOEYzd0VQWW5nWHd4MXNIQW15OHA3Ykhybm9aOENvUi96emEzOUx5ZmUydjV6dTdsL1lDY0RHNEZ6REdaMzEvbnQ4TzBiS0dQd0wrRHY0V2Y1Y0hMK01aWDRQVGFObUx6OTU5L1BYeHpiOEhuQVhjV3Yra1R4L3Rybmh1N3htMHhNVjdOWWpBWlRqMmE5cXZnRUdlMzBKN0hXQ014OXllaTlOSGFNZkExV3A3SDdadmdzZTI1YVh6bndkOGZVNkorNHREYkJOOVRscGZrZXI0M2RmM1ZNZHp2bU9PVkJ1Y0wybEZsNDV6L1RKcTg3Vk5iSnZiZkUyMWpYTy9GVUIzMjlvT1daQlRlNkRQT1IyM1RzZTU4U1dKdWVqbUlJNnlSakdvZlFkMXJoN0ZtYnJPR2gzVHIzM2MrelpkWTFEbkxlZ1llQ01qK3U3bWN2eDMzQytxcjBsZTNnbytLVEZuZ1FmWFBMVGpYUXJnbC9jMmNKTGw4ZHZIN3BON0gyNzRYMktMekJXZ3RlQ3A0RTVBdnhScnBlQm1DbTZsV1NkOVB2Z1ErQmZiWjY0c2VzcStEcGR2SWhTYkFIekszMFBJTHNKVnh2VHNCZmpSKzJsQzh5bTJXbVZiOEg3Z0NGdDhKdmcrRXZkakRMUHYwOStBdkg4aHN1a2JiUGRrSEk3dDdHSEg1WlFBNWg2cmlZeWpqeXA2Q3E4aUJCK0RsZzBralU3MzNpS3lid2xKODN3aGRlTXA3TzNpRzBRdS9ZREkvbStKWEg2YnlKV3NlZFdESXRjU3Y0Tm9lcEs5SFA2Y3lEUzJXZlk4OTB1UmVmeFllQ05TUnVOTE8wU1cwZC9SSDR2YzhCZVJZK3pwT0xxOGtkemZoTzV2UmlPM3JCVzVsUmpkaHU4bm1PLzJhWkU3cUVGM0hHM0xTNm9EYWMxalZ2blZxOXpwMDd5WGxBL29yMVVETnlqSE5pb1B0aXBYemxBK3VmcjRhTEJIOFRnRjhXL1ZOdXFOUEIxUUQ0UzRDRDRLc1pEckFUR1Q0eExYUFdJa3Q0TVhTbHpySE80SDd3YnZCeDhGNUZHK0NyNEx2Z2ZJb2Z3QS9GeDVSODBTNnBBSFg3d3U1U0R4OXFoUlhnamdrTmZRMm5rQ3ZBSzhBN2dhK3hsQTNEM3FyK2Y0KzQrNGZ2bnMxZDhUMTFJZkx2ajQ3dU9yZngrZ0h2dWZBSERHL3lHZ3ZnWGtKNkFPQjlUK2dGd0VCd0c1QzloUGNIOWJYbHk5ZDNraWR3SnZXelgvdytDejRJdmdWN3FYalZybnFhc2VzZlRnbmplak5aWDRlblh3UE1EWjVSRkhqL2g1alBVZVZKMjV1czBhUGp4eWY0WU42Qk1RditEMzBJSDlwOUJTR2ovUzdDZTlFTGNaTko5NUV4UWhqcG12MFpMbnpCL1JGem50T2dmTlBVQ0xydk8zUWlIMDFFT3M4NmVnRWpXaUQvMFZXYWRJdlM4U3ozNDQzWS9QL2UrRlduQ3MvNmUwbkNlbEw2UEYxNkJEWWovQVdvUFVva0Y0TkVDTUI1aW5kREx1Mi85NXdMNUw2TFNFRGtyb3ZVUmVpdWl3K0RQV0kvZTltOUg4Skw3QTEveCtRSXh6eERUSFhEbm16UDZWOXNtMGFEaUwzemw4eWxLcmNweDVPV0tiSFdyTFM5Q0c1TXhJM3AxbThxcWJiaDJUYUtnZ0svV1UxT1JlN2RjbkQ5ZGhWM2RkSFYrcjdhQStEeW1TbXV1MGRwYnFiSWRxemRrMks0WlZsKzU4aE4rdHU4ZUVJdEdqdTUrTTYyOWpPdGNaYlhPNmRiYnJiOVJJMlFmSWNldmVjcEhHeEdsMkVWREhoWnpMaTVTL2k2cmpXVENwV2o0TXFIM1MxSGVuNnhlQTUyanI3alYzNnZNSmJaOHJzZTdKcmR3dHNkYmhoZHpYbGhlbkViUXEzd2JVVktmMWxzYlpnM2VlM2huY1hlTTlnRHJoL1k3VUZWUy9sd0I0NExzN0R2Nzc2TXovSUdBdS8wK2tGZzRFVDlDejU3Vm9ncHlscmdSM29RZjBsZVlPa2lFdkdlNDlXV3BJamp0Y0RqM24wSHNYUHVmaFJEZmM2c1pXUUpNRmFsVGhZTXpOdm12QThWZ1AvWnh2cFpmQ2IzUzlodlZPNDMwZC9nM0IwK0d2azNac0crSEdldGJlUkF4R0dEdkN1YkNGK3JFVmpXd0RaZndZaGNObDhsOHU4b3kvbytpc3pMN0tyK2VaMmpESytETDVMc1A1VWVJN1NrM2FnazlicUQ4amNHZ3ordG5FbWh0ZXpscG9meGgvaHNqbE92aXlsak55OEFwOEpGYjlMd2JYNGp2ckYrRm5FZCtMK05kM1NQNzMrWkpScmZSMGFLQlgrZS8rejJlTlBIelBUdHIxYmMrbjYvc0c1ZWcyNWZOV1JWbDU3TzdlTmRYQlhzVVRKVDUvemxZK08xNjdPL2NGNmpmNWFkM0Y5N2ZoQ3JWelJvamJJN21YYTdTZFZEMFErOVo5L21yRnJHSmE5ZkVTOEVxSjY3azd0emdmNUF1QWU0NDhvUHpsckdqZGE5MTU5UWZ3Wi9BVHdQM0QzWkZiSUNjQ2grWGZnRnJ1N3Z5dGU3ODcwOUo2YjNibkhESHkyS3NIZDd3ek8vNXpMZDJzWDk5d2gyeXhsWXpZbUpxcUx6ZjBPVGMzUDFsZm5wbFB2b1c2bW8xajEwM1dseGlrZjQ5MGhxbEdmWGs2c1hRdnp5L1g1MVowS3NTbUZkMEt4eHFOMmJsbnIralhvN1lWSFhzUHpUeEMxNzcvV3JYenlvMTFMYzRmRzBzMjU1amxuNURXdjZuT0NFek8xWmVTQ0NUR1BCR29qeDFlWkR4dnB6cUdaT2NYWEVTVzR1K21GcC9iQjN1TEhZYStvMDNueWRUT3llbWp6ZG1kb2NTOFQ3NHhldlI1cXUwNUh5L3BQNlJUcFhXcVRLTjVaS2FaSkNjOVZ6L1VtRXZDeEk1Ykd4NWJXSnhwTGljN3dibzAxZ3AvWXBtY24wc3NyYjNKcWY4QTFzZjF3STRkQUFBPSJ9 -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["date"],"name":[1],"type":["chr"],"align":["left"]},{"label":["location"],"name":[2],"type":["chr"],"align":["left"]},{"label":["new_cases"],"name":[3],"type":["int"],"align":["right"]},{"label":["new_deaths"],"name":[4],"type":["int"],"align":["right"]},{"label":["total_cases"],"name":[5],"type":["int"],"align":["right"]},{"label":["total_deaths"],"name":[6],"type":["int"],"align":["right"]},{"label":["weekly_cases"],"name":[7],"type":["int"],"align":["right"]},{"label":["weekly_deaths"],"name":[8],"type":["int"],"align":["right"]},{"label":["biweekly_cases"],"name":[9],"type":["int"],"align":["right"]},{"label":["biweekly_deaths"],"name":[10],"type":["int"],"align":["right"]}],"data":[{"1":"2020-04-01","2":"Afghanistan","3":"25","4":"0","5":"166","6":"4","7":"124","8":"3","9":"144","10":"4"},{"1":"2020-04-02","2":"Afghanistan","3":"26","4":"0","5":"192","6":"4","7":"117","8":"3","9":"170","10":"4"},{"1":"2020-04-03","2":"Afghanistan","3":"43","4":"0","5":"235","6":"4","7":"160","8":"3","9":"213","10":"4"},{"1":"2020-04-04","2":"Afghanistan","3":"0","4":"0","5":"235","6":"4","7":"144","8":"2","9":"211","10":"4"},{"1":"2020-04-05","2":"Afghanistan","3":"35","4":"1","5":"270","6":"5","7":"164","8":"2","9":"246","10":"5"},{"1":"2020-04-06","2":"Afghanistan","3":"29","4":"2","5":"299","6":"7","7":"185","8":"3","9":"265","10":"7"},{"1":"2020-04-07","2":"Afghanistan","3":"38","4":"0","5":"337","6":"7","7":"196","8":"3","9":"297","10":"6"},{"1":"2020-04-08","2":"Afghanistan","3":"30","4":"4","5":"367","6":"11","7":"201","8":"7","9":"325","10":"10"},{"1":"2020-04-09","2":"Afghanistan","3":"56","4":"3","5":"423","6":"14","7":"231","8":"10","9":"348","10":"13"},{"1":"2020-04-10","2":"Afghanistan","3":"61","4":"1","5":"484","6":"15","7":"249","8":"11","9":"409","10":"14"},{"1":"2020-04-11","2":"Afghanistan","3":"37","4":"0","5":"521","6":"15","7":"286","8":"11","9":"430","10":"13"},{"1":"2020-04-12","2":"Afghanistan","3":"34","4":"3","5":"555","6":"18","7":"285","8":"13","9":"449","10":"15"},{"1":"2020-04-13","2":"Afghanistan","3":"52","4":"0","5":"607","6":"18","7":"308","8":"11","9":"493","10":"14"},{"1":"2020-04-14","2":"Afghanistan","3":"58","4":"3","5":"665","6":"21","7":"328","8":"14","9":"524","10":"17"},{"1":"2020-04-15","2":"Afghanistan","3":"49","4":"2","5":"714","6":"23","7":"347","8":"12","9":"548","10":"19"},{"1":"2020-04-16","2":"Afghanistan","3":"70","4":"2","5":"784","6":"25","7":"361","8":"11","9":"592","10":"21"},{"1":"2020-04-17","2":"Afghanistan","3":"10","4":"4","5":"794","6":"29","7":"310","8":"14","9":"559","10":"25"},{"1":"2020-04-18","2":"Afghanistan","3":"51","4":"1","5":"845","6":"30","7":"324","8":"15","9":"610","10":"26"},{"1":"2020-04-19","2":"Afghanistan","3":"63","4":"0","5":"908","6":"30","7":"353","8":"12","9":"638","10":"25"},{"1":"2020-04-20","2":"Afghanistan","3":"88","4":"3","5":"996","6":"33","7":"389","8":"15","9":"697","10":"26"},{"1":"2020-04-21","2":"Afghanistan","3":"35","4":"2","5":"1031","6":"35","7":"366","8":"14","9":"694","10":"28"},{"1":"2020-04-22","2":"Afghanistan","3":"61","4":"1","5":"1092","6":"36","7":"378","8":"13","9":"725","10":"25"},{"1":"2020-04-23","2":"Afghanistan","3":"84","4":"4","5":"1176","6":"40","7":"392","8":"15","9":"753","10":"26"},{"1":"2020-04-24","2":"Afghanistan","3":"105","4":"2","5":"1281","6":"42","7":"487","8":"13","9":"797","10":"27"},{"1":"2020-04-25","2":"Afghanistan","3":"70","4":"1","5":"1351","6":"43","7":"506","8":"13","9":"830","10":"28"},{"1":"2020-04-26","2":"Afghanistan","3":"112","4":"4","5":"1463","6":"47","7":"555","8":"17","9":"908","10":"29"},{"1":"2020-04-27","2":"Afghanistan","3":"68","4":"10","5":"1531","6":"57","7":"535","8":"24","9":"924","10":"39"},{"1":"2020-04-28","2":"Afghanistan","3":"172","4":"0","5":"1703","6":"57","7":"672","8":"22","9":"1038","10":"36"},{"1":"2020-04-29","2":"Afghanistan","3":"124","4":"3","5":"1827","6":"60","7":"735","8":"24","9":"1113","10":"37"},{"1":"2020-04-30","2":"Afghanistan","3":"122","4":"0","5":"1949","6":"60","7":"773","8":"20","9":"1165","10":"35"},{"1":"2020-05-01","2":"Afghanistan","3":"222","4":"4","5":"2171","6":"64","7":"890","8":"22","9":"1377","10":"35"},{"1":"2020-05-02","2":"Afghanistan","3":"164","4":"4","5":"2335","6":"68","7":"984","8":"25","9":"1490","10":"38"},{"1":"2020-05-03","2":"Afghanistan","3":"134","4":"4","5":"2469","6":"72","7":"1006","8":"25","9":"1561","10":"42"},{"1":"2020-05-04","2":"Afghanistan","3":"235","4":"13","5":"2704","6":"85","7":"1173","8":"28","9":"1708","10":"52"},{"1":"2020-05-05","2":"Afghanistan","3":"190","4":"5","5":"2894","6":"90","7":"1191","8":"33","9":"1863","10":"55"},{"1":"2020-05-06","2":"Afghanistan","3":"330","4":"5","5":"3224","6":"95","7":"1397","8":"35","9":"2132","10":"59"},{"1":"2020-05-07","2":"Afghanistan","3":"168","4":"9","5":"3392","6":"104","7":"1443","8":"44","9":"2216","10":"64"},{"1":"2020-05-08","2":"Afghanistan","3":"171","4":"2","5":"3563","6":"106","7":"1392","8":"42","9":"2282","10":"64"},{"1":"2020-05-09","2":"Afghanistan","3":"215","4":"3","5":"3778","6":"109","7":"1443","8":"41","9":"2427","10":"66"},{"1":"2020-05-10","2":"Afghanistan","3":"255","4":"6","5":"4033","6":"115","7":"1564","8":"43","9":"2570","10":"68"},{"1":"2020-05-11","2":"Afghanistan","3":"369","4":"5","5":"4402","6":"120","7":"1698","8":"35","9":"2871","10":"63"},{"1":"2020-05-12","2":"Afghanistan","3":"285","4":"2","5":"4687","6":"122","7":"1793","8":"32","9":"2984","10":"65"},{"1":"2020-05-13","2":"Afghanistan","3":"280","4":"5","5":"4967","6":"127","7":"1743","8":"32","9":"3140","10":"67"},{"1":"2020-05-14","2":"Afghanistan","3":"259","4":"3","5":"5226","6":"130","7":"1834","8":"26","9":"3277","10":"70"},{"1":"2020-05-15","2":"Afghanistan","3":"113","4":"6","5":"5339","6":"136","7":"1776","8":"30","9":"3168","10":"72"},{"1":"2020-05-16","2":"Afghanistan","3":"1063","4":"32","5":"6402","6":"168","7":"2624","8":"59","9":"4067","10":"100"},{"1":"2020-05-17","2":"Afghanistan","3":"0","4":"0","5":"6402","6":"168","7":"2369","8":"53","9":"3933","10":"96"},{"1":"2020-05-18","2":"Afghanistan","3":"262","4":"1","5":"6664","6":"169","7":"2262","8":"49","9":"3960","10":"84"},{"1":"2020-05-19","2":"Afghanistan","3":"408","4":"4","5":"7072","6":"173","7":"2385","8":"51","9":"4178","10":"83"},{"1":"2020-05-20","2":"Afghanistan","3":"581","4":"5","5":"7653","6":"178","7":"2686","8":"51","9":"4429","10":"83"},{"1":"2020-05-21","2":"Afghanistan","3":"492","4":"9","5":"8145","6":"187","7":"2919","8":"57","9":"4753","10":"83"},{"1":"2020-05-22","2":"Afghanistan","3":"531","4":"6","5":"8676","6":"193","7":"3337","8":"57","9":"5113","10":"87"},{"1":"2020-05-23","2":"Afghanistan","3":"540","4":"12","5":"9216","6":"205","7":"2814","8":"37","9":"5438","10":"96"},{"1":"2020-05-24","2":"Afghanistan","3":"782","4":"11","5":"9998","6":"216","7":"3596","8":"48","9":"5965","10":"101"},{"1":"2020-05-25","2":"Afghanistan","3":"584","4":"2","5":"10582","6":"218","7":"3918","8":"49","9":"6180","10":"98"},{"1":"2020-05-26","2":"Afghanistan","3":"591","4":"1","5":"11173","6":"219","7":"4101","8":"46","9":"6486","10":"97"},{"1":"2020-05-27","2":"Afghanistan","3":"658","4":"1","5":"11831","6":"220","7":"4178","8":"42","9":"6864","10":"93"},{"1":"2020-05-28","2":"Afghanistan","3":"625","4":"7","5":"12456","6":"227","7":"4311","8":"40","9":"7230","10":"97"},{"1":"2020-05-29","2":"Afghanistan","3":"580","4":"8","5":"13036","6":"235","7":"4360","8":"42","9":"7697","10":"99"},{"1":"2020-05-30","2":"Afghanistan","3":"623","4":"11","5":"13659","6":"246","7":"4443","8":"41","9":"7257","10":"78"},{"1":"2020-05-31","2":"Afghanistan","3":"866","4":"3","5":"14525","6":"249","7":"4527","8":"33","9":"8123","10":"81"},{"1":"2020-06-01","2":"Afghanistan","3":"680","4":"8","5":"15205","6":"257","7":"4623","8":"39","9":"8541","10":"88"},{"1":"2020-06-02","2":"Afghanistan","3":"545","4":"8","5":"15750","6":"265","7":"4577","8":"46","9":"8678","10":"92"},{"1":"2020-06-03","2":"Afghanistan","3":"759","4":"5","5":"16509","6":"270","7":"4678","8":"50","9":"8856","10":"92"},{"1":"2020-06-04","2":"Afghanistan","3":"758","4":"24","5":"17267","6":"294","7":"4811","8":"67","9":"9122","10":"107"},{"1":"2020-06-05","2":"Afghanistan","3":"787","4":"6","5":"18054","6":"300","7":"5018","8":"65","9":"9378","10":"107"},{"1":"2020-06-06","2":"Afghanistan","3":"915","4":"9","5":"18969","6":"309","7":"5310","8":"63","9":"9753","10":"104"},{"1":"2020-06-07","2":"Afghanistan","3":"582","4":"18","5":"19551","6":"327","7":"5026","8":"78","9":"9553","10":"111"},{"1":"2020-06-08","2":"Afghanistan","3":"791","4":"30","5":"20342","6":"357","7":"5137","8":"100","9":"9760","10":"139"},{"1":"2020-06-09","2":"Afghanistan","3":"575","4":"12","5":"20917","6":"369","7":"5167","8":"104","9":"9744","10":"150"},{"1":"2020-06-10","2":"Afghanistan","3":"542","4":"15","5":"21459","6":"384","7":"4950","8":"114","9":"9628","10":"164"},{"1":"2020-06-11","2":"Afghanistan","3":"684","4":"21","5":"22143","6":"405","7":"4876","8":"111","9":"9687","10":"178"},{"1":"2020-06-12","2":"Afghanistan","3":"747","4":"21","5":"22890","6":"426","7":"4836","8":"126","9":"9854","10":"191"},{"1":"2020-06-13","2":"Afghanistan","3":"656","4":"20","5":"23546","6":"446","7":"4577","8":"137","9":"9887","10":"200"},{"1":"2020-06-14","2":"Afghanistan","3":"556","4":"5","5":"24102","6":"451","7":"4551","8":"124","9":"9577","10":"202"},{"1":"2020-06-15","2":"Afghanistan","3":"664","4":"20","5":"24766","6":"471","7":"4424","8":"114","9":"9561","10":"214"},{"1":"2020-06-16","2":"Afghanistan","3":"761","4":"7","5":"25527","6":"478","7":"4610","8":"109","9":"9777","10":"213"},{"1":"2020-06-17","2":"Afghanistan","3":"783","4":"13","5":"26310","6":"491","7":"4851","8":"107","9":"9801","10":"221"},{"1":"2020-06-18","2":"Afghanistan","3":"564","4":"13","5":"26874","6":"504","7":"4731","8":"99","9":"9607","10":"210"},{"1":"2020-06-19","2":"Afghanistan","3":"658","4":"42","5":"27532","6":"546","7":"4642","8":"120","9":"9478","10":"246"},{"1":"2020-06-20","2":"Afghanistan","3":"346","4":"2","5":"27878","6":"548","7":"4332","8":"102","9":"8909","10":"239"},{"1":"2020-06-21","2":"Afghanistan","3":"546","4":"21","5":"28424","6":"569","7":"4322","8":"118","9":"8873","10":"242"},{"1":"2020-06-22","2":"Afghanistan","3":"409","4":"12","5":"28833","6":"581","7":"4067","8":"110","9":"8491","10":"224"},{"1":"2020-06-23","2":"Afghanistan","3":"310","4":"17","5":"29143","6":"598","7":"3616","8":"120","9":"8226","10":"229"},{"1":"2020-06-24","2":"Afghanistan","3":"338","4":"20","5":"29481","6":"618","7":"3171","8":"127","9":"8022","10":"234"},{"1":"2020-06-25","2":"Afghanistan","3":"234","4":"21","5":"29715","6":"639","7":"2841","8":"135","9":"7572","10":"234"},{"1":"2020-06-26","2":"Afghanistan","3":"460","4":"36","5":"30175","6":"675","7":"2643","8":"129","9":"7285","10":"249"},{"1":"2020-06-27","2":"Afghanistan","3":"276","4":"8","5":"30451","6":"683","7":"2573","8":"135","9":"6905","10":"237"},{"1":"2020-06-28","2":"Afghanistan","3":"165","4":"20","5":"30616","6":"703","7":"2192","8":"134","9":"6514","10":"252"},{"1":"2020-06-29","2":"Afghanistan","3":"351","4":"18","5":"30967","6":"721","7":"2134","8":"140","9":"6201","10":"250"},{"1":"2020-06-30","2":"Afghanistan","3":"271","4":"12","5":"31238","6":"733","7":"2095","8":"135","9":"5711","10":"255"},{"1":"2020-07-01","2":"Afghanistan","3":"279","4":"13","5":"31517","6":"746","7":"2036","8":"128","9":"5207","10":"255"},{"1":"2020-07-02","2":"Afghanistan","3":"319","4":"28","5":"31836","6":"774","7":"2121","8":"135","9":"4962","10":"270"},{"1":"2020-07-03","2":"Afghanistan","3":"186","4":"33","5":"32022","6":"807","7":"1847","8":"132","9":"4490","10":"261"},{"1":"2020-07-04","2":"Afghanistan","3":"302","4":"12","5":"32324","6":"819","7":"1873","8":"136","9":"4446","10":"271"},{"1":"2020-07-05","2":"Afghanistan","3":"348","4":"7","5":"32672","6":"826","7":"2056","8":"123","9":"4248","10":"257"},{"1":"2020-07-06","2":"Afghanistan","3":"279","4":"38","5":"32951","6":"864","7":"1984","8":"143","9":"4118","10":"283"},{"1":"2020-07-07","2":"Afghanistan","3":"433","4":"56","5":"33384","6":"920","7":"2146","8":"187","9":"4241","10":"322"},{"1":"2020-07-08","2":"Afghanistan","3":"210","4":"16","5":"33594","6":"936","7":"2077","8":"190","9":"4113","10":"318"},{"1":"2020-07-09","2":"Afghanistan","3":"59","4":"1","5":"33653","6":"937","7":"1817","8":"163","9":"3938","10":"298"}],"options":{"columns":{"min":{},"max":[10],"total":[10]},"rows":{"min":[10],"max":[10],"total":[100]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG4jIFJldHJpZXZlIHRoZSByZXN0IG9mIHRoZSByZXN1bHRzXG5yZXN0IDwtIGRiRmV0Y2gocmVzdWx0KVxuYGBgIn0= -->
-<pre class="r"><code>
-# Retrieve the rest of the results
-rest &lt;- dbFetch(result)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -1852,7 +1900,7 @@ system.time(rodbc_result &lt;- dbReadTable(rodbc, &quot;flights&quot;))</code></
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIk9EQkMgd2l0aCBTUUwiDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KYGBge3J9DQojaW5zdGFsbC5wYWNrYWdlcygiREJJIikNCiNpbnN0YWxsLnBhY2thZ2VzKCJvZGJjIikNCmluc3RhbGwucGFja2FnZXMoIlJPREJDIikNCmBgYA0KDQpgYGB7cn0NCiNsaWJyYXJ5KERCSSkNCmxpYnJhcnkob2RiYykNCiNsaWJyYXJ5KFJPREJDKQ0KYGBgDQoNCmBgYHtyfQ0KY29uIDwtIGRiQ29ubmVjdChvZGJjOjpvZGJjKCksICJNWVNRTF9PREJDIikNCmBgYA0KDQpgYGB7cn0NCmRiTGlzdFRhYmxlcyhjb24pDQoNCiMgTGlzdCB0YWJsZXMgYmVnaW5uaW5nIHdpdGggZg0KZGJMaXN0VGFibGVzKGNvbiwgdGFibGVfbmFtZSA9ICIlZiIpDQoNCiMgTGlzdCBhbGwgZmllbGRzIGluIHRoZSAnZmxpZ2h0cycgZGF0YWJhc2UNCmBgYA0KDQpgYGB7cn0NCiMgUmVhZGluZyBkYXRhDQpkYXRhIDwtIGRiUmVhZFRhYmxlKGNvbiwgImZsaWdodHMiKQ0KYGBgDQoNCmBgYHtyfQ0KIyBXcml0aW5nIGRhdGENCmRhdGEgPC0gZGJXcml0ZVRhYmxlKGNvbiwgImlyaXMiLCBpcmlzKQ0KYGBgDQoNCmBgYHtyfQ0KIyBRdWVyeWluZw0KcmVzdWx0IDwtIGRiU2VuZFF1ZXJ5KGNvbiwgIlNFTEVDVCAqIEZST00gZnVsbF9kYXRhcyIpDQoNCiMgUmV0cmlldmUgdGhlIGZpcnN0IDEwMCByZXN1bHRzDQpmaXJzdF8xMDAgPC0gZGJGZXRjaChyZXN1bHQsIG4gPSAxMDApDQpmaXJzdF8xMDANCg0KIyBSZXRyaWV2ZSB0aGUgcmVzdCBvZiB0aGUgcmVzdWx0cw0KcmVzdCA8LSBkYkZldGNoKHJlc3VsdCkNCmBgYA0KDQpgYGB7cn0NCiMgUmVhZGluZyBUYWJsZXMNCmxpYnJhcnkoREJJKQ0KbGlicmFyeShST0RCQ0RCSSkNCnJvZGJjIDwtIGRiQ29ubmVjdChST0RCQ0RCSTo6T0RCQygpLCBkc24gPSAiUG9zdGdyZVNRTCIpDQpzeXN0ZW0udGltZShyb2RiY19yZXN1bHQgPC0gZGJSZWFkVGFibGUocm9kYmMsICJmbGlnaHRzIikpDQpgYGANCg0K</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIk9EQkMgd2l0aCBTUUwiDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KYGBge3J9DQojaW5zdGFsbC5wYWNrYWdlcygiREJJIikNCiNpbnN0YWxsLnBhY2thZ2VzKCJvZGJjIikNCiNpbnN0YWxsLnBhY2thZ2VzKCJsdWJyaWRhdGUiKQ0KI2luc3RhbGwucGFja2FnZXMoIlJPREJDIikNCiNpbnN0YWxsLnBhY2thZ2VzKCJnZ3Bsb3QyIikNCiNpbnN0YWxsLnBhY2thZ2VzKCJ0aWR5ciIpDQojaW5zdGFsbC5wYWNrYWdlcygicGx5ciIpDQojaW5zdGFsbC5wYWNrYWdlcygibWFncml0dHIiKQ0KaW5zdGFsbC5wYWNrYWdlcygia2FibGVFeHRyYSIpDQpgYGANCg0KYGBge3J9DQojbGlicmFyeShEQkkpDQpsaWJyYXJ5KG9kYmMpDQpsaWJyYXJ5KGx1YnJpZGF0ZSkNCiNsaWJyYXJ5KFJPREJDKQ0KbGlicmFyeShnZ3Bsb3QyKQ0KI2xpYnJhcnkodGlkeXIpDQpsaWJyYXJ5KHBseXIpDQpsaWJyYXJ5KG1hZ3JpdHRyKQ0KbGlicmFyeShrYWJsZUV4dHJhKQ0KYGBgDQoNCmBgYHtyfQ0KY29uIDwtIGRiQ29ubmVjdChvZGJjOjpvZGJjKCksICJNWVNRTF9PREJDIikNCm9kYmNDb25uZWN0aW9uSWNvbihjb24pDQpgYGANCmBgYHtyfQ0KI0Z1bGwgZGF0YQ0KcS5jb25maXJtZWQgPC0gZGJTZW5kUXVlcnkoY29uLCAiU0VMRUNUICogRlJPTSB0aW1lX3Nlcmllc19jb3ZpZDE5X2NvbmZpcm1lZF9nbG9iYWwiKQ0KY29uZmlybWVkX2Nhc2VzIDwtIGRiRmV0Y2gocS5jb25maXJtZWQpICU+JSANCiAgcmVuYW1lKGMoIkNvdW50cnkuUmVnaW9uIiA9ICJDb3VudHJ5IikpDQpWaWV3KGNvbmZpcm1lZF9jYXNlcykNCmBgYA0KDQpgYGB7cn0NCmRhdGVzIDwtIG5hbWVzKGNvbmZpcm1lZF9jYXNlcylbNTpuY29sKGNvbmZpcm1lZF9jYXNlcyldICU+JSBtZHkoKQ0KcmFuZ2UoZGF0ZXMpDQpgYGANCg0KYGBge3J9DQpxLmRlYXRocyA8LSBkYlNlbmRRdWVyeShjb24sICJTRUxFQ1QgKiBGUk9NIHRpbWVfc2VyaWVzX2NvdmlkMTlfZGVhdGhzX2dsb2JhbCIpDQpkZWF0aHNfY2FzZXMgPC0gZGJGZXRjaChxLmRlYXRocykgJT4lIA0KICByZW5hbWUoYygiQ291bnRyeS5SZWdpb24iID0gIkNvdW50cnkiKSkNClZpZXcoZGVhdGhzX2Nhc2VzKQ0KYGBgDQoNCmBgYHtyfQ0KcS5yZWNvdmVyZWQgPC0gZGJTZW5kUXVlcnkoY29uLCAiU0VMRUNUICogRlJPTSB0aW1lX3Nlcmllc19jb3ZpZDE5X3JlY292ZXJlZF9nbG9iYWwiKQ0KcmVjb3ZlcmVkX2Nhc2VzIDwtIGRiRmV0Y2gocS5yZWNvdmVyZWQpICU+JSANCiAgcmVuYW1lKGMoIkNvdW50cnkuUmVnaW9uIiA9ICJDb3VudHJ5IikpDQpWaWV3KHJlY292ZXJlZF9jYXNlcykNCmBgYA0KDQpgYGB7cn0NCiNUb3AgMTAgYWxsIHRpbWUNCnRvcDEwLmFsbCA8LSBkYlNlbmRRdWVyeShxLmNvbmZpcm1lZCwgIlNFTEVDVCBDb3VudHJ5DQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEZST00gY29uZmlybWVkX2Nhc2VzDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEdST1VQIEJZIENvdW50cnkNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgI09SREVSIEJZIDgvMzEvMjAyMCBERVNDDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICIpDQp0b3AxMC5hbGxfY2FzZXMgPC0gZGJGZXRjaCh0b3AxMC5hbGwsIG4gPSAxMCkNCnRvcDEwLmFsbF9jYXNlcw0KYGBgDQoNCmBgYHtyfQ0KdG9wMTAuYWxsX2Nhc2VzdG9wMTAuRGVhdGhQZXJDYXNlIDwtIGRiU2VuZFF1ZXJ5KGNvbiwgIiIpDQpgYGANCg0KYGBge3J9DQojV2Vla2x5IFRvcCAxMA0KdG9wMTAud2VlayA8LSBkYlNlbmRRdWVyeShjb24sICJTRUxFQ1QgbG9jYXRpb24sIEFWRyh3ZWVrbHlfY2FzZXMpDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEZST00gZnVsbF9kYXRhcw0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBXSEVSRSBOT1QgbG9jYXRpb24gPSAnV29ybGQnDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEdST1VQIEJZIGxvY2F0aW9uDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIE9SREVSIEJZIEFWRyh3ZWVrbHlfY2FzZXMpIERFU0MNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIikNCnRvcDEwLndlZWtseV9jYXNlcyA8LSBkYkZldGNoKHRvcDEwLndlZWssIG4gPSAxMCkNCnRvcDEwLndlZWtseV9jYXNlcw0KDQpnZ3Bsb3QodG9wMTAud2Vla2x5X2Nhc2VzLCBhZXMoeCA9IGxvY2F0aW9uLCB5ID0gd2Vla2x5X2Nhc2VzLCBncm91cCA9IDEpKSArIGdlb21fbGluZSgpDQpgYGANCg0KYGBge3J9DQpkYkxpc3RUYWJsZXMoY29uKQ0KDQojIExpc3QgdGFibGVzIGJlZ2lubmluZyB3aXRoIGYNCmRiTGlzdFRhYmxlcyhjb24sIHRhYmxlX25hbWUgPSAiJWYiKQ0KDQojIExpc3QgYWxsIGZpZWxkcyBpbiB0aGUgJ2ZsaWdodHMnIGRhdGFiYXNlDQpgYGANCg0KYGBge3J9DQojIFdyaXRpbmcgZGF0YQ0KZGF0YSA8LSBkYldyaXRlVGFibGUoY29uLCAiaXJpcyIsIGlyaXMpDQpgYGANCg0KDQpgYGB7cn0NCiMgUmVhZGluZyBUYWJsZXMNCmxpYnJhcnkoREJJKQ0KbGlicmFyeShST0RCQ0RCSSkNCnJvZGJjIDwtIGRiQ29ubmVjdChST0RCQ0RCSTo6T0RCQygpLCBkc24gPSAiUG9zdGdyZVNRTCIpDQpzeXN0ZW0udGltZShyb2RiY19yZXN1bHQgPC0gZGJSZWFkVGFibGUocm9kYmMsICJmbGlnaHRzIikpDQpgYGANCg0K</div>
 
 
 
