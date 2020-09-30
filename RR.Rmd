@@ -1,0 +1,152 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+#install.packages("RODBC")
+#install.packages("odbc")
+#install.packages("reshape2")
+#install.packages("ggplot2")
+#install.packages("plyr")
+#install.packages("sqldf")
+library(RODBC) #connect mysql
+#library(odbc) #connect mysql
+library(lubridate) #date operation
+library(magrittr) #pipe operation
+library(reshape2)
+library(ggplot2)
+library(plyr)
+library(sqldf)
+
+
+
+
+
+
+
+```
+```{r}
+#load data into R
+#odbc <- dbConnect(odbc::odbc(), dsn = "coronavirus19")
+data1 <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
+#Data Cleaning
+
+data1 <- sqlQuery(data1, "SELECT * FROM covid19_confirmed_global ")
+#Remove some columns and rename
+data1 <- data1[,!(names(data1) %in% c("Province.State","Lat","Long"))]%>%rename(c("Country.Region" = "Country"))
+#covert from wide to long format
+data1 <- melt(data1,id = c("Country")) %>% rename(c("variable" = "Date"))%>% rename(c("value"="confirmed"))
+
+#data2 <- sqldf("SELECT * FROM data1 WHERE date = '8/31/2020' group by Country order by confirmed desc ")
+data1 <- sqldf("SELECT * FROM data1 order by Country")
+
+View(data1)
+
+
+
+```
+
+
+
+```{r}
+#load data into R
+data2 <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
+#Data Cleaning
+
+data2 <- sqlQuery(data2, "SELECT * FROM covid19_deaths_global ")
+#Remove some columns and rename
+data2 <- data2[,!(names(data2) %in% c("Province.State","Lat","Long"))]%>%rename(c("Country.Region" = "Country"))
+#covert from wide to long format
+data2 <- melt(data2,id = c("Country")) %>% rename(c("variable" = "Date"))%>% rename(c("value"="deaths"))
+
+#data2 <- sqldf("SELECT * FROM data1 WHERE date = '8/31/2020' group by Country order by confirmed desc ")
+data2 <- sqldf("SELECT * FROM data2 order by Country")
+
+View(data2)
+```
+
+
+
+```{r}
+#load data into R
+data3 <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
+#Data Cleaning
+
+data3 <- sqlQuery(data3, "SELECT * FROM covid19_recovered_global ")
+#Remove some columns and rename
+data3 <- data3[,!(names(data3) %in% c("Province.State","Lat","Long"))]%>%rename(c("Country.Region" = "Country"))
+#covert from wide to long format
+data3 <- melt(data3,id = c("Country")) %>% rename(c("variable" = "Date"))%>% rename(c("value"="recovered"))
+
+#data2 <- sqldf("SELECT * FROM data1 WHERE date = '8/31/2020' group by Country order by confirmed desc ")
+data3 <- sqldf("SELECT * FROM data3 order by Country")
+
+View(data3)
+```
+```{r}
+#load data into R
+#odbc <- dbConnect(odbc::odbc(), dsn = "coronavirus19")
+data <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
+#Data Cleaning
+
+data1 <- sqlQuery(data, "SELECT * FROM covid19_confirmed_global ")
+
+cleanData <- function(data){
+  data %<>% data[,!(names(data) %in% c("Province.State","Lat","Long"))]%>%rename(c("Country.Region" = "Country"))
+  data %<>% melt(data,id = c("Country")) %>% rename(c("variable" = "Date"))%>% rename(c("value"="confirmed"))%>% as.data.frame()
+  return(data)
+}
+data.confirmed <- data1 %>% cleanData()
+
+```
+```{r}
+data <- data1 %>% merge(data2,all = T) %>% merge(data3,all = T)
+View(data)
+```
+
+```{r}
+#load data into R
+odbc <- dbConnect(odbc::odbc(), dsn = "coronavirus")
+
+#dbListTables(odbc) #is used for listing all existing tables in a database.
+#data <- dbReadTable(odbc, "covid19_confirmed_global") #will read a full table into an R data.frame()
+#rdate <- as.Date(data$date,"%Y-%m-%d")
+
+
+#range(rdate)
+#data.top <- rdate %>% filter(date == max(date))
+#data.top
+result <- dbSendQuery(odbc, "SELECT date, location, total_cases,total_deaths FROM 
+covid19_confirmed_global WHERE date = '2020-08-31' group by location order by total_cases desc")
+#rdate <- as.Date(full_data$date,"%Y-%m-%d")
+#str(date)
+#result
+#top <- dbFetch(result,n=10)
+#top["death_per_case"] <- 100*top$total_deaths/top$total_cases
+#head(data)
+#top
+View(data)
+#my.data
+
+```
+```{r}
+ggplot(top,aes(total_cases))+geom_histogram()
+```
+```{r}
+
+top$date <- as.Date(top$date,"%Y-%m-%d")
+str(top$date)
+top
+```
+```{r}
+top$date <- as.Date(top$date,tryFormats = c("%Y-%m-%d","%m/%d/%Y"))
+str(top$date)
+top
+
+```
+
