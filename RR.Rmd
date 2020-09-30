@@ -24,28 +24,27 @@ library(plyr)
 library(sqldf)
 
 
-
-
-
-
-
 ```
 ```{r}
-#load data into R
+#load data into R covid19_confirmed_global
 #odbc <- dbConnect(odbc::odbc(), dsn = "coronavirus19")
-data1 <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
+data_confirmed <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
 #Data Cleaning
 
-data1 <- sqlQuery(data1, "SELECT * FROM covid19_confirmed_global ")
+data_confirmed <- sqlQuery(data_confirmed, "SELECT * FROM covid19_confirmed_global ")
+
 #Remove some columns and rename
-data1 <- data1[,!(names(data1) %in% c("Province.State","Lat","Long"))]%>%rename(c("Country.Region" = "Country"))
+data_confirmed <- data_confirmed[,!(names(data_confirmed) %in% c("Province.State","Lat","Long"))]%>%rename(c("Country.Region" = "Country"))
 #covert from wide to long format
-data1 <- melt(data1,id = c("Country")) %>% rename(c("variable" = "Date"))%>% rename(c("value"="confirmed"))
+data_confirmed <- melt(data_confirmed,id = c("Country")) %>% rename(c("variable" = "Date"))%>% rename(c("value"="confirmed"))
 
 #data2 <- sqldf("SELECT * FROM data1 WHERE date = '8/31/2020' group by Country order by confirmed desc ")
-data1 <- sqldf("SELECT * FROM data1 order by Country")
-
-View(data1)
+data_confirmed <- sqldf("SELECT * FROM data_confirmed order by Country")
+#convert from charater to date and format
+data_confirmed$Date <- as.Date(data_confirmed$Date,tryFormats = c("%m/%d/%Y", "%Y-%m-%d")) 
+#check str
+str(data_confirmed)
+View(data_confirmed)
 
 
 
@@ -54,42 +53,50 @@ View(data1)
 
 
 ```{r}
-#load data into R
-data2 <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
+#load data into R covid19_deaths_global
+data_deaths <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
 #Data Cleaning
 
-data2 <- sqlQuery(data2, "SELECT * FROM covid19_deaths_global ")
+data_deaths <- sqlQuery(data_deaths, "SELECT * FROM covid19_deaths_global ")
 #Remove some columns and rename
-data2 <- data2[,!(names(data2) %in% c("Province.State","Lat","Long"))]%>%rename(c("Country.Region" = "Country"))
+data_deaths <- data_deaths[,!(names(data_deaths) %in% c("Province.State","Lat","Long"))]%>%rename(c("Country.Region" = "Country"))
 #covert from wide to long format
-data2 <- melt(data2,id = c("Country")) %>% rename(c("variable" = "Date"))%>% rename(c("value"="deaths"))
+data_deaths <- melt(data_deaths,id = c("Country")) %>% rename(c("variable" = "Date"))%>% rename(c("value"="deaths"))
 
 #data2 <- sqldf("SELECT * FROM data1 WHERE date = '8/31/2020' group by Country order by confirmed desc ")
-data2 <- sqldf("SELECT * FROM data2 order by Country")
+data_deaths <- sqldf("SELECT * FROM data_deaths order by Country")
+#convert from charater to date and format
+data_deaths$Date <- as.Date(data_deaths$Date,tryFormats = c("%m/%d/%Y", "%Y-%m-%d")) 
 
-View(data2)
+#check str
+str(data_deaths)
+View(data_deaths)
 ```
 
 
 
 ```{r}
-#load data into R
-data3 <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
+#load data into R covid19_recovered_global
+data_recovered <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
 #Data Cleaning
 
-data3 <- sqlQuery(data3, "SELECT * FROM covid19_recovered_global ")
+data_recovered <- sqlQuery(data_recovered, "SELECT * FROM covid19_recovered_global ")
 #Remove some columns and rename
-data3 <- data3[,!(names(data3) %in% c("Province.State","Lat","Long"))]%>%rename(c("Country.Region" = "Country"))
+data_recovered <- data_recovered[,!(names(data_recovered) %in% c("Province.State","Lat","Long"))]%>%rename(c("Country.Region" = "Country"))
 #covert from wide to long format
-data3 <- melt(data3,id = c("Country")) %>% rename(c("variable" = "Date"))%>% rename(c("value"="recovered"))
+data_recovered <- melt(data_recovered,id = c("Country")) %>% rename(c("variable" = "Date"))%>% rename(c("value"="recovered"))
 
 #data2 <- sqldf("SELECT * FROM data1 WHERE date = '8/31/2020' group by Country order by confirmed desc ")
-data3 <- sqldf("SELECT * FROM data3 order by Country")
+data_recovered <- sqldf("SELECT * FROM data_recovered order by Country")
+#convert from charater to date and format
+data_recovered$Date <- as.Date(data_recovered$Date,tryFormats = c("%m/%d/%Y", "%Y-%m-%d")) 
 
-View(data3)
+#check str
+str(data_recovered)
+View(data_recovered)
 ```
 ```{r}
-#load data into R
+#load data into R Function data cleaning 
 #odbc <- dbConnect(odbc::odbc(), dsn = "coronavirus19")
 data <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
 #Data Cleaning
@@ -105,8 +112,27 @@ data.confirmed <- data1 %>% cleanData()
 
 ```
 ```{r}
-data <- data1 %>% merge(data2,all = T) %>% merge(data3,all = T)
-View(data)
+data_total <- data_confirmed %>% merge(data_deaths,all = T) %>% merge(data_recovered,all = T)
+
+#check str
+str(data_total)
+#View(data_total)
+```
+```{r}
+#counts for the whole world
+data.world <- data_total %>% 
+  summarise(Country='World',
+            confirmed = sum(confirmed,na.rm = T),
+            deaths = sum(deaths,na.rm = T),
+            recovered = sum(recovered,na.rm = T))
+#data.world <- sqldf("SELECT * FROM data.world order by Country")
+#data <- data_total %>% merge(data.word,all = T) 
+
+
+data_total %<>% rbind(data.world)
+#current confirmed case
+data.world %<>% mutate(current.confirmed = confirmed - deaths - recovered)
+View(data.world)
 ```
 
 ```{r}
