@@ -1,0 +1,165 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+#install.packages("knitr")
+library(dplyr)
+library(lubridate)
+library(magrittr)
+library(ggplot2)
+library(tidyr)
+library(knitr)
+??src_mysql
+my_db <- src_mysql(
+  dbname = "covid",
+  host = "localhost",
+  user = "root",
+  password = "1234"
+)
+my_db
+
+#import data
+df_conf <- tbl(my_db, sql("select * from confirmed "))
+df_conf <- as.data.frame(df_conf)
+df_conf
+df_deaths <- tbl(my_db, sql("select * from deaths "))
+df_deaths <- as.data.frame(df_deaths)
+df_deaths
+df_recover <- tbl(my_db, sql("select * from recovered "))
+df_recover <- as.data.frame(df_recover)
+df_recover
+
+```
+```{r}
+#check the time frame of the data
+n.col <- ncol(df_conf)
+dates <- names(df_conf)[5:n.col]%>% mdy()
+range(dates)
+min.date <- min(dates)
+max.date <- max(dates)
+min.date.txt <- min.date %>% format('%d %b %Y')
+max.date.txt <- max.date %>% format('%d %b %Y') %>% paste('UTC')
+```
+```{r}
+#clear data
+cleanData <- function(data) {
+  ## remove some columns
+  data %<>% select(-c(Province.State, Lat, Long)) %>% rename(country=Country.Region)
+  ## convert from wide to long format
+  data %<>% gather(key=date, value=count, -country)
+  ## convert from character to date
+  data %<>% mutate(date = date %>% mdy())
+  ## aggregate by country
+  data %<>% group_by(country, date) %>% summarise(count=sum(count, na.rm=T)) %>% as.data.frame()
+  return(data)
+}
+## clean the three datasets
+data.confirmed <- df_conf %>% cleanData() %>% rename(confirmed=count)
+data.deaths <- df_deaths %>% cleanData() %>% rename(deaths=count)
+data.recovered <- df_recover %>% cleanData() %>% rename(recovered=count)
+data <- data.confirmed %>% merge(data.deaths, all=T) %>% merge(data.recovered, all=T)
+data
+## countries/regions with confirmed cases, excl. cruise ships
+countries <- data %>% pull(country) %>% setdiff('Cruise Ship')
+data %>% filter(country=='China') %>% head(10)
+```
+
+
+```{r}
+data.world <- data %>% group_by(date) %>%
+  summarise(country='World',
+            confirmed = sum(confirmed, na.rm=T),
+            deaths = sum(deaths, na.rm=T),
+            recovered = sum(recovered, na.rm=T))
+data %<>% rbind(data.world)
+data
+data %<>% mutate(current.confirmed = confirmed - deaths - recovered)
+data
+world <- filter(data,country == 'World')
+world
+```
+```{r}
+#rate
+data %<>% arrange(country, date)
+n <- nrow(data)
+day1 <- min(data$date)
+data %<>% mutate(new.confirmed = ifelse(date == day1, NA, confirmed - lag(confirmed, n=1)),
+                 new.deaths = ifelse(date == day1, NA, deaths - lag(deaths, n=1)),
+                 new.recovered = ifelse(date == day1, NA, recovered - lag(recovered, n=1)))
+data %<>% mutate(new.confirmed = ifelse(new.confirmed < 0, 0, new.confirmed),
+                 new.deaths = ifelse(new.deaths < 0, 0, new.deaths),
+                 new.recovered = ifelse(new.recovered < 0, 0, new.recovered))
+## death rate based on total deaths and recovered cases
+data %<>% mutate(rate.upper = (100 * deaths / (deaths + recovered)) %>% round(1))
+## lower bound: death rate based on total confirmed cases
+data %<>% mutate(rate.lower = (100 * deaths / confirmed) %>% round(1))
+## death rate based on the number of death/recovered on every single day
+data %<>% mutate(rate.daily = (100 * new.deaths / (new.deaths + new.recovered)) %>% round(1))
+```
+```{r}
+## convert from wide to long format
+data.long <- data %>%
+  select(c(country, date, confirmed, current.confirmed, recovered, deaths)) %>%
+  gather(key=type, value=count, -c(country, date))
+## set factor levels to show them in a desirable order
+data.long %<>% mutate(type=recode_factor(type, confirmed='Total Confirmed',
+                                         current.confirmed='Current Confirmed',
+                                         recovered='Recovered',
+                                         deaths='Deaths'))
+
+```
+```{r}
+## convert from wide to long format, for drawing area plots
+rates.long <- data %>%
+  select(c(country, date, rate.upper, rate.lower, rate.daily)) %>%
+  gather(key=type, value=count, -c(country, date))
+# set factor levels to show them in a desirable order
+rates.long %<>% mutate(type=recode_factor(type, rate.daily='Daily',
+                                          rate.lower='Lower bound',
+                                          rate.upper='Upper bound'))
+```
+```{r}
+## ranking by confirmed cases
+data.latest.all <- data %>% filter(date == max(date)) %>%
+  select(country, date,confirmed, new.confirmed, current.confirmed,
+         recovered, deaths, new.deaths, death.rate=rate.lower) %>%
+  mutate(ranking = dense_rank(desc(confirmed)))
+k <- 20
+## top 20 countries: 21 incl. 'World'
+top.countries <- data.latest.all %>% filter(ranking <= k + 1) %>%
+  arrange(ranking) %>% pull(country) %>% as.character()
+top.countries %>% setdiff('World') %>% print()
+
+```
+```{r}
+data
+
+```
+```{r}
+data.latest <- data.latest.all %>% filter(!is.na(country)) %>%
+  mutate(country=ifelse(ranking <= k + 1, as.character(country), 'Others')) %>%
+  mutate(country=country %>% factor(levels=c(top.countries, 'Others')))
+data.latest %<>% group_by(country) %>%
+  summarise(confirmed=sum(confirmed), new.confirmed=sum(new.confirmed),
+            current.confirmed=sum(current.confirmed),
+            recovered=sum(recovered), deaths=sum(deaths), new.deaths=sum(new.deaths)) %>%
+  mutate(death.rate=(100 * deaths/confirmed) %>% round(1))
+data.latest %<>% select(c(country, confirmed, deaths, death.rate,
+                          new.confirmed, new.deaths, current.confirmed))
+data
+
+```
+```{r}
+data.latest %>% mutate(death.rate=death.rate %>% format(nsmall=1) %>% paste0('%'))
+
+
+```
+
+
+ 
+
+
+
+

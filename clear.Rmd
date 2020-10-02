@@ -13,6 +13,7 @@ library(kableExtra)
 library(tidyr)
 library(gridExtra)
 df <- read.csv("C:\\Users\\UNS_CT\\Desktop\\oenggii\\project\\New folder\\total_cases.csv")
+df
 df$date <- as.Date(df$date)
 df
 df %>% ggplot(aes(x=date, y=World))+geom_line(colour="red")+labs(title=paste0('Numbers of Cases Worldwide (log scale) '))+scale_y_continuous(trans='log10')

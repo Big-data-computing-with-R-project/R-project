@@ -5,6 +5,9 @@ output: html_notebook
 
 ```{r}
 library(dplyr)
+library(lubridate)
+library(magrittr)
+library(ggplot2)
 ??src_mysql
 my_db <- src_mysql(
   dbname = "covid",
@@ -13,33 +16,96 @@ my_db <- src_mysql(
   password = "1234"
 )
 my_db
-df_full <- tbl(my_db,
-         sql("select * from full_data"))
-df_full
+
+#select data
+df_Top <- tbl(my_db,
+         sql("select date,location,total_cases,total_deaths from full_data where date = '8/31/2020' group by location order by total_cases desc"))
+
 ```
 ```{r}
 #clear
-library(lubridate)
+df_Top <- as.data.frame(df_Top)
+df_Top
+df_Top$date <- as.Date(df_Top$date,tryFormats = c("%m/%d/%Y", "%Y-%m-%d"))
+df_Top <- rename(df_Top,c(country=location))
+df_Top <- rename(df_Top,c(confirmed=total_cases))
+df_Top <- rename(df_Top,c(deaths=total_deaths))
+df_Top
+```
+```{r}
+#Top 10 
+df_ten <- top_n(df_Top,11,confirmed)
+df_ten
+df_ten$deaths_per_cases <- 100*df_ten$deaths/df_ten$confirmed
+df_ten
+
+```
+```{r}
+#plot top 10
+df_ten_long <- df_ten %>% filter(country!='World') %>% gather(key=type, value=count, -country)
+df_ten_long%<>% mutate(type=recode_factor(type,
+                                                confirmed='Total Confirmed',
+                                                deaths='Total Deaths',
+                                                deaths_per_cases='Death Rate (%)'))
+plot_top_ten <- df_ten_long %>% ggplot(aes(x=country, y=count, fill=country, group=country,)) +
+  geom_bar(stat='identity') +
+  geom_text(aes(label=count, y=count), size=2, vjust=0) +
+  xlab('') + ylab('') +
+  labs(title=paste0('Top 20 Countries with Most Confirmed Cases')) +
+  scale_fill_discrete(name='Country', labels=aes(count)) +
+  theme(legend.title=element_blank(),
+        legend.position='none',
+        plot.title=element_text(size=11),
+        axis.text=element_text(size=7),
+        axis.text.x=element_text(angle=45, hjust=1)) +
+  facet_wrap(~type, ncol=1, scales='free_y')
+
+plot_top_ten
+
+```
+
+```{r}
+# full table
+df_full <- tbl(my_db,
+         sql("select date,location,total_cases,total_deaths from full_data"))
+df_full <- as.data.frame(df_full)
 df_full$date <- as.Date(df_full$date,tryFormats = c("%m/%d/%Y", "%Y-%m-%d"))
 df_full <- rename(df_full,c(country=location))
-df_full <- select(df_full, -c (weekly_cases,weekly_deaths,biweekly_cases,biweekly_deaths))
+df_full <- rename(df_full,c(confirmed=total_cases))
+df_full <- rename(df_full,c(deaths=total_deaths))
 df_full
+
 ```
+
+
+
 ```{r}
 #world case
 df_world <- df_full %>% group_by(date) %>% summarise(country='World',
-                                         new_cases= sum(new_cases, na.rm=T),
-                                         new_deaths=sum(new_deaths,na.rm = T),
-                                         total_cases=sum(total_cases,na.rm = T),
-                                         total_deaths=sum(total_deaths,na.rm=T))
+                                         confirmed=sum(confirmed,na.rm = T),
+                                         deaths=sum(deaths,na.rm=T))
 df_world
 df_total <-rbind(df_world) 
+df_total %<>% mutate(current.confirmed = confirmed - deaths)
 df_total
 ```
 ```{r}
-#Daily Increases and Death Rates
-df_full %<>% arrange(country, date)
+#daily increases and deaths rates
+n <- nrow(df_full)
+day1 <- min(data$date)
+df_full %<>% mutate(new.confirmed = ifelse(date == day1, NA, confirmed - lag(confirmed,n=1)),
+                    new.deaths = ifelse(date == day1, NA, deaths - lag(deaths, n=1)))
 
+## change negative number of new cases to zero
+df_full %<>% mutate(new.confirmed = ifelse(new.confirmed < 0, 0, new.confirmed),
+                 new.deaths = ifelse(new.deaths < 0, 0, new.deaths))
+## lower bound: death rate based on total confirmed cases
+df_full %<>% mutate(rate.lower = (100 * deaths / confirmed) %>% round(1))
+
+data.latest.all <- data %>% filter(date == max(date)) %>% select(country, date, confirmed,
+                                                                 new.confirmed,
+                                                                 current.confirmed,recovered, deaths,
+                                                                 new.deaths, death.rate=rate.lower)%>%mutate(ranking = dense_rank(desc(confirmed)))
 
 ```
 
