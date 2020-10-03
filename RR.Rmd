@@ -133,7 +133,7 @@ data_total$Country <- "World"
 #current confirmed case
 #dataTotal %<>%  mutate(current.confirmed = confirmed - deaths - recovered)
 #dataWorld
-world.Total <- aggregate(x = data_total[c("confirmed", "deaths", "recovered")], by = list(date = data_total$Date), FUN = sum)
+world.Total <- aggregate(x = data_total[c("confirmed", "deaths", "recovered")], by = list(country = data_total$Country, date = data_total$Date), FUN = sum)
 world.Total 
 
 ```
