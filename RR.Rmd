@@ -104,7 +104,7 @@ raw.recovered <- sqlQuery(data, "SELECT * FROM covid19_recovered_global")
 cleanData <- function(data){
   data <- data[,!(names(data) %in% c("Province.State","Lat","Long"))]%>%rename(c("Country.Region"="Country"))
   data <- melt(data,id = c("Country")) %>% rename(c("variable" = "Date"))%>% rename(c("value"="count"))
-  data <- sqldf("SELECT * FROM data group by Country,Date order by Country") %>% as.data.frame()
+  data <- sqldf("SELECT * FROM data group by Country, Date order by Country") %>% as.data.frame()
   data$Date <- as.Date(data$Date,tryFormats = c("%m/%d/%Y", "%Y-%m-%d")) 
  return(data)
 }
@@ -127,11 +127,14 @@ View(data_total)
 ##dataDate <- sqldf("SELECT * FROM data_total group by Date")
 data(data_total)
 head(data_total)
-dataWorld <- aggregate(x = data_total$deaths,by = list(data_total$Date),sum,na.rm = T)
+data_total$Country <- "World"
+#dataWorld  <- aggregate(. ~ Country + Date , data = data_total, sum, na.rm=TRUE)
 #dataTotal %<>%  rbind(dataWorld)
 #current confirmed case
 #dataTotal %<>%  mutate(current.confirmed = confirmed - deaths - recovered)
-dataWorld
+#dataWorld
+world.Total <- aggregate(x = data_total[c("confirmed", "deaths", "recovered")], by = list(date = data_total$Date), FUN = sum)
+world.Total 
 
 ```
 
