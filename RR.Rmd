@@ -102,10 +102,10 @@ raw.deaths <- sqlQuery(data, "SELECT * FROM covid19_deaths_global")
 raw.recovered <- sqlQuery(data, "SELECT * FROM covid19_recovered_global")
 
 cleanData <- function(data){
-  data <- data[,!(names(data) %in% c("Province.State","Lat","Long"))]%>%rename(c("Country.Region"="Country"))
-  data <- melt(data,id = c("Country")) %>% rename(c("variable" = "Date"))%>% rename(c("value"="count"))
-  data <- sqldf("SELECT * FROM data group by Country, Date order by Country") %>% as.data.frame()
-  data$Date <- as.Date(data$Date,tryFormats = c("%m/%d/%Y", "%Y-%m-%d")) 
+  data <- data[,!(names(data) %in% c("Province.State","Lat","Long"))]%>%rename(c("Country.Region"="country"))
+  data <- melt(data,id = c("country")) %>% rename(c("variable" = "date"))%>% rename(c("value"="count"))
+  data <- sqldf("SELECT * FROM data group by country, date") %>% as.data.frame()
+  data$date <- as.Date(data$date,tryFormats = c("%m/%d/%Y", "%Y-%m-%d")) 
  return(data)
 }
 dataConfirmed <- raw.confirmed %>% cleanData()%>% rename(c("count"="confirmed"))
@@ -133,12 +133,12 @@ head(data_total)
 #dataTotal %<>%  mutate(current.confirmed = confirmed - deaths - recovered)
 
 data_total1 <- data_total
-data_total1$Country <- "World"
+data_total1$country <- "World"
 data_total1
 
 #data_total1 <- subset(data_total1, select = -c(Country))
 
-dataWorld  <- aggregate(. ~ Country + Date , data = data_total1, sum, na.rm=TRUE)
+dataWorld  <- aggregate(. ~ country + date , data = data_total1, sum, na.rm=TRUE)
 dataWorld$current.confirmed <- dataWorld$confirmed - dataWorld$deaths - dataWorld$recovered
 dataWorld
 #world.Total <- aggregate(x = data_total[c("confirmed", "deaths", "recovered")], by = list(country = data_total$Country, date = data_total$Date), sum)
