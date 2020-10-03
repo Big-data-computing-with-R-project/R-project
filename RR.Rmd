@@ -127,14 +127,22 @@ View(data_total)
 ##dataDate <- sqldf("SELECT * FROM data_total group by Date")
 data(data_total)
 head(data_total)
-data_total$Country <- "World"
-#dataWorld  <- aggregate(. ~ Country + Date , data = data_total, sum, na.rm=TRUE)
+
 #dataTotal %<>%  rbind(dataWorld)
 #current confirmed case
 #dataTotal %<>%  mutate(current.confirmed = confirmed - deaths - recovered)
-#dataWorld
-world.Total <- aggregate(x = data_total[c("confirmed", "deaths", "recovered")], by = list(country = data_total$Country, date = data_total$Date), FUN = sum)
-world.Total 
+
+data_total1 <- data_total
+data_total1$Country <- "World"
+data_total1
+
+#data_total1 <- subset(data_total1, select = -c(Country))
+
+dataWorld  <- aggregate(. ~ Country + Date , data = data_total1, sum, na.rm=TRUE)
+dataWorld$current.confirmed <- dataWorld$confirmed - dataWorld$deaths - dataWorld$recovered
+dataWorld
+#world.Total <- aggregate(x = data_total[c("confirmed", "deaths", "recovered")], by = list(country = data_total$Country, date = data_total$Date), sum)
+#world.Total 
 
 ```
 
