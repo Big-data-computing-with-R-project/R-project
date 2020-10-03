@@ -14,10 +14,6 @@ Try executing this chunk by clicking the *Run* button within the chunk or by pla
 #install.packages("ggplot2")
 #install.packages("plyr")
 #install.packages("sqldf")
-install.packages("data.table")
-```
-
-```{r}
 library(RODBC) #connect mysql
 #library(odbc) #connect mysql
 library(lubridate) #date operation
@@ -26,9 +22,10 @@ library(reshape2)
 library(ggplot2)
 library(plyr)
 library(sqldf)
-library(data.table)
-```
+library(tidyr)
 
+
+```
 ```{r}
 #load data into R covid19_confirmed_global
 #odbc <- dbConnect(odbc::odbc(), dsn = "coronavirus19")
@@ -36,37 +33,28 @@ data_confirmed <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
 #Data Cleaning
 
 data_confirmed <- sqlQuery(data_confirmed, "SELECT * FROM covid19_confirmed_global ")
-View(data_confirmed)
-```
-
-```{r}
-#load data into R covid19_confirmed_global
-#odbc <- dbConnect(odbc::odbc(), dsn = "coronavirus19")
-dbcon <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
-```
-
-```{r}
-#Data Cleaning
-data_confirmed <- sqlQuery(dbcon, "SELECT * FROM covid19_confirmed_global ")
 
 #Remove some columns and rename
 data_confirmed <- data_confirmed[,!(names(data_confirmed) %in% c("Province.State","Lat","Long"))]%>%rename(c("Country.Region" = "Country"))
 #covert from wide to long format
-data_confirmed <- melt(data_confirmed,id = c("Country")) %>% rename(c("variable" = "Date"))%>% rename(c("value"="confirmed"))
+data_confirmed <- data_confirmed %>% gather(key=date,value=count,-c(Country))
 
-#data2 <- sqldf("SELECT * FROM data1 WHERE date = '8/31/2020' group by Country order by confirmed desc ")
-data_confirmed <- sqldf("SELECT * FROM data_confirmed order by Country")
-#convert from charater to date and format
-data_confirmed$Date <- as.Date(data_confirmed$Date,tryFormats = c("%m/%d/%Y", "%Y-%m-%d")) 
-#check str
-str(data_confirmed)
 View(data_confirmed)
+
+gather
+
+
 
 ```
 
+
+
 ```{r}
+#load data into R covid19_deaths_global
+data_deaths <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
 #Data Cleaning
-data_deaths <- sqlQuery(dbcon, "SELECT * FROM covid19_deaths_global ")
+
+data_deaths <- sqlQuery(data_deaths, "SELECT * FROM covid19_deaths_global ")
 #Remove some columns and rename
 data_deaths <- data_deaths[,!(names(data_deaths) %in% c("Province.State","Lat","Long"))]%>%rename(c("Country.Region" = "Country"))
 #covert from wide to long format
@@ -85,11 +73,13 @@ View(data_deaths)
 
 
 ```{r}
+#load data into R covid19_recovered_global
+data_recovered <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
 #Data Cleaning
-data_recovered <- sqlQuery(dbcon, "SELECT * FROM covid19_recovered_global ")
 
+data_recovered <- sqlQuery(data_recovered, "SELECT * FROM covid19_recovered_global ")
 #Remove some columns and rename
-data_recovered <- data_recovered[,!(names(data_recovered) %in% c("Province.State","Lat","Long"))]%>%rename(c("Country.Region" = "Country")) 
+data_recovered <- data_recovered[,!(names(data_recovered) %in% c("Province.State","Lat","Long"))]%>%rename(c("Country.Region" = "Country"))
 #covert from wide to long format
 data_recovered <- melt(data_recovered,id = c("Country")) %>% rename(c("variable" = "Date"))%>% rename(c("value"="recovered"))
 
@@ -99,23 +89,12 @@ data_recovered <- sqldf("SELECT * FROM data_recovered order by Country")
 data_recovered$Date <- as.Date(data_recovered$Date,tryFormats = c("%m/%d/%Y", "%Y-%m-%d")) 
 
 #check str
-
 str(data_recovered)
 View(data_recovered)
 ```
 
 ```{r}
-#Merge to New Table (Summarise)
-data_total <- data_confirmed %>% merge(data_deaths,all = T) %>% merge(data_recovered,all = T)
-
-#check str
-str(data_total)
-View(data_total)
-```
-
-```{r}
 #load data into R Function data cleaning 
-#odbc <- dbConnect(odbc::odbc(), dsn = "coronavirus19")
 data <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
 #Data Cleaning
 
@@ -123,127 +102,131 @@ raw.confirmed <- sqlQuery(data, "SELECT * FROM covid19_confirmed_global")
 raw.deaths <- sqlQuery(data, "SELECT * FROM covid19_deaths_global")
 raw.recovered <- sqlQuery(data, "SELECT * FROM covid19_recovered_global")
 
-#typeof(data1)
-```
-
-```{r}
 cleanData <- function(data){
-  #data <-subset(data, select = -c("Province.State","Lat","Long")) %>%rename(c("Country.Region" = "Country"))
-  data <- data[,!(names(data) %in% c("Province.State","Lat","Long"))] %>%rename(c("Country.Region" = "country"))
-  #data <- data[,!(names(data) %in% c("Lat","Long"))] %>%rename(c("Country.Region" = "country"))
-  data <- melt(data,id = c("country")) %>% rename(c("variable" = "date")) %>% rename(c("value"="count"))
-  data <- sqldf("SELECT * FROM data order by country") %>% as.data.frame()
-  data$date <- as.Date(data$date, tryFormats = c("%m/%d/%Y", "%Y-%m-%d")) 
-  return(data)
+  data <- data[,!(names(data) %in% c("Province.State","Lat","Long"))]%>%rename(c("Country.Region"="country"))
+  data <- melt(data,id = c("country")) %>% rename(c("variable" = "date"))%>% rename(c("value"="count"))
+  data <- sqldf("SELECT * FROM data group by country, date order by country") %>% as.data.frame()
+  data$date <- as.Date(data$date,tryFormats = c("%m/%d/%Y", "%Y-%m-%d")) 
+ return(data)
 }
-```
+dataConfirmed <- raw.confirmed %>% cleanData()%>% rename(c("count"="confirmed"))
+dataDeaths <- raw.deaths %>% cleanData() %>% rename(c("count"="deaths"))
+dataRecovered <- raw.recovered %>% cleanData() %>% rename(c("count"="recovered"))
+#dataConfirmed
 
-```{r}
-data.confirmed <- raw.confirmed %>% cleanData() %>% rename(c("count"="confirmed"))
-data.confirmed
-data.deaths <- raw.deaths %>% cleanData() %>% rename(c("count"="deaths"))
-data.deaths
-data.recovered <- raw.recovered %>% cleanData() %>% rename(c("count"="recovered"))
-data.recovered
-```
+data_total <- dataConfirmed %>% merge(dataDeaths,all = T) %>% merge(dataRecovered,all = T)
 
-```{r}
-# Merge to New Table (Summarise) -- function
-merge.data <- data.confirmed %>% merge(data.deaths,all = T) %>% merge(data.recovered,all = T)
-#data.total <- unique(data.total[, 0:5])
-data.total <- merge.data[!duplicated(merge.data),]
 #check str
-#str(data.total)
-View(data.total)
-```
+#str(data_total)
+#View(data_total)
+View(data_total)
 
-
-
-```{r}
-data.total$country <- "World"
-data.total
-```
-
-```{r}
-for (i in 1:data.total[2])
-  print
-```
-
-```{r}
-
-```
-
-
-```{r}
-# Worldwide Cases
-#data.World <- data.total[data.total$Date == max(data.total$Date), ]
-
-#data.World <- aggregate(data.total, list(date = data.total$date, country = data.total$country), FUN = sum)
-#data.World
-
-#df <- subset(data.total, select = -c(country)) 
-world.confirmed  <- aggregate(. ~date + country, data = data.total, sum, na.rm=TRUE)
-world.confirmed 
-
-#world.Total <- aggregate(x = data.total[c("confirmed", "deaths", "recovered")], by = list(date = data.total$date), FUN = sum)
-#world.Total 
-```
-
-
-```{r}
-# Top 20 of World
-select_month <- month(as.POSIXlt(data.confirmed$Date, format="%y/%m/%d"))
-confirmedTop20 <- sqldf(data.confirmed, "SELECT Country, confirmed
-                                            WHERE Date = "2020-04-30"
-                                            ORDER BY confirmed
-                           ")
 ```
 
 
 ```{r}
 #counts for the whole world
-data_world <- data_total %>% 
-  summarise(Country='World',
-            confirmed = sum(confirmed,na.rm = T),
-            deaths = sum(deaths,na.rm = T),
-            recovered = sum(recovered,na.rm = T))
-#data.world <- sqldf("SELECT * FROM data.world order by Country")
-#data <- data_total %>% merge(data.word,all = T) 
 
-data_total %<>% rbind(data_world)
-#current confirmed case
-data_world %<>% mutate(current.confirmed = confirmed - deaths - recovered)
-View(data.world)
-```
+##dataDate <- sqldf("SELECT * FROM data_total group by Date")
+#data_total1 <- subset(data_total1, select = -c(Country))
+#world.Total <- aggregate(x = data_total[c("confirmed", "deaths", "recovered")], by = list(country = data_total$Country, date = data_total$Date), sum)
+#world.Total
 
+data_total <- dataConfirmed %>% merge(dataDeaths,all = T) %>% merge(dataRecovered,all = T)
 
-```{r}
-#load data into R
-odbc <- dbConnect(odbc::odbc(), dsn = "coronavirus")
+data(data_total)
+head(data_total)
 
-#dbListTables(odbc) #is used for listing all existing tables in a database.
-#data <- dbReadTable(odbc, "covid19_confirmed_global") #will read a full table into an R data.frame()
-#rdate <- as.Date(data$date,"%Y-%m-%d")
+#change country to "World"
+data_total1 <- data_total
+data_total1$country <- "World"
 
+#group data by date and sum all (confirmed, deaths, recovered) cases
+dataWorld  <- aggregate(. ~ country + date , data = data_total1, sum, na.rm=TRUE)
+dataWorld 
+View(dataWorld)
 
-#range(rdate)
-#data.top <- rdate %>% filter(date == max(date))
-#data.top
-result <- dbSendQuery(odbc, "SELECT date, location, total_cases,total_deaths FROM 
-covid19_confirmed_global WHERE date = '2020-08-31' group by location order by total_cases desc")
-#rdate <- as.Date(full_data$date,"%Y-%m-%d")
-#str(date)
-#result
-#top <- dbFetch(result,n=10)
-#top["death_per_case"] <- 100*top$total_deaths/top$total_cases
-#head(data)
-#top
-View(data)
-#my.data
+#merge 'World' statistic to main data frame
+data_total <- rbind(data_total, dataWorld)
+data_total <- sqldf("SELECT * FROM data_total group by country, date order by country")
+
+#current confirmed cases
+data_total$current.confirmed <- data_total$confirmed - data_total$deaths - data_total$recovered
+data_total 
+View(data_total)
 
 ```
+
 ```{r}
-ggplot(top,aes(total_cases))+geom_histogram()
+data_total <-  mutate(data_total,current.confirmed = confirmed - deaths - recovered)
+data_total
+
+```
+
+```{r}
+#sort by country and date
+data_total %<>% arrange(Country,Date)
+
+#daily increases of deaths and recovered cases
+#set NA to the increases on day1
+n <- nrow(data_total)
+day1 <- min(data_total$Date)
+data_total %<>% mutate(new.confirmed = ifelse(Date == day1,NA,confirmed - lag(confirmed,n=1)),
+                 new.deaths = ifelse(Date == day1,NA,deaths - lag(deaths,n=1)),
+                 new.recovered = ifelse(Date == day1,NA,recovered - lag(recovered,n=1)))
+
+#change negative number of new case to zero
+data_total %<>% mutate(new.confirmed = ifelse(new.confirmed < 0,0,new.confirmed),
+                       new.deaths = ifelse(new.deaths < 0,0,new.deaths),
+                       new.recovered = ifelse(new.recovered < 0,0,new.recovered))
+
+#death rate based on total deaths and recovered cases
+data_total %<>% mutate(rate.upper = (100*deaths/(deaths+recovered)) %>% round(1))
+#lower bound: death rate based on total confirmed cases
+data_total %<>% mutate(rate.lower = (100*deaths/confirmed) %>% round(1))
+#death rate based on number of death/recovered on every single day
+data_total %<>% mutate(rate.daily = (100*new.deaths/(new.deaths+new.recovered)) %>% round(1))
+
+
+#covert from wide to long format,for drawing area plots
+#dataSelect1 <- sqldf("select Country,Date,confirmed,recovered,deaths from data_total")
+#data_total
+data.long <- data_total %>% melt(data_total,id = c("Country","Date"))
+data.long
+
+#set factor levels to show them in a desirable order
+#data.long %<>% mutate(type = recode_factor(type,confirmed = 'Total Confirmed',
+                                           #current.confirmed = 'Current Confirmed',
+                                           #recovered = 'Recovered',
+                                           #deaths = 'Deaths'))
+```
+```{r}
+data_total2 <-  mutate(data_total,current.confirmed = confirmed - deaths - recovered)
+#data_total2
+dataSelect1 <- sqldf("select Country,Date,confirmed,recovered,deaths from data_total2")
+dataSelect1
+```
+
+```{r}
+
+#covert from wide to long format, for drawing area plots
+dataSelect2 <- sqldf(data_total,"SELECT Country,Date,rate.upper,rate.lower,rate.daily FROM data_total")
+rates.long <- data_total %>%
+  #filter(country %in% top.countries) %>%
+  dataSelect2 %>%
+  #mutate(country=factor(country,levels=top.countries)) %>%
+  melt(data,id = c("Country")) %>% rename(c("variable" = "Date"))%>% rename(c("value"="count"))
+#set factor levels to show them in a desirable order
+rates.long %<>% mutate(type=recode_factor(type,rate.daily = 'Daily',
+                                          rate.lower = 'Lower bound',
+                                          rate.upper = 'Upper bound   '))
+```
+
+```{r}
+x <- raw.confirmed
+x$confirmed <- x[,ncol(x)]
+x%<>% sqldf("SELECT country.Region,Province.State,Lat,Long,confirmed") %>%
+  mutate(txt)
 ```
 ```{r}
 
