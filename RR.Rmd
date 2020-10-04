@@ -22,7 +22,7 @@ library(reshape2)
 library(ggplot2)
 library(plyr)
 library(sqldf)
-library(tidyr)
+#library(tidyr)
 
 
 ```
@@ -124,25 +124,32 @@ View(data_total)
 
 ```{r}
 #counts for the whole world
+
 ##dataDate <- sqldf("SELECT * FROM data_total group by Date")
+#data_total1 <- subset(data_total1, select = -c(Country))
+#world.Total <- aggregate(x = data_total[c("confirmed", "deaths", "recovered")], by = list(country = data_total$Country, date = data_total$Date), sum)
+#world.Total
+
+data_total <- dataConfirmed %>% merge(dataDeaths,all = T) %>% merge(dataRecovered,all = T)
 data(data_total)
 head(data_total)
 
-#dataTotal %<>%  rbind(dataWorld)
-#current confirmed case
-#dataTotal %<>%  mutate(current.confirmed = confirmed - deaths - recovered)
-
+#change country to "World"
 data_total1 <- data_total
 data_total1$country <- "World"
-data_total1
 
-#data_total1 <- subset(data_total1, select = -c(Country))
-
+#group data by date and sum all (confirmed, deaths, recovered) cases
 dataWorld  <- aggregate(. ~ country + date , data = data_total1, sum, na.rm=TRUE)
-dataWorld$current.confirmed <- dataWorld$confirmed - dataWorld$deaths - dataWorld$recovered
-dataWorld
-#world.Total <- aggregate(x = data_total[c("confirmed", "deaths", "recovered")], by = list(country = data_total$Country, date = data_total$Date), sum)
-#world.Total 
+dataWorld 
+View(dataWorld)
+
+#merge 'World' statistic to main data frame
+data_total <- rbind(data_total, dataWorld)
+data_total <- sqldf("SELECT * FROM data_total group by country, date order by country")
+#current confirmed cases
+data_total$current.confirmed <- data_total$confirmed - data_total$deaths - data_total$recovered
+data_total 
+View(data_total)
 
 ```
 
