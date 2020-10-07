@@ -20,7 +20,7 @@ my_db <- src_mysql(
 )
 my_db
 
-#import data
+##import data
 df_conf <- tbl(my_db, sql("select * from confirmed "))
 df_conf <- as.data.frame(df_conf)
 df_conf
@@ -33,17 +33,17 @@ df_recover
 
 ```
 ```{r}
-#check the time frame of the data
+##check the time frame of the data
 n.col <- ncol(df_conf)
 dates <- names(df_conf)[5:n.col]%>% mdy()
 range(dates)
 min.date <- min(dates)
 max.date <- max(dates)
 min.date.txt <- min.date %>% format('%d %b %Y')
-max.date.txt <- max.date %>% format('%d %b %Y') %>% paste('UTC')
+max.date.txt <- max.date %>% format('%d %b %Y')
 ```
 ```{r}
-#clear data
+#clean data
 cleanData <- function(data) {
   ## remove some columns
   data %<>% select(-c(Province.State, Lat, Long)) %>% rename(country=Country.Region)
@@ -55,7 +55,7 @@ cleanData <- function(data) {
   data %<>% group_by(country, date) %>% summarise(count=sum(count, na.rm=T)) %>% as.data.frame()
   return(data)
 }
-## clean the three datasets
+## clean the three data sets
 data.confirmed <- df_conf %>% cleanData() %>% rename(confirmed=count)
 data.deaths <- df_deaths %>% cleanData() %>% rename(deaths=count)
 data.recovered <- df_recover %>% cleanData() %>% rename(recovered=count)
@@ -63,7 +63,7 @@ data <- data.confirmed %>% merge(data.deaths, all=T) %>% merge(data.recovered, a
 data
 ## countries/regions with confirmed cases, excl. cruise ships
 countries <- data %>% pull(country) %>% setdiff('Cruise Ship')
-data %>% filter(country=='China') %>% head(10)
+data 
 ```
 
 
@@ -117,8 +117,7 @@ rates.long <- data %>%
   gather(key=type, value=count, -c(country, date))
 # set factor levels to show them in a desirable order
 rates.long %<>% mutate(type=recode_factor(type, rate.daily='Daily',
-                                          rate.lower='Lower bound',
-                                          rate.upper='Upper bound'))
+                             rate.upper='Upper bound'))
 ```
 ```{r}
 ## ranking by confirmed cases
@@ -157,9 +156,33 @@ data.latest %>% mutate(death.rate=death.rate %>% format(nsmall=1) %>% paste0('%'
 
 ```
 
+```{r}
+## convert from wide to long format, for drawing area plots
+data.latest.long <- data.latest %>% filter(country!='World') %>%
+  gather(key=type, value=count, -country)
+## set factor levels to show them with proper text and in a desirable order
+data.latest.long %<>% mutate(type=recode_factor(type,
+                                                confirmed='Total Confirmed',
+                                                deaths='Total Deaths',
+                                                death.rate='Death Rate (%)',
+                                                new.confirmed='New Confirmed (compared with one day before)',
+                                                new.deaths='New Deaths (compared with one day before)',
+                                                current.confirmed='Current Confirmed'))
+```
 
- 
+```{r}
+## bar chart
+data.latest.long %>% ggplot(aes(x=country, y=count, fill=country, group=country)) +
+  geom_bar(stat='identity') +
+  geom_text(aes(label=count, y=count), size=2, vjust=0) +
+  xlab('') + ylab('') +
+  labs(title=paste0('Top 20 Countries with Most Confirmed Cases - ', max.date.txt)) +
+  scale_fill_discrete(name='Country', labels=aes(count)) +
+  theme(legend.title=element_blank(),
+        legend.position='none',
+        plot.title=element_text(size=11),
+        axis.text=element_text(size=7),
+        axis.text.x=element_text(angle=45, hjust=1)) +
+  facet_wrap(~type, ncol=1, scales='free_y')
 
-
-
-
+```
