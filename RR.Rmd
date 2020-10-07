@@ -214,23 +214,24 @@ View(rates.long)
 ```
 
 ```{r}
-data.latest.all <- data_total %>% filter(date == max(date)) %>% data_total[,!(names(data_total) %in% c("new.confirmed","new.deaths","new.recovered","rate.upper","rate.lower","rate.daily"))] %>% mutate(ranking = dense)
-  
+#ranking by confirmed case
+head(data_total)
+dataDate <- data_total[data_total$date  == "2020-08-31",]%>%rename(c("rate.lower" = "death.rate"))
+head(dataDate)
+data.latest.all <- dataDate[,c("country","date","confirmed","new.confirmed","recovered","deaths","new.deaths","death.rate")]
+data.latest.all <- arrange(data.latest.all,desc(confirmed)) %>% mutate(ranking = rank(desc(confirmed)))
+
+#View(data.latest.all)
+k <- 20
+#top 20 countries 21 incl.'World'
+head(data.latest.all)
+top.countries <- data.latest.all[data.latest.all$ranking <= k+1,] %>% arrange(ranking)%>% setdiff('World')
+
 ```
 
 ```{r}
 
-#covert from wide to long format, for drawing area plots
-dataSelect2 <- sqldf(data_total,"SELECT Country,Date,rate.upper,rate.lower,rate.daily FROM data_total")
-rates.long <- data_total %>%
-  #filter(country %in% top.countries) %>%
-  dataSelect2 %>%
-  #mutate(country=factor(country,levels=top.countries)) %>%
-  melt(data,id = c("Country")) %>% rename(c("variable" = "Date"))%>% rename(c("value"="count"))
-#set factor levels to show them in a desirable order
-rates.long %<>% mutate(type=recode_factor(type,rate.daily = 'Daily',
-                                          rate.lower = 'Lower bound',
-                                          rate.upper = 'Upper bound   '))
+
 ```
 
 ```{r}
