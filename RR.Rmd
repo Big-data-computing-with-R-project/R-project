@@ -101,10 +101,12 @@ raw.confirmed <- sqlQuery(data, "SELECT * FROM covid19_confirmed_global")
 raw.deaths <- sqlQuery(data, "SELECT * FROM covid19_deaths_global")
 raw.recovered <- sqlQuery(data, "SELECT * FROM covid19_recovered_global")
 
+
+
 cleanData <- function(data){
   data <- data[,!(names(data) %in% c("Province.State","Lat","Long"))]%>%rename(c("Country.Region"="country"))
   data <- melt(data,id = c("country")) %>% rename(c("variable" = "date"))%>% rename(c("value"="count"))
-  data <- sqldf("SELECT * FROM data group by country, date") %>% as.data.frame()
+  data <- aggregate(. ~ country + date , data = data, sum, na.rm=TRUE)%>% as.data.frame()
   data$date <- as.Date(data$date,tryFormats = c("%m/%d/%Y", "%Y-%m-%d")) 
  return(data)
 }
@@ -114,6 +116,7 @@ dataRecovered <- raw.recovered %>% cleanData() %>% rename(c("count"="recovered")
 #dataConfirmed
 
 data_total <- dataConfirmed %>% merge(dataDeaths,all = T) %>% merge(dataRecovered,all = T)
+
 
 #check str
 #str(data_total)
@@ -149,27 +152,21 @@ data_total <- sqldf("SELECT * FROM data_total group by country, date order by co
 #current confirmed cases
 data_total$current.confirmed <- data_total$confirmed - data_total$deaths - data_total$recovered
 data_total 
-View(data_total)
-
-```
-
-```{r}
-data_total <-  mutate(data_total,current.confirmed = confirmed - deaths - recovered)
-data_total
+#View(data_total)
 
 ```
 
 ```{r}
 #sort by country and date
-data_total %<>% arrange(Country,Date)
+data_total %<>% arrange(country,date)
 
 #daily increases of deaths and recovered cases
 #set NA to the increases on day1
 n <- nrow(data_total)
-day1 <- min(data_total$Date)
-data_total %<>% mutate(new.confirmed = ifelse(Date == day1,NA,confirmed - lag(confirmed,n=1)),
-                 new.deaths = ifelse(Date == day1,NA,deaths - lag(deaths,n=1)),
-                 new.recovered = ifelse(Date == day1,NA,recovered - lag(recovered,n=1)))
+day1 <- min(data_total$date)
+data_total %<>% mutate(new.confirmed = ifelse(date == day1,NA,confirmed - lag(confirmed,n=1)),
+                 new.deaths = ifelse(date == day1,NA,deaths - lag(deaths,n=1)),
+                 new.recovered = ifelse(date == day1,NA,recovered - lag(recovered,n=1)))
 
 #change negative number of new case to zero
 data_total %<>% mutate(new.confirmed = ifelse(new.confirmed < 0,0,new.confirmed),
@@ -183,12 +180,12 @@ data_total %<>% mutate(rate.lower = (100*deaths/confirmed) %>% round(1))
 #death rate based on number of death/recovered on every single day
 data_total %<>% mutate(rate.daily = (100*new.deaths/(new.deaths+new.recovered)) %>% round(1))
 
-
+data_total
 #covert from wide to long format,for drawing area plots
 #dataSelect1 <- sqldf("select Country,Date,confirmed,recovered,deaths from data_total")
 #data_total
-data.long <- data_total %>% melt(data_total,id = c("Country","Date"))
-data.long
+#data.long <- data_total %>% melt(data_total,id = c("country","date"))
+#data.long
 
 #set factor levels to show them in a desirable order
 #data.long %<>% mutate(type = recode_factor(type,confirmed = 'Total Confirmed',
