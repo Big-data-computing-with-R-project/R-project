@@ -214,10 +214,8 @@ View(rates.long)
 ```
 
 ```{r}
-data_total2 <-  mutate(data_total,current.confirmed = confirmed - deaths - recovered)
-#data_total2
-dataSelect1 <- sqldf("select Country,Date,confirmed,recovered,deaths from data_total2")
-dataSelect1
+data.latest.all <- data_total %>% filter(date == max(date)) %>% data_total[,!(names(data_total) %in% c("new.confirmed","new.deaths","new.recovered","rate.upper","rate.lower","rate.daily"))] %>% mutate(ranking = dense)
+  
 ```
 
 ```{r}
