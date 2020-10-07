@@ -143,8 +143,8 @@ data_total1$country <- "World"
 
 #group data by date and sum all (confirmed, deaths, recovered) cases
 dataWorld  <- aggregate(. ~ country + date , data = data_total1, sum, na.rm=TRUE)
-dataWorld 
-View(dataWorld)
+#dataWorld 
+#View(dataWorld)
 
 #merge 'World' statistic to main data frame
 data_total <- rbind(data_total, dataWorld)
@@ -152,7 +152,7 @@ data_total <- sqldf("SELECT * FROM data_total group by country, date order by co
 #current confirmed cases
 data_total$current.confirmed <- data_total$confirmed - data_total$deaths - data_total$recovered
 data_total 
-#View(data_total)
+View(data_total)
 
 ```
 
@@ -164,14 +164,15 @@ data_total %<>% arrange(country,date)
 #set NA to the increases on day1
 n <- nrow(data_total)
 day1 <- min(data_total$date)
-data_total %<>% mutate(new.confirmed = ifelse(date == day1,NA,confirmed - lag(confirmed,n=1)),
-                 new.deaths = ifelse(date == day1,NA,deaths - lag(deaths,n=1)),
-                 new.recovered = ifelse(date == day1,NA,recovered - lag(recovered,n=1)))
+data_total %<>% mutate(new.confirmed = confirmed - c(NA,head(confirmed,-1)),
+                 new.deaths = deaths - c(NA,head(deaths,-1)) ,
+                 new.recovered = recovered - c(NA,head(recovered,-1)))
 
 #change negative number of new case to zero
 data_total %<>% mutate(new.confirmed = ifelse(new.confirmed < 0,0,new.confirmed),
                        new.deaths = ifelse(new.deaths < 0,0,new.deaths),
                        new.recovered = ifelse(new.recovered < 0,0,new.recovered))
+
 
 #death rate based on total deaths and recovered cases
 data_total %<>% mutate(rate.upper = (100*deaths/(deaths+recovered)) %>% round(1))
@@ -180,19 +181,38 @@ data_total %<>% mutate(rate.lower = (100*deaths/confirmed) %>% round(1))
 #death rate based on number of death/recovered on every single day
 data_total %<>% mutate(rate.daily = (100*new.deaths/(new.deaths+new.recovered)) %>% round(1))
 
-data_total
+View(data_total)
 #covert from wide to long format,for drawing area plots
 #dataSelect1 <- sqldf("select Country,Date,confirmed,recovered,deaths from data_total")
 #data_total
-#data.long <- data_total %>% melt(data_total,id = c("country","date"))
-#data.long
 
-#set factor levels to show them in a desirable order
-#data.long %<>% mutate(type = recode_factor(type,confirmed = 'Total Confirmed',
-                                           #current.confirmed = 'Current Confirmed',
-                                           #recovered = 'Recovered',
-                                           #deaths = 'Deaths'))
 ```
+```{r}
+data.long <- data_total[,!(names(data_total) %in% c("new.confirmed","new.deaths","new.recovered","rate.upper","rate.lower","rate.daily"))]
+#View(data.long)
+data.long <- melt(data.long,id = c("country","date")) 
+#View(data.long)
+data.long <- data.long %>% rename(c("variable" = "Type")) %>% rename(c("value" = "count"))
+data.long$Type <- as.character(data.long$Type)
+data.long$Type[data.long$Type == "confirmed"] <- "Total Confirmed"
+data.long$Type[data.long$Type == "current.confirmed"] <- "Current Confirmed"
+data.long$Type[data.long$Type == "recovered"] <- "Recovered"
+View(data.long)
+
+rates.long <- data_total[,!(names(data_total) %in% c("new.confirmed","new.deaths","new.recovered","confirmed","current.confirmed","recovered","deaths"))]
+#View(data.long)
+rates.long <- melt(rates.long,id = c("country","date")) 
+rates.long <- rates.long %>% rename(c("variable" = "Type")) %>% rename(c("value" = "count"))
+rates.long$Type <- as.character(rates.long$Type)
+rates.long$Type[rates.long$Type == "rate.daily"] <- "Daily"
+rates.long$Type[rates.long$Type == "rate.lower"] <- "Lower Bound"
+rates.long$Type[rates.long$Type == "rate.upper"] <- "Upper Bound"
+View(rates.long)  
+#set factor levels to show them in a desirable order
+
+
+```
+
 ```{r}
 data_total2 <-  mutate(data_total,current.confirmed = confirmed - deaths - recovered)
 #data_total2
