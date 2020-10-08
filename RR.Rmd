@@ -252,50 +252,30 @@ rownames(data.latest) <- NULL
 data.latest
 View(data.latest)
 
-#data.latest %>% mutate(death.rate=death.rate %>% format(nsmall=1) %>% paste0('%')) %>%
-#  kable('latex', booktabs=T, row.names=T, align=c('l', rep('r', 6)),
-#        caption=paste0('Cases in Top 20 Countries - ', max.date.txt,
-#                       '. See a complete list of all infected countries at the end of this report.'),
-#        format.args=list(big.mark=',')) %>%
-#  kable_styling(font_size=7, latex_options=c('striped', 'hold_position', 'repeat_header'))
-
+```
+```{r}
 data.latest.long <- data.latest[data.latest$country != 'World',] 
-data.latest.long
 data.latest.long <- melt(data.latest.long, id = c("country")) 
+data.latest.long <- data.latest.long%>% rename(c("variable" = "Type")) %>% rename(c("value" = "count"))
+data.latest.long$Type <- as.character(data.latest.long$Type)
+data.latest.long$Type[data.latest.long$Type == "confirmed"] <- "Total Confirmed"
+data.latest.long$Type[data.latest.long$Type == "deaths"] <- "Total deaths"
+data.latest.long$Type[data.latest.long$Type == "death.rate"] <- "Death Rate (%)"
+data.latest.long$Type[data.latest.long$Type == "new.confirmed"] <- "New Confirmed"
+data.latest.long$Type[data.latest.long$Type == "new.deaths"] <- "New Deaths"
+data.latest.long$Type[data.latest.long$Type == "current.confirmed"] <- "Current Confirmed"
+View(data.latest.long)
 ```
 
 ```{r}
-data.latest <-  ddply(data.latest, .(country, date), summarise,
-                      confirmed = sum(confirmed), new.confirmed = sum(new.confirmed),
-                      current.confirmed = sum(current.confirmed),
-                      recovered = sum(recovered), deaths = sum(deaths), new.deaths = sum(new.deaths)) %>%
-  mutate(death.rate=(100 * deaths/confirmed) %>% round(1)) 
 
-data.latest <- data.latest[,c("country","date","confirmed","new.confirmed","current.confirmed","recovered","deaths","new.deaths","death.rate")] 
+  
 
-
-data.latest %<>% select(c(country, confirmed, deaths, death.rate,
-new.confirmed, new.deaths, current.confirmed))
 
 ```
 
 
 ```{r}
-x <- raw.confirmed
-x$confirmed <- x[,ncol(x)]
-x%<>% sqldf("SELECT country.Region,Province.State,Lat,Long,confirmed") %>%
-  mutate(txt)
-```
-```{r}
-
-top$date <- as.Date(top$date,"%Y-%m-%d")
-str(top$date)
-top
-```
-```{r}
-top$date <- as.Date(top$date,tryFormats = c("%Y-%m-%d","%m/%d/%Y"))
-str(top$date)
-top
 
 ```
 
