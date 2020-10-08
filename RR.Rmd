@@ -41,8 +41,6 @@ data_confirmed <- data_confirmed[,!(names(data_confirmed) %in% c("Province.State
 data_confirmed <- data_confirmed %>% gather(key=date,value=count,-c(Country))
 
 View(data_confirmed)
-
-gather
 ```
 
 ```{r}
@@ -98,6 +96,15 @@ raw.confirmed <- sqlQuery(data, "SELECT * FROM covid19_confirmed_global")
 raw.deaths <- sqlQuery(data, "SELECT * FROM covid19_deaths_global")
 raw.recovered <- sqlQuery(data, "SELECT * FROM covid19_recovered_global")
 
+n.col <- ncol(raw.confirmed)
+## get dates from column names
+dates <- names(raw.confirmed)[5:n.col] %>% mdy()
+range(dates)
+
+min.date <- min(dates)
+max.date <- max(dates)
+min.date.txt <- min.date %>% format('%d %b %Y')
+max.date.txt <- max.date %>% format('%d %b %Y') %>% paste('UTC')
 
 
 cleanData <- function(data){
@@ -268,14 +275,17 @@ View(data.latest.long)
 ```
 
 ```{r}
+data.latest.long %>% ggplot(aes(x=country, y=count, fill=country, group=country)) +
+  geom_bar(stat='identity') +
+  geom_text(aes(label=count, y=count), size=2, vjust=0) +
+  xlab('') + ylab('') +
+  labs(title=paste0('Top 20 Countries with Most Confirmed Cases- ', max.date.txt)) +
+  scale_fill_discrete(name='Country', labels=aes(count)) +
+  theme(legend.title=element_blank(),
+        legend.position='none',
+        plot.title=element_text(size=11),
+        axis.text=element_text(size=7),
+        axis.text.x=element_text(angle=45, hjust=1)) +
+  facet_wrap(~Type, ncol=1, scales='free_y')
 
-  
-
-
-```
-
-
-```{r}
-
-```
-
+``
