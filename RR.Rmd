@@ -14,6 +14,8 @@ Try executing this chunk by clicking the *Run* button within the chunk or by pla
 #install.packages("ggplot2")
 #install.packages("plyr")
 #install.packages("sqldf")
+#install.packages("data.table")
+
 library(RODBC) #connect mysql
 #library(odbc) #connect mysql
 library(lubridate) #date operation
@@ -22,10 +24,9 @@ library(reshape2)
 library(ggplot2)
 library(plyr)
 library(sqldf)
-
-
-
+#library(data.table)
 ```
+
 ```{r}
 #load data into R covid19_confirmed_global
 #odbc <- dbConnect(odbc::odbc(), dsn = "coronavirus19")
@@ -42,12 +43,7 @@ data_confirmed <- data_confirmed %>% gather(key=date,value=count,-c(Country))
 View(data_confirmed)
 
 gather
-
-
-
 ```
-
-
 
 ```{r}
 #load data into R covid19_deaths_global
@@ -92,6 +88,7 @@ data_recovered$Date <- as.Date(data_recovered$Date,tryFormats = c("%m/%d/%Y", "%
 str(data_recovered)
 View(data_recovered)
 ```
+
 ```{r}
 #load data into R Function data cleaning 
 data <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
@@ -187,22 +184,26 @@ View(data_total)
 #data_total
 
 ```
+
 ```{r}
 data.long <- data_total[,!(names(data_total) %in% c("new.confirmed","new.deaths","new.recovered","rate.upper","rate.lower","rate.daily"))]
 #View(data.long)
 data.long <- melt(data.long,id = c("country","date")) 
 #View(data.long)
 data.long <- data.long %>% rename(c("variable" = "Type")) %>% rename(c("value" = "count"))
+
 data.long$Type <- as.character(data.long$Type)
 data.long$Type[data.long$Type == "confirmed"] <- "Total Confirmed"
 data.long$Type[data.long$Type == "current.confirmed"] <- "Current Confirmed"
 data.long$Type[data.long$Type == "recovered"] <- "Recovered"
 View(data.long)
 
+
 rates.long <- data_total[,!(names(data_total) %in% c("new.confirmed","new.deaths","new.recovered","confirmed","current.confirmed","recovered","deaths"))]
 #View(data.long)
 rates.long <- melt(rates.long,id = c("country","date")) 
 rates.long <- rates.long %>% rename(c("variable" = "Type")) %>% rename(c("value" = "count"))
+
 rates.long$Type <- as.character(rates.long$Type)
 rates.long$Type[rates.long$Type == "rate.daily"] <- "Daily"
 rates.long$Type[rates.long$Type == "rate.lower"] <- "Lower Bound"
@@ -218,21 +219,66 @@ View(rates.long)
 head(data_total)
 dataDate <- data_total[data_total$date  == "2020-08-31",]%>%rename(c("rate.lower" = "death.rate"))
 head(dataDate)
-data.latest.all <- dataDate[,c("country","date","confirmed","new.confirmed","recovered","deaths","new.deaths","death.rate")]
+data.latest.all <- dataDate[,c("country","date","confirmed","new.confirmed","current.confirmed","recovered","deaths","new.deaths","death.rate")]
 data.latest.all <- arrange(data.latest.all,desc(confirmed)) %>% mutate(ranking = rank(desc(confirmed)))
 
 #View(data.latest.all)
 k <- 20
 #top 20 countries 21 incl.'World'
 head(data.latest.all)
-top.countries <- data.latest.all[data.latest.all$ranking <= k+1,] %>% arrange(ranking)%>% setdiff('World')
+top.countries <- data.latest.all[data.latest.all$ranking <= k+1,] %>% arrange(ranking) 
+top.countries
+#View(top.countries)
 
 ```
 
 ```{r}
+#add 'Others'
+data.latest <- data.latest.all[!is.na(data.latest.all$country),] %>% 
+  mutate(country = ifelse(ranking <= k + 1, as.character(country), 'Others')) 
+  mutate(data.latest, country = country %>% factor(levels=c(as.character(top.countries), 'Others')))
+  
+data.latest <-  ddply(data.latest, .(country, date), summarise,
+                      confirmed = sum(confirmed), new.confirmed = sum(new.confirmed),
+                      current.confirmed = sum(current.confirmed),
+                      recovered = sum(recovered), deaths = sum(deaths), new.deaths = sum(new.deaths)) %>%
+ mutate(death.rate=(100 * deaths/confirmed) %>% round(1)) 
 
+data.latest <- arrange(data.latest,desc(confirmed)) %>% mutate(ranking = rank(desc(confirmed)))
+data.latest <- data.latest[,c("country", "confirmed", "deaths", "death.rate", "new.confirmed", "new.deaths", "current.confirmed")] 
+data.latest <- data.latest[c(1:2, nrow(data.latest) , 4:21, 3),]
+rownames(data.latest) <- NULL
+
+data.latest
+View(data.latest)
+
+#data.latest %>% mutate(death.rate=death.rate %>% format(nsmall=1) %>% paste0('%')) %>%
+#  kable('latex', booktabs=T, row.names=T, align=c('l', rep('r', 6)),
+#        caption=paste0('Cases in Top 20 Countries - ', max.date.txt,
+#                       '. See a complete list of all infected countries at the end of this report.'),
+#        format.args=list(big.mark=',')) %>%
+#  kable_styling(font_size=7, latex_options=c('striped', 'hold_position', 'repeat_header'))
+
+data.latest.long <- data.latest[data.latest$country != 'World',] 
+data.latest.long
+data.latest.long <- melt(data.latest.long, id = c("country")) 
+```
+
+```{r}
+data.latest <-  ddply(data.latest, .(country, date), summarise,
+                      confirmed = sum(confirmed), new.confirmed = sum(new.confirmed),
+                      current.confirmed = sum(current.confirmed),
+                      recovered = sum(recovered), deaths = sum(deaths), new.deaths = sum(new.deaths)) %>%
+  mutate(death.rate=(100 * deaths/confirmed) %>% round(1)) 
+
+data.latest <- data.latest[,c("country","date","confirmed","new.confirmed","current.confirmed","recovered","deaths","new.deaths","death.rate")] 
+
+
+data.latest %<>% select(c(country, confirmed, deaths, death.rate,
+new.confirmed, new.deaths, current.confirmed))
 
 ```
+
 
 ```{r}
 x <- raw.confirmed
