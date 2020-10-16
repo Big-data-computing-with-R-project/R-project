@@ -2,16 +2,20 @@
 title: "R Notebook"
 output: html_notebook
 ---
-
 ```{r}
 #install.packages("knitr")
+#install.packages("grid")
+```
+
+```{r}
+library(gridExtra)
 library(dplyr)
 library(lubridate)
 library(magrittr)
 library(ggplot2)
 library(tidyr)
 library(knitr)
-??src_mysql
+#??src_mysql
 my_db <- src_mysql(
   dbname = "covid",
   host = "localhost",
@@ -30,7 +34,6 @@ df_deaths
 df_recover <- tbl(my_db, sql("select * from recovered "))
 df_recover <- as.data.frame(df_recover)
 df_recover
-
 ```
 ```{r}
 ##check the time frame of the data
@@ -77,8 +80,7 @@ data %<>% rbind(data.world)
 data
 data %<>% mutate(current.confirmed = confirmed - deaths - recovered)
 data
-world <- filter(data,country == 'World')
-world
+
 ```
 ```{r}
 #rate
@@ -110,6 +112,78 @@ data.long %<>% mutate(type=recode_factor(type, confirmed='Total Confirmed',
                                          deaths='Deaths'))
 
 ```
+```{r}
+##Number of case World
+world <- filter(data.long,country == 'World')
+plot1 <- world %>% filter(type != 'Total Confirmed') %>%
+  ggplot(aes(x=date, y=count)) +
+  geom_area(aes(fill=type), alpha=0.5) +
+  labs(title=paste0('Numbers of Cases Worldwide - ', max.date.txt)) +
+  scale_fill_manual(values=c('red', 'green', 'black')) +
+  theme(legend.title=element_blank(), legend.position='bottom',
+        plot.title = element_text(size=7),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank(),
+        legend.key.size=unit(0.2, 'cm'),
+        legend.text=element_text(size=6),
+        axis.text=element_text(size=7),
+        axis.text.x=element_text(angle=45, hjust=1))
+plot2 <- world %>%
+  ggplot(aes(x=date, y=count)) +
+  geom_line(aes(color=type)) +
+  labs(title=paste0('Numbers of Cases Worldwide (log scale) - ', max.date.txt)) +
+  scale_color_manual(values=c('purple', 'red', 'green', 'black')) +
+  theme(legend.title=element_blank(), legend.position='bottom',
+        plot.title = element_text(size=7),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank(),
+        legend.key.size=unit(0.2, 'cm'),
+        legend.text=element_text(size=6),
+        axis.text=element_text(size=7),
+        axis.text.x=element_text(angle=45, hjust=1)) +
+  scale_y_continuous(trans='log10')
+## show two plots side by side
+grid.arrange(plot1, plot2, ncol=2)
+```
+```{r}
+## Current Confirmed Cases
+data.world <- data %>% filter(country=='World')
+n <- nrow(data.world)
+plot1 <- ggplot(data.world, aes(x=date, y=current.confirmed)) +
+  geom_point() + geom_smooth() +
+  xlab('') + ylab('Count') + labs(title='Current Confirmed Cases') +
+  theme(axis.text.x=element_text(angle=45, hjust=1))
+plot2 <- ggplot(data.world, aes(x=date, y=new.confirmed)) +
+  geom_point() + geom_smooth() +
+  xlab('') + ylab('Count') + labs(title='Daily New Confirmed Cases') +
+  theme(axis.text.x=element_text(angle=45, hjust=1))
+## show two plots side by side
+grid.arrange(plot1, plot2, ncol=2)
+```
+```{r}
+## a scatter plot with a smoothed line and vertical x-axis labels
+plot1 <- ggplot(data.world, aes(x=date, y=deaths)) +
+  geom_point() + geom_smooth() +
+  xlab('') + ylab('Count') + labs(title='Accumulative Deaths') +
+  theme(axis.text.x=element_text(angle=45, hjust=1))
+plot2 <- ggplot(data.world, aes(x=date, y=recovered)) +
+  geom_point() + geom_smooth() +
+  xlab('') + ylab('Count') + labs(title='Accumulative Recovered Cases') +
+  theme(axis.text.x=element_text(angle=45, hjust=1))
+plot3 <- ggplot(data.world, aes(x=date, y=new.deaths)) +
+  geom_point() + geom_smooth() +
+  xlab('') + ylab('Count') + labs(title='New Deaths') +
+  theme(axis.text.x=element_text(angle=45, hjust=1))
+plot4 <- ggplot(data.world, aes(x=date, y=new.recovered)) +
+  geom_point() + geom_smooth() +
+  xlab('') + ylab('Count') + labs(title='New Recovered Cases') +
+  theme(axis.text.x=element_text(angle=45, hjust=1))
+## show four plots together, with 2 plots in each row
+grid.arrange(plot1, plot2, plot3, plot4, nrow=2)
+```
+
+
+
 ```{r}
 ## convert from wide to long format, for drawing area plots
 rates.long <- data %>%
@@ -168,11 +242,18 @@ data.latest.long %<>% mutate(type=recode_factor(type,
                                                 new.confirmed='New Confirmed (compared with one day before)',
                                                 new.deaths='New Deaths (compared with one day before)',
                                                 current.confirmed='Current Confirmed'))
+View(data.latest.long)
+data.one.dem <- filter(data.latest.long,type=='Total Confirmed'
+                       | type=='Total Deaths'
+                       | type=='Current Confirmed')
+data.two.dem <- filter(data.latest.long,type=='Death Rate (%)'
+                       | type=='New Confirmed (compared with one day before)'
+                       | type=='New Deaths (compared with one day before)')
 ```
 
 ```{r}
 ## bar chart
-data.latest.long %>% ggplot(aes(x=country, y=count, fill=country, group=country)) +
+data.one.dem %>% ggplot(aes(x=country, y=count, fill=country, group=country)) +
   geom_bar(stat='identity') +
   geom_text(aes(label=count, y=count), size=2, vjust=0) +
   xlab('') + ylab('') +
@@ -186,3 +267,28 @@ data.latest.long %>% ggplot(aes(x=country, y=count, fill=country, group=country)
   facet_wrap(~type, ncol=1, scales='free_y')
 
 ```
+```{r}
+
+data.two.dem %>% ggplot(aes(x=country, y=count, fill=country, group=country)) +
+  geom_bar(stat='identity') +
+  geom_text(aes(label=count, y=count), size=2, vjust=0) +
+  xlab('') + ylab('') +
+  labs(title=paste0('Top 20 Countries with Most Confirmed Cases - ', max.date.txt)) +
+  scale_fill_discrete(name='Country', labels=aes(count)) +
+  theme(legend.title=element_blank(),
+        legend.position='none',
+        plot.title=element_text(size=11),
+        axis.text=element_text(size=7),
+        axis.text.x=element_text(angle=45, hjust=1)) +
+  facet_wrap(~type, ncol=1, scales='free_y')
+```
+
+```{r}
+##GDP
+df_gdp <- tbl(my_db, sql("select * from gdp "))
+df_gdp <- as.data.frame(df_gdp)
+df_gdp <- rename(df_gdp,"country"="Real GDP growth (Annual percent change)")
+df_gdp <- select(df_gdp,c("country","2012","2013","2014","2015","2016","2017","2018","2019","2020","2021"))
+df_gdp
+```
+
