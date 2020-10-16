@@ -1,0 +1,260 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+#install.packages("RODBC")
+#install.packages("odbc")
+#install.packages("reshape2")
+#install.packages("ggplot2")
+#install.packages("plyr")
+#install.packages("sqldf")
+#install.packages("data.table")
+
+library(RODBC) #connect mysql
+#library(odbc) #connect mysql
+library(lubridate) #date operation
+library(magrittr) #pipe operation
+library(reshape2)
+library(ggplot2)
+library(plyr)
+library(sqldf)
+#library(data.table)
+```
+
+```{r}
+#load data into R covid19_confirmed_global
+#odbc <- dbConnect(odbc::odbc(), dsn = "coronavirus19")
+data_confirmed <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
+#Data Cleaning
+
+data_confirmed <- sqlQuery(data_confirmed, "SELECT * FROM covid19_confirmed_global ")
+
+#Remove some columns and rename
+data_confirmed <- data_confirmed[,!(names(data_confirmed) %in% c("Province.State","Lat","Long"))]%>%rename(c("Country.Region" = "Country"))
+#covert from wide to long format
+data_confirmed <- data_confirmed %>% gather(key=date,value=count,-c(Country))
+
+View(data_confirmed)
+
+gather
+```
+
+```{r}
+#load data into R covid19_deaths_global
+data_deaths <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
+#Data Cleaning
+
+data_deaths <- sqlQuery(data_deaths, "SELECT * FROM covid19_deaths_global ")
+#Remove some columns and rename
+data_deaths <- data_deaths[,!(names(data_deaths) %in% c("Province.State","Lat","Long"))]%>%rename(c("Country.Region" = "Country"))
+#covert from wide to long format
+data_deaths <- melt(data_deaths,id = c("Country")) %>% rename(c("variable" = "Date"))%>% rename(c("value"="deaths"))
+
+#data2 <- sqldf("SELECT * FROM data1 WHERE date = '8/31/2020' group by Country order by confirmed desc ")
+data_deaths <- sqldf("SELECT * FROM data_deaths order by Country")
+#convert from charater to date and format
+data_deaths$Date <- as.Date(data_deaths$Date,tryFormats = c("%m/%d/%Y", "%Y-%m-%d")) 
+
+#check str
+str(data_deaths)
+View(data_deaths)
+```
+
+```{r}
+#load data into R covid19_recovered_global
+data_recovered <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
+#Data Cleaning
+
+data_recovered <- sqlQuery(data_recovered, "SELECT * FROM covid19_recovered_global ")
+#Remove some columns and rename
+data_recovered <- data_recovered[,!(names(data_recovered) %in% c("Province.State","Lat","Long"))]%>%rename(c("Country.Region" = "Country"))
+#covert from wide to long format
+data_recovered <- melt(data_recovered,id = c("Country")) %>% rename(c("variable" = "Date"))%>% rename(c("value"="recovered"))
+
+#data2 <- sqldf("SELECT * FROM data1 WHERE date = '8/31/2020' group by Country order by confirmed desc ")
+data_recovered <- sqldf("SELECT * FROM data_recovered order by Country")
+#convert from charater to date and format
+data_recovered$Date <- as.Date(data_recovered$Date,tryFormats = c("%m/%d/%Y", "%Y-%m-%d")) 
+
+#check str
+str(data_recovered)
+View(data_recovered)
+```
+
+```{r}
+#load data into R Function data cleaning 
+data <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
+#Data Cleaning
+
+raw.confirmed <- sqlQuery(data, "SELECT * FROM covid19_confirmed_global")
+raw.deaths <- sqlQuery(data, "SELECT * FROM covid19_deaths_global")
+raw.recovered <- sqlQuery(data, "SELECT * FROM covid19_recovered_global")
+
+
+
+cleanData <- function(data){
+  data <- data[,!(names(data) %in% c("Province.State","Lat","Long"))]%>%rename(c("Country.Region"="country"))
+  data <- melt(data,id = c("country")) %>% rename(c("variable" = "date"))%>% rename(c("value"="count"))
+  data <- aggregate(. ~ country + date , data = data, sum, na.rm=TRUE)%>% as.data.frame()
+  data$date <- as.Date(data$date,tryFormats = c("%m/%d/%Y", "%Y-%m-%d")) 
+ return(data)
+}
+dataConfirmed <- raw.confirmed %>% cleanData()%>% rename(c("count"="confirmed"))
+dataDeaths <- raw.deaths %>% cleanData() %>% rename(c("count"="deaths"))
+dataRecovered <- raw.recovered %>% cleanData() %>% rename(c("count"="recovered"))
+#dataConfirmed
+
+data_total <- dataConfirmed %>% merge(dataDeaths,all = T) %>% merge(dataRecovered,all = T)
+
+
+#check str
+#str(data_total)
+#View(data_total)
+View(data_total)
+```
+
+
+```{r}
+#counts for the whole world
+
+data_total <- dataConfirmed %>% merge(dataDeaths,all = T) %>% merge(dataRecovered,all = T)
+data(data_total)
+head(data_total)
+
+#change country to "World"
+data_total1 <- data_total
+data_total1$country <- "World"
+
+#group data by date and sum all (confirmed, deaths, recovered) cases
+dataWorld  <- aggregate(. ~ country + date , data = data_total1, sum, na.rm=TRUE)
+#dataWorld 
+#View(dataWorld)
+
+#merge 'World' statistic to main data frame
+data_total <- rbind(data_total, dataWorld)
+data_total <- sqldf("SELECT * FROM data_total group by country, date order by country")
+#current confirmed cases
+data_total$current.confirmed <- data_total$confirmed - data_total$deaths - data_total$recovered
+data_total 
+View(data_total)
+
+```
+
+```{r}
+#sort by country and date
+data_total %<>% arrange(country,date)
+
+#daily increases of deaths and recovered cases
+#set NA to the increases on day1
+n <- nrow(data_total)
+day1 <- min(data_total$date)
+data_total %<>% mutate(new.confirmed = confirmed - c(NA,head(confirmed,-1)),
+                 new.deaths = deaths - c(NA,head(deaths,-1)) ,
+                 new.recovered = recovered - c(NA,head(recovered,-1)))
+
+#change negative number of new case to zero
+data_total %<>% mutate(new.confirmed = ifelse(new.confirmed < 0,0,new.confirmed),
+                       new.deaths = ifelse(new.deaths < 0,0,new.deaths),
+                       new.recovered = ifelse(new.recovered < 0,0,new.recovered))
+
+
+#death rate based on total deaths and recovered cases
+data_total %<>% mutate(rate.upper = (100*deaths/(deaths+recovered)) %>% round(1))
+#lower bound: death rate based on total confirmed cases
+data_total %<>% mutate(rate.lower = (100*deaths/confirmed) %>% round(1))
+#death rate based on number of death/recovered on every single day
+data_total %<>% mutate(rate.daily = (100*new.deaths/(new.deaths+new.recovered)) %>% round(1))
+
+View(data_total)
+#covert from wide to long format,for drawing area plots
+#dataSelect1 <- sqldf("select Country,Date,confirmed,recovered,deaths from data_total")
+#data_total
+
+```
+
+```{r}
+data.long <- data_total[,!(names(data_total) %in% c("new.confirmed","new.deaths","new.recovered","rate.upper","rate.lower","rate.daily"))]
+#View(data.long)
+data.long <- melt(data.long,id = c("country","date")) 
+#View(data.long)
+data.long <- data.long %>% rename(c("variable" = "Type")) %>% rename(c("value" = "count"))
+
+data.long$Type <- as.character(data.long$Type)
+data.long$Type[data.long$Type == "confirmed"] <- "Total Confirmed"
+data.long$Type[data.long$Type == "current.confirmed"] <- "Current Confirmed"
+data.long$Type[data.long$Type == "recovered"] <- "Recovered"
+View(data.long)
+
+
+rates.long <- data_total[,!(names(data_total) %in% c("new.confirmed","new.deaths","new.recovered","confirmed","current.confirmed","recovered","deaths"))]
+#View(data.long)
+rates.long <- melt(rates.long,id = c("country","date")) 
+rates.long <- rates.long %>% rename(c("variable" = "Type")) %>% rename(c("value" = "count"))
+
+rates.long$Type <- as.character(rates.long$Type)
+rates.long$Type[rates.long$Type == "rate.daily"] <- "Daily"
+rates.long$Type[rates.long$Type == "rate.lower"] <- "Lower Bound"
+rates.long$Type[rates.long$Type == "rate.upper"] <- "Upper Bound"
+View(rates.long)  
+#set factor levels to show them in a desirable order
+
+
+```
+
+```{r}
+#ranking by confirmed case
+head(data_total)
+dataDate <- data_total[data_total$date  == "2020-08-31",]%>%rename(c("rate.lower" = "death.rate"))
+head(dataDate)
+data.latest.all <- dataDate[,c("country","date","confirmed","new.confirmed","current.confirmed","recovered","deaths","new.deaths","death.rate")]
+data.latest.all <- arrange(data.latest.all,desc(confirmed)) %>% mutate(ranking = rank(desc(confirmed)))
+
+#View(data.latest.all)
+k <- 20
+#top 20 countries 21 incl.'World'
+head(data.latest.all)
+top.countries <- data.latest.all[data.latest.all$ranking <= k+1,] %>% arrange(ranking) 
+top.countries
+#View(top.countries)
+
+```
+
+```{r}
+#add 'Others'
+data.latest <- data.latest.all[!is.na(data.latest.all$country),] %>% 
+  mutate(country = ifelse(ranking <= k + 1, as.character(country), 'Others')) 
+  mutate(data.latest, country = country %>% factor(levels=c(as.character(top.countries), 'Others')))
+  
+data.latest <-  ddply(data.latest, .(country, date), summarise,
+                      confirmed = sum(confirmed), new.confirmed = sum(new.confirmed),
+                      current.confirmed = sum(current.confirmed),
+                      recovered = sum(recovered), deaths = sum(deaths), new.deaths = sum(new.deaths)) %>%
+ mutate(death.rate=(100 * deaths/confirmed) %>% round(1)) 
+
+data.latest <- arrange(data.latest,desc(confirmed)) %>% mutate(ranking = rank(desc(confirmed)))
+data.latest <- data.latest[,c("country", "confirmed", "deaths", "death.rate", "new.confirmed", "new.deaths", "current.confirmed")] 
+data.latest <- data.latest[c(1:2, nrow(data.latest) , 4:21, 3),]
+rownames(data.latest) <- NULL
+
+data.latest
+View(data.latest)
+
+#data.latest %>% mutate(death.rate=death.rate %>% format(nsmall=1) %>% paste0('%')) %>%
+#  kable('latex', booktabs=T, row.names=T, align=c('l', rep('r', 6)),
+#        caption=paste0('Cases in Top 20 Countries - ', max.date.txt,
+#                       '. See a complete list of all infected countries at the end of this report.'),
+#        format.args=list(big.mark=',')) %>%
+#  kable_styling(font_size=7, latex_options=c('striped', 'hold_position', 'repeat_header'))
+
+data.latest.long <- data.latest[data.latest$country != 'World',] 
+rownames(data.latest.long) <- NULL
+data.latest.long
+data.latest.long <- melt(data.latest.long, id = c("country")) 
+
+``

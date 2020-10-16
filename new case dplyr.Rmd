@@ -1,0 +1,110 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+install.packages("dplyr")
+install.packages("ggplot2")
+install.packages("tidyverse")
+install.packages("lubridate")
+install.packages("RMySQL")
+install.packages("DBI")
+```
+```{r}
+setwd("D:/4D/Pre Project/R")
+print(getwd())
+
+library(tidyverse)
+library(lubridate)
+library(RMySQL)
+library(DBI)
+library(ggplot2)
+library(dplyr)
+#packageVersion("dplyr") # check version
+```
+```{r}
+data <- read.csv("new_deaths.csv") 
+View(data)
+
+format_date <- as.Date(data$date, "%Y-%m-%d")
+range(format_date)
+
+# Wolrd's new case 
+world_deaths <- data %>% 
+  select(date, World) 
+world_deaths %>% 
+  ggplot(aes(date, World, group = 1)) + geom_line()
+World_top10 <- top_n(world_new, 10, wt = World) #top 10 World new case at one day 
+
+```
+```{r}
+# New cases in April
+apr_new <- data %>%
+  filter(date >= as.Date("2020-04-01") & date <= as.Date("2020-04-30")) 
+  apr_new %>% ggplot(aes(date, World, group = 1)) + geom_line()
+
+  # Max new cases and min new cases in April 
+  apr_new %>%
+    summarise_each(funs(mean, max, min), World)
+
+  # World total case in April 
+  apr_rank <- 
+    apr_new %>% select(date, World) %>%
+    mutate(World.Total = cumsum(World)) %>%
+    select(date, World.Total)
+  View(apr_rank)
+  
+  # New format : make country to be row, Select date and country
+  apr_format <-
+    apr_new %>%
+    select(date, Afghanistan:Zimbabwe) %>%
+    gather(key = country, value = new_deaths, Afghanistan:Zimbabwe)
+  
+  # Sum of case of each country
+  apr_country <-
+    apr_format %>% 
+    #arrange(country) %>%
+    group_by(country) %>%
+    mutate(total_cases = cumsum(new_deaths)) %>%
+    filter(date == as.Date("2020-04-30")) %>%
+    select(country, total_cases)
+  
+  View(apr_country)
+
+```
+```{r}
+  # Top 10 new cases
+ apr_top10 <- 
+   apr_format %>% 
+   mutate(total_cases = cumsum(new_deaths)) %>%
+   filter(date == as.Date("2020-04-30")) %>%
+   top_n(10, wt = total_cases)
+  
+  View(apr_top10)
+  
+  ggplot(apr_country, aes(country, total_cases, group = 1)) + geom_line()
+  #ggplot(apr_country, aes(date, total_cases, color = country)) + geom_line()
+
+```
+
+```{r}
+may_new <- data %>%
+  filter(date >= as.Date("2020-05-01") & date <= as.Date("2020-05-31"))
+  may_new %>% ggplot(aes(date, World, group = 1)) + geom_line()
+
+  
+jun_new <- data %>%
+  filter(date >= as.Date("2020-06-01") & date <= as.Date("2020-06-30"))
+  jun_new %>% ggplot(aes(date, World, group = 1)) + geom_line()
+
+  
+jul_new <- data %>%
+  filter(date >= as.Date("2020-07-01") & date <= as.Date("2020-07-31"))
+  jul_new %>% ggplot(aes(date, World, group = 1)) + geom_line()
+
+  
+aug_new <- data %>%
+  filter(date >= as.Date("2020-08-01") & date <= as.Date("2020-08-31"))
+  aug_new %>% ggplot(aes(date, World, group = 1)) + geom_line()
+
+```
