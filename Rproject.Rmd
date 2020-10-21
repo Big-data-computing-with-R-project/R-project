@@ -296,8 +296,8 @@ rates.long$Type[rates.long$Type == "rate.upper"] <- "Upper Bound"
 View(rates.long)  
 #set factor levels to show them in a desirable order
 
-
 ```
+
 
 ```{r}
 #ranking by confirmed case
@@ -313,7 +313,7 @@ k <- 20
 head(data.latest.all)
 top.countries <- data.latest.all[data.latest.all$ranking <= k+1,] %>% arrange(ranking) 
 top.countries
-#View(top.countries)
+View(top.countries)
 
 ```
 
@@ -375,13 +375,355 @@ data <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
 #Data Cleaning
 
 dataGDP <- sqlQuery(data, "SELECT * FROM GDP")
-View(dataGDP)
+#View(dataGDP)
 dataGDP <- dataGDP[,c(1,34:43)]
 rownames(dataGDP) <- NULL
+
+data.longGDP <- melt(dataGDP,id = c(1)) 
+#View(data.longGDP)
+data.longGDP <- data.longGDP %>% rename(c("variable" = "Year")) %>% rename(c("value" = "GDP"))%>%rename(c("Real GDP growth (Annual percent change)" = "country"))
+View(data.longGDP)
 
 #raw.dataGDP <- sqldf("SELECT * FROM raw_dataGDP")
 #View(dataGDP)
 #dataGDP
 
 ```
+
+```{r}
+world.longGDP <- data.longGDP[data.longGDP$country == 'World',]
+rownames(world.longGDP) <- NULL
+africa.longGDP <- data.longGDP[data.longGDP$country == 'Africa (Region)',]
+rownames(africa.longGDP) <- NULL
+asia.longGDP <- data.longGDP[data.longGDP$country == 'Asia and Pacific',]
+rownames(asia.longGDP) <- NULL
+europe.longGDP <- data.longGDP[data.longGDP$country == 'Europe',]
+rownames(europe.longGDP) <- NULL
+asean.longGDP <- data.longGDP[data.longGDP$country == 'ASEAN-5',]
+rownames(asean.longGDP) <- NULL
+pacific.longGDP <- data.longGDP[data.longGDP$country == 'Pacific Islands',]
+rownames(pacific.longGDP) <- NULL
+#world.longGDP
+
+world.longGDP$group <- cut(world.longGDP$GDP,c(-Inf,0,Inf),labels = c("-","+"))
+africa.longGDP$group <- cut(africa.longGDP$GDP,c(-Inf,0,Inf),labels = c("-","+"))
+asia.longGDP$group <- cut(asia.longGDP$GDP,c(-Inf,0,Inf),labels = c("-","+"))
+europe.longGDP$group <- cut(europe.longGDP$GDP,c(-Inf,0,Inf),labels = c("-","+"))
+asean.longGDP$group <- cut(asean.longGDP$GDP,c(-Inf,0,Inf),labels = c("-","+"))
+pacific.longGDP$group <- cut(pacific.longGDP$GDP,c(-Inf,0,Inf),labels = c("-","+"))
+#world.longGDP
+
+plot1 <- ggplot(world.longGDP,aes(x=Year,y=GDP,fill = group ))+
+    labs(title=paste0('Real GDP growth (Annual percent change) of World from 2012-2021'))+
+    geom_bar(stat = "identity")+
+    scale_fill_manual(values = c("-" = "red","+" = "limegreen"))+
+    theme_bw() + theme(legend.position = "none")+
+    xlab("")+
+    theme(legend.title=element_blank(),
+    plot.title = element_text(size=7))
+plot2 <- ggplot(africa.longGDP,aes(x=Year,y=GDP,fill = group ))+
+    labs(title=paste0('Real GDP growth (Annual percent change) of Africa (Region) from 2012-2021'))+
+    geom_bar(stat = "identity")+
+    scale_fill_manual(values = c("-" = "red","+" = "limegreen"))+
+    theme_bw() + theme(legend.position = "none")+
+    xlab("")+
+    theme(legend.title=element_blank(),
+    plot.title = element_text(size=7))
+plot3 <- ggplot(asia.longGDP,aes(x=Year,y=GDP,fill = group ))+
+    labs(title=paste0('Real GDP growth (Annual percent change) of Asia and Pacific from 2012-2021'))+
+    geom_bar(stat = "identity")+
+    scale_fill_manual(values = c("-" = "red","+" = "limegreen"))+
+    theme_bw() + theme(legend.position = "none")+
+    xlab("")+
+    theme(legend.title=element_blank(),
+    plot.title = element_text(size=7))
+plot4 <- ggplot(europe.longGDP,aes(x=Year,y=GDP,fill = group ))+
+    labs(title=paste0('Real GDP growth (Annual percent change) of Europe from 2012-2021'))+
+    geom_bar(stat = "identity")+
+    scale_fill_manual(values = c("-" = "red","+" = "limegreen"))+
+    theme_bw() + theme(legend.position = "none")+
+    xlab("")+
+    theme(legend.title=element_blank(),
+    plot.title = element_text(size=7))
+plot5 <- ggplot(asean.longGDP,aes(x=Year,y=GDP,fill = group ))+
+    labs(title=paste0('Real GDP growth (Annual percent change) of ASEAN-5 from 2012-2021'))+
+    geom_bar(stat = "identity")+
+    scale_fill_manual(values = c("-" = "red","+" = "limegreen"))+
+    theme_bw() + theme(legend.position = "none")+
+    xlab("")+
+    theme(legend.title=element_blank(),
+    plot.title = element_text(size=7))
+plot6 <- ggplot(pacific.longGDP,aes(x=Year,y=GDP,fill = group ))+
+    labs(title=paste0('Real GDP growth (Annual percent change) of Pacific Islands from 2012-2021'))+
+    geom_bar(stat = "identity")+
+    scale_fill_manual(values = c("-" = "red","+" = "limegreen"))+
+    theme_bw() + theme(legend.position = "none")+
+    xlab("")+
+    theme(legend.title=element_blank(),
+    plot.title = element_text(size=7))
+grid.arrange(plot1)
+grid.arrange(plot2)
+grid.arrange(plot3)
+grid.arrange(plot4)
+grid.arrange(plot5)
+grid.arrange(plot6)
+
+```
+```{r}
+#data_total_GDP <- data.longGDP %>% merge(dataConfirmed,by = "country") 
+#View(data_total_GDP)
+```
+```{r}
+#Top 20 Countries in GDP 2020 desc
+#ranking by GDP
+head(data.longGDP)
+dataYear <- data.longGDP[data.longGDP$Year  == "2020",]
+data.latest.GDP <- dataYear[,c("country","Year","GDP")]
+data.latest.GDP <- arrange(data.latest.GDP,desc(GDP)) %>% mutate(ranking = rank(GDP))
+
+
+#View(data.latest.all)
+k <- 20
+#top 20 countries 21 incl.'World'
+head(data.latest.GDP)
+top.GDP <- data.latest.GDP[data.latest.GDP$ranking <= k+1,] %>% arrange(ranking) 
+top.GDP
+#View(top.GDP)
+#View(top.countries)
+
+
+```
+```{r}
+#Top 20 Countries in GDP 2020 desc
+#ranking by GDP
+head(data.longGDP)
+dataYear <- data.longGDP[data.longGDP$Year  == "2020",]
+head(dataYear)
+data.latest.GDP <- dataYear[,c("country","Year","GDP")]
+data.latest.GDP.desc <- arrange(data.latest.GDP,desc(GDP)) %>% mutate(ranking = rank(GDP, na.last = TRUE, ties.method = "min"))
+
+#View(data.latest.all)
+k <- 28
+#top 20 countries 21 incl.'World'
+head(data.latest.GDP.desc)
+top.GDP.desc <- data.latest.GDP.desc[data.latest.GDP.desc$ranking <= k+1,] %>% arrange(ranking) 
+View(top.GDP.desc)
+#View(top.countries)
+
+```
+
+```{r}
+#View(data.latest.GDP)
+data.latest.GDP.top <- arrange(data.latest.GDP, desc(GDP)) %>% mutate(ranking = rank(desc(GDP), na.last = TRUE, ties.method = "min"))
+data.latest.GDP.top
+
+k <- 28
+#top 20 countries 21 incl.'World'
+head(data.latest.GDP.top)
+top.GDP <- data.latest.GDP.top[data.latest.GDP.top$ranking <= k+1,] %>% arrange(ranking) 
+View(top.GDP)
+```
+
+```{r}
+topcountries.gdp <- top.countries %>% merge(data.longGDP, by = "country")
+topcountries.gdp <- topcountries.gdp[,(names(topcountries.gdp) %in% c("country","Year","GDP"))]
+View(topcountries.gdp)
+```
+
+```{r}
+world.gdp <- topcountries.gdp[topcountries.gdp$country == 'World',] %>% arrange(Year) %>%
+  ggplot(aes(x=Year, y=GDP)) +
+  geom_line() +
+  labs(title = 'World GDP 2012 - 2021') +
+  theme(legend,title = element_blank(), legend.position = 'bottom',
+        plot.title = element_text(size=12),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank(),
+        legend.key.size = unit(0.4, 'cm'),
+        strip.text.x = element_text(size=7),
+        axis.text = element_text(size=7),
+        axis.text.x=element_text(angle=45, hjust = 1)) +
+  scale_y_continuous(trans='log10')
+#world.gdp + facet_wrap(~country, ncol=2, scales = 'free_y')
+world.gdp
+
+```
+
+
+```{r}
+gdp.all <- topcountries.gdp %>% arrange(Year) %>%
+  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
+  geom_line(size = 1) +
+  #geom_point() +
+  labs(title = 'Top 20 Countries Real GDP growth (Annual percent change) 2012 - 2021')
+#gdp.all
+
+gdp.us <- topcountries.gdp[ which (topcountries.gdp$country == 'US' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
+  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(title = 'World & US GDP 2012 - 2021')
+#gdp.us
+
+gdp.brazil <- topcountries.gdp[ which (topcountries.gdp$country == 'Brazil' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
+  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(title = 'World & Brazil GDP 2012 - 2021')
+#gdp.brazil
+
+gdp.india <- topcountries.gdp[ which (topcountries.gdp$country == 'India' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
+  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(title = 'World & India GDP 2012 - 2021')
+#gdp.india
+
+gdp.russia <- topcountries.gdp[ which (topcountries.gdp$country == 'Russia' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
+  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(title = 'World & Russia GDP 2012 - 2021')
+#gdp.russia
+
+gdp.peru <- topcountries.gdp[ which (topcountries.gdp$country == 'Peru' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
+  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(title = 'World & Peru GDP 2012 - 2021')
+#gdp.peru
+
+gdp.southAf <- topcountries.gdp[ which (topcountries.gdp$country == 'South Africa' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
+  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(title = 'World & South Africa GDP 2012 - 2021')
+#gdp.southAf
+
+gdp.colombia <- topcountries.gdp[ which (topcountries.gdp$country == 'Colombia' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
+  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(title = 'World & Colombia GDP 2012 - 2021')
+#gdp.colombia
+
+gdp.mexico <- topcountries.gdp[ which (topcountries.gdp$country == 'Mexico' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
+  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(title = 'World & Mexico GDP 2012 - 2021')
+#gdp.mexico
+
+gdp.spain <- topcountries.gdp[ which (topcountries.gdp$country == 'Spain' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
+  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(title = 'World & Spain GDP 2012 - 2021')
+#gdp.spain
+
+gdp.argentina <- topcountries.gdp[ which (topcountries.gdp$country == 'Argentina' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
+  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(title = 'World & Argentina GDP 2012 - 2021')
+#gdp.argentina
+
+gdp.chile <- topcountries.gdp[ which (topcountries.gdp$country == 'Chile' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
+  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(title = 'World & Chile GDP 2012 - 2021')
+#gdp.chile
+
+gdp.iran <- topcountries.gdp[ which (topcountries.gdp$country == 'Iran' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
+  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(title = 'World & Iran GDP 2012 - 2021')
+#gdp.iran
+
+gdp.uk <- topcountries.gdp[ which (topcountries.gdp$country == 'United Kingdom' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
+  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(title = 'World & United Kingdom GDP 2012 - 2021')
+#gdp.uk
+
+gdp.france <- topcountries.gdp[ which (topcountries.gdp$country == 'France' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
+  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(title = 'World & France GDP 2012 - 2021')
+#gdp.france
+
+gdp.saudi <- topcountries.gdp[ which (topcountries.gdp$country == 'Saudi Arabia' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
+  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(title = 'World & Saudi Arabia GDP 2012 - 2021')
+#gdp.saudi
+
+gdp.bangladesh <- topcountries.gdp[ which (topcountries.gdp$country == 'Bangladesh' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
+  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(title = 'World & Bangladesh GDP 2012 - 2021')
+#gdp.bangladesh
+
+gdp.pakistan <- topcountries.gdp[ which (topcountries.gdp$country == 'Pakistan' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
+  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(title = 'World & Pakistan GDP 2012 - 2021')
+#gdp.pakistan
+
+gdp.turkey <- topcountries.gdp[ which (topcountries.gdp$country == 'Turkey' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
+  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(title = 'World & Turkey GDP 2012 - 2021')
+#gdp.turkey
+
+gdp.italy <- topcountries.gdp[ which (topcountries.gdp$country == 'Italy' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
+  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(title = 'World & Italy GDP 2012 - 2021')
+#gdp.italy
+
+gdp.germany <- topcountries.gdp[ which (topcountries.gdp$country == 'Germany' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
+  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(title = 'World & Germany GDP 2012 - 2021')
+#gdp.germany
+```
+
+```{r}
+grid.arrange(gdp.all)
+
+grid.arrange(gdp.us, gdp.brazil, nrow=2)
+grid.arrange(gdp.india, gdp.russia, nrow=2)
+grid.arrange(gdp.peru, gdp.southAf, nrow=2)
+grid.arrange(gdp.colombia, gdp.mexico, nrow=2)
+grid.arrange(gdp.spain, gdp.argentina, nrow=2)
+grid.arrange(gdp.chile, gdp.iran, nrow=2)
+grid.arrange(gdp.uk, gdp.france, nrow=2)
+grid.arrange(gdp.saudi, gdp.bangladesh, nrow=2)
+grid.arrange(gdp.pakistan, gdp.turkey, nrow=2)
+grid.arrange(gdp.italy, gdp.germany, nrow=2)
+
+
+#grid.arrange(gdp.us, gdp.brazil, gdp.india, gdp.russia, gdp.peru, gdp.southAf, gdp.colombia, gdp.mexico, #gdp.spain, gdp.argentina, gdp.chile, gdp.iran, gdp.uk, gdp.france, gdp.saudi, gdp.bangladesh, #gdp.pakistan, gdp.turkey, gdp.italy, gdp.germany, nrow=20)
+
+
+```
+
+```{r}
+topcountries.gdp2020 <- top.countries %>% merge(dataYear, by = "country")
+topcountries.gdp2020 <- topcountries.gdp2020[,(names(topcountries.gdp2020) %in% c("country","confirmed","GDP"))]
+topcountries.gdp2020 <- topcountries.gdp2020 %>% arrange(desc(confirmed))
+View(topcountries.gdp2020)
+```
+
 
