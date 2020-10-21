@@ -99,6 +99,7 @@ data %<>% mutate(rate.upper = (100 * deaths / (deaths + recovered)) %>% round(1)
 data %<>% mutate(rate.lower = (100 * deaths / confirmed) %>% round(1))
 ## death rate based on the number of death/recovered on every single day
 data %<>% mutate(rate.daily = (100 * new.deaths / (new.deaths + new.recovered)) %>% round(1))
+#View(data)
 ```
 ```{r}
 ## convert from wide to long format
@@ -110,7 +111,7 @@ data.long %<>% mutate(type=recode_factor(type, confirmed='Total Confirmed',
                                          current.confirmed='Current Confirmed',
                                          recovered='Recovered',
                                          deaths='Deaths'))
-
+View(data.long)
 ```
 ```{r}
 ##Number of case World
@@ -199,6 +200,7 @@ data.latest.all <- data %>% filter(date == max(date)) %>%
   select(country, date,confirmed, new.confirmed, current.confirmed,
          recovered, deaths, new.deaths, death.rate=rate.lower) %>%
   mutate(ranking = dense_rank(desc(confirmed)))
+View(data.latest.all)
 k <- 20
 ## top 20 countries: 21 incl. 'World'
 top.countries <- data.latest.all %>% filter(ranking <= k + 1) %>%
@@ -221,7 +223,7 @@ data.latest %<>% group_by(country) %>%
   mutate(death.rate=(100 * deaths/confirmed) %>% round(1))
 data.latest %<>% select(c(country, confirmed, deaths, death.rate,
                           new.confirmed, new.deaths, current.confirmed))
-data
+data.latest
 
 ```
 ```{r}
@@ -291,4 +293,46 @@ df_gdp <- rename(df_gdp,"country"="Real GDP growth (Annual percent change)")
 df_gdp <- select(df_gdp,c("country","2012","2013","2014","2015","2016","2017","2018","2019","2020","2021"))
 df_gdp
 ```
+
+```{r}
+data.longGDP <- df_gdp %>% gather(key=year, value=GDP, -c(country))
+data.top <- data.latest %>% filter(country!='World')
+data.top <- head(data.top,20)
+#View(data.top)
+data.gdp <- filter(data.longGDP,year=='2020')
+#View(data.gdp)
+data.top.world <- merge(x = data.top, y = data.top.gdp, by = "country", all.x = TRUE) %>% 
+  select(-c(year))
+#View(data.top.world)
+
+
+
+```
+```{r}
+#rank GDP
+data.top.hight <- data.gdp %>% select(country, year,GDP) %>%
+  mutate(ranking = dense_rank(desc(GDP)))
+data.top.hight
+k <- 15
+top.gdp <- data.top.hight %>% 
+  #filter(ranking <= k + 1) %>% 
+  arrange(ranking)
+top.gdp <- head(top.gdp,21)
+data.top.low <- data.gdp %>% select(country, year,GDP) %>%
+  mutate(ranking = dense_rank(GDP))
+low.gdp.long <- data.top.low %>% 
+  #filter(ranking <= k + 1) %>% 
+  arrange(ranking)
+View(low.gdp.long)
+low.gdp <- head(low.gdp.long,23)
+low.gdp
+```
+
+
+
+```{r}
+
+```
+
+
 
