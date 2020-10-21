@@ -5,6 +5,8 @@ output: html_notebook
 ```{r}
 #install.packages("knitr")
 #install.packages("grid")
+#install.packages("MLRMPA")
+install.packages("dprep")
 ```
 
 ```{r}
@@ -15,6 +17,7 @@ library(magrittr)
 library(ggplot2)
 library(tidyr)
 library(knitr)
+#library(MLRMPA)
 #??src_mysql
 my_db <- src_mysql(
   dbname = "covid",
@@ -200,7 +203,7 @@ data.latest.all <- data %>% filter(date == max(date)) %>%
   select(country, date,confirmed, new.confirmed, current.confirmed,
          recovered, deaths, new.deaths, death.rate=rate.lower) %>%
   mutate(ranking = dense_rank(desc(confirmed)))
-View(data.latest.all)
+#View(data.latest.all)
 k <- 20
 ## top 20 countries: 21 incl. 'World'
 top.countries <- data.latest.all %>% filter(ranking <= k + 1) %>%
@@ -208,10 +211,7 @@ top.countries <- data.latest.all %>% filter(ranking <= k + 1) %>%
 top.countries %>% setdiff('World') %>% print()
 
 ```
-```{r}
-data
 
-```
 ```{r}
 data.latest <- data.latest.all %>% filter(!is.na(country)) %>%
   mutate(country=ifelse(ranking <= k + 1, as.character(country), 'Others')) %>%
@@ -244,7 +244,7 @@ data.latest.long %<>% mutate(type=recode_factor(type,
                                                 new.confirmed='New Confirmed (compared with one day before)',
                                                 new.deaths='New Deaths (compared with one day before)',
                                                 current.confirmed='Current Confirmed'))
-View(data.latest.long)
+#View(data.latest.long)
 data.one.dem <- filter(data.latest.long,type=='Total Confirmed'
                        | type=='Total Deaths'
                        | type=='Current Confirmed')
@@ -287,26 +287,43 @@ data.two.dem %>% ggplot(aes(x=country, y=count, fill=country, group=country)) +
 
 ```{r}
 ##GDP
-df_gdp <- tbl(my_db, sql("select * from gdp "))
+df_gdp <- tbl(my_db, sql("select * from gdp"))
 df_gdp <- as.data.frame(df_gdp)
 df_gdp <- rename(df_gdp,"country"="Real GDP growth (Annual percent change)")
 df_gdp <- select(df_gdp,c("country","2012","2013","2014","2015","2016","2017","2018","2019","2020","2021"))
 df_gdp
+df_gdp2019 <- tbl(my_db, sql("select * from gdp19"))
+df_gdp2019 <- as.data.frame(df_gdp2019)
+df_gdp2019
+
 ```
 
 ```{r}
+#Top 20 with gdp
 data.longGDP <- df_gdp %>% gather(key=year, value=GDP, -c(country))
 data.top <- data.latest %>% filter(country!='World')
 data.top <- head(data.top,20)
-#View(data.top)
+View(data.top)
 data.gdp <- filter(data.longGDP,year=='2020')
 #View(data.gdp)
-data.top.world <- merge(x = data.top, y = data.top.gdp, by = "country", all.x = TRUE) %>% 
-  select(-c(year))
-#View(data.top.world)
+data.top.world <- merge(x = data.top, y = df_gdp2019, by = "country", all.x = TRUE) %>% 
+  select(-c(code,rank,new.confirmed,new.deaths,current.confirmed)) %>% rename(GDP="GDP (millions of US dollars)")
+View(data.top.world)
+data.top.world$confirmed <- normalize(data.top.world$confirmed)
+data.top.world$deaths <- normalize(data.top.world$deaths)
+data.top.world$death.rate <- normalize(data.top.world$death.rate)
+data.top.world$GDP <- normalize(data.top.world$GDP)
+View(data.top.world)
+normalize = function(data){
+  return ((data - min(data,na.rm = TRUE))/(max(data,na.rm = TRUE) - min(data,na.rm = TRUE)))
+}
+#num_data <- topcountries.gdp2019[,c(2,3)]
+norm_data = as.data.frame(apply(data.top.world[,2:8],2,normalize))
 
-
-
+#wide to long 
+data %<>% gather(key=date, value=count, -country)
+norm_data %<>% gather(key=type, value=count, -c(country))
+norm_data
 ```
 ```{r}
 #rank GDP
