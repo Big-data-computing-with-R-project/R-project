@@ -1,0 +1,26 @@
+---
+title: "Weather"
+output: html_notebook
+---
+
+```{r}
+library(RODBC) #connect mysql
+#library(odbc) #connect mysql
+library(lubridate) #date operation
+library(magrittr) #pipe operation
+library(reshape2)
+library(ggplot2)
+library(plyr)
+library(sqldf)
+library(gridExtra)
+```
+
+```{r}
+data <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
+
+#Data Cleaning
+data_temp <- sqlQuery(data, "SELECT * FROM citytemperature")
+#data_temp <- data_temp[,!(names(data_temp) %in% c("Region","State"))]
+View(data_temp)
+```
+

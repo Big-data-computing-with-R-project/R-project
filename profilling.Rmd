@@ -1,0 +1,335 @@
+---
+title: "Profiling"
+output: html_notebook
+---
+```{r}
+install.packages("RODBC")
+install.packages("odbc")
+install.packages("reshape2")
+install.packages("ggplot2")
+install.packages("plyr")
+install.packages("sqldf")
+install.packages("data.table")
+install.packages("gridExtra")
+```
+
+```{r}
+# Library (not using dplyr)
+library(RODBC) #connect mysql
+library(lubridate) #date operation
+library(magrittr) #pipe operation
+library(reshape2)
+library(ggplot2)
+library(plyr)
+library(sqldf)
+library(gridExtra)
+
+library(profvis)
+```
+```{r}
+#Library (using dplyr)
+library(dplyr)
+library(tidyr)
+```
+
+
+```{r}
+# ---------- Database Diagnosis (RODBC / sqldf) -----------
+
+# Function Declaration : 
+#         odbc_db()     = RODBC  
+#         srcmysql_db() = sqldf
+# Result: No effect
+
+# RODBC Package : odbcConnect(), sqlQuery()
+odbc_db <- function(){
+  db1 <- odbcConnect("coronavirus19",uid = "root",pwd = "1234")
+  raw.confirmed <- sqlQuery(db1, "SELECT * FROM covid19_confirmed_global")
+  raw.deaths <- sqlQuery(db1, "SELECT * FROM covid19_deaths_global")
+  raw.recovered <- sqlQuery(db1, "SELECT * FROM covid19_recovered_global")
+}
+  
+
+# src_mysql Package  : src_mysql(), sql()
+srcmysql_db <- function(){
+  db2 <- src_mysql(dbname = "covid", host = "localhost", user = "root", password = "1234")
+  df_conf <- tbl(db2, sql("select * from covid19_confirmed_global"))
+  df_conf <- as.data.frame(df_conf)
+  df_deaths <- tbl(db2, sql("select * from covid19_deaths_global"))
+  df_deaths <- as.data.frame(df_deaths)
+  df_recover <- tbl(db2, sql("select * from covid19_recovered_global"))
+  df_recover <- as.data.frame(df_recover)
+} 
+  
+profvis({
+  
+  my_db1 <- odbc_db()
+  db1 <- odbcConnect("coronavirus19",uid = "root",pwd = "1234")
+  raw.confirmed <- sqlQuery(db1, "SELECT * FROM covid19_confirmed_global")
+  raw.deaths <- sqlQuery(db1, "SELECT * FROM covid19_deaths_global")
+  raw.recovered <- sqlQuery(db1, "SELECT * FROM covid19_recovered_global")
+  
+  my_db2 <- srcmysql_db()
+  db2 <- src_mysql(dbname = "covid", host = "localhost", user = "root", password = "1234")
+  df_conf <- tbl(db2, sql("select * from covid19_confirmed_global"))
+  df_conf <- as.data.frame(df_conf)
+  df_deaths <- tbl(db2, sql("select * from covid19_deaths_global"))
+  df_deaths <- as.data.frame(df_deaths)
+  df_recover <- tbl(db2, sql("select * from covid19_recovered_global"))
+  df_recover <- as.data.frame(df_recover)
+})
+
+#raw.confirmed raw.deaths raw.recovered
+#df_conf df_deaths df_recover
+
+```
+
+```{r}
+# ---------- CleanData Function -----------
+
+# Function Declaration : 
+#         nd_cleanData() = not using dplyr 
+#         d_cleanData() = using dplyr
+# Result: d_cleanData() better than nd_cleanData() 
+
+
+# cleanData1 : not using dplyr
+nd_cleanData <- function(data){
+  data <- data[,!(names(data) %in% c("Province.State","Lat","Long"))]%>%rename(c("Country.Region" = "country"))
+  data <- melt(data,id = c("country")) %>% rename(c("variable" = "date"))%>% rename(c("value" = "count"))
+  data <- aggregate(. ~ country + date , data = data, sum, na.rm=TRUE)%>% as.data.frame()
+  data$date <- as.Date(data$date,tryFormats = c("%m/%d/%Y", "%Y-%m-%d")) 
+ return(data)
+}
+
+# cleanData2 : using dplyr
+d_cleanData <- function(data) {
+  ## remove some columns
+  data %<>% select(-c(Province.State, Lat, Long)) %>% rename(country = Country.Region)
+  ## convert from wide to long format
+  data %<>% gather(key=date, value=count, -country)
+  ## convert from character to date
+  data %<>% mutate(date = date %>% mdy())
+  ## aggregate by country
+  data %<>% group_by(country, date) %>% summarise(count=sum(count, na.rm=T)) %>% as.data.frame()
+  return(data)
+}
+
+```
+```{r}
+# cleanData1 : not using dplyr
+profvis({
+  dataConfirmed1 <- raw.confirmed %>% nd_cleanData()%>% rename(c("count"="confirmed"))
+  dataDeaths1 <- raw.deaths %>% nd_cleanData() %>% rename(c("count"="deaths"))
+  dataRecovered1 <- raw.recovered %>% nd_cleanData() %>% rename(c("count"="recovered"))
+  
+  raw.confirmed <- raw.confirmed[,!(names(raw.confirmed) %in% c("Province.State","Lat","Long"))]%>%rename(c("Country.Region" = "country"))
+  raw.confirmed <- melt(raw.confirmed,id = c("country")) %>% rename(c("variable" = "date"))%>% rename(c("value" = "count"))
+  raw.confirmed <- aggregate(. ~ country + date , data = raw.confirmed, sum, na.rm=TRUE)%>% as.data.frame()
+  raw.confirmed$date <- as.Date(raw.confirmed$date,tryFormats = c("%m/%d/%Y", "%Y-%m-%d")) 
+})
+```
+```{r}
+# cleanData2 : using dplyr
+profvis({
+  dataConfirmed2 <- raw.confirmed %>% d_cleanData() %>% rename(confirmed=count)
+  dataDeaths2 <- raw.deaths %>% d_cleanData() %>% rename(deaths=count)
+  dataRecovered2 <- raw.recovered %>% d_cleanData() %>% rename(recovered=count)
+  
+  df_conf %<>% select(-c(Province.State, Lat, Long)) %>% rename(country = Country.Region)
+  ## convert from wide to long format
+  df_conf %<>% gather(key=date, value=count, -country)
+  ## convert from character to date
+  df_conf %<>% mutate(date = date %>% mdy())
+  ## aggregate by country
+  df_conf %<>% group_by(country, date) %>% summarise(count=sum(count, na.rm=T)) %>% as.data.frame()
+  })
+```
+
+```{r}
+# ---------- Data.world ----------
+
+# Function Declaration : 
+#         nd_dataTotal() = not using dplyr 
+#         d_dataTotal() = using dplyr
+# Result: d_dataTotal() better than nd_dataTotal() 
+
+nd_dataTotal <- function(conf, deaths, recov){
+  data <- conf %>% merge(deaths, all=T) %>% merge(recov, all=T)
+  data_total <- data
+  data_total$country <- "World"
+  dataWorld  <- aggregate(. ~ country + date , data = data_total, sum, na.rm=TRUE)
+  data <- rbind(data, dataWorld)
+  data <- sqldf("SELECT * FROM data group by country, date order by country")
+  data$current.confirmed <- data$confirmed - data$deaths - data$recovered
+  return(data)
+  }
+  
+
+d_dataTotal <- function(conf, deaths, recov){
+  data <- conf %>% merge(deaths, all=T) %>% merge(recov, all=T)
+  data.world <- data %>% group_by(date) %>%
+  summarise(country='World',
+            confirmed = sum(confirmed, na.rm=T),
+            deaths = sum(deaths, na.rm=T),
+            recovered = sum(recovered, na.rm=T))
+  data %<>% rbind(data.world)
+  data %<>% mutate(current.confirmed = confirmed - deaths - recovered)
+  return(data)
+  }
+
+profvis({
+  nd_dataTotal(dataConfirmed1, dataDeaths1, dataRecovered1)
+  d_dataTotal(dataConfirmed2, dataDeaths2, dataRecovered2)
+})
+
+profvis({
+  data_total <- dataConfirmed1 %>% merge(dataDeaths1,all = T) %>% merge(dataRecovered1,all = T)
+  data_total1 <- data_total
+  data_total1$country <- "World"
+  dataWorld  <- aggregate(. ~ country + date , data = data_total1, sum, na.rm=TRUE)
+  data_total <- rbind(data_total, dataWorld)
+  data_total <- sqldf("SELECT * FROM data_total group by country, date order by country")
+  data_total$current.confirmed <- data_total$confirmed - data_total$deaths - data_total$recovered
+  
+  data <- dataConfirmed2 %>% merge(dataDeaths2,all = T) %>% merge(dataRecovered2,all = T)
+  data.world <- data %>% group_by(date) %>%
+  summarise(country='World',
+            confirmed = sum(confirmed, na.rm=T),
+            deaths = sum(deaths, na.rm=T),
+            recovered = sum(recovered, na.rm=T))
+  data %<>% rbind(data.world)
+  data %<>% mutate(current.confirmed = confirmed - deaths - recovered)
+})
+
+
+```
+
+```{r}
+
+# Subset (base R) & Filter
+# Variable Declaration : 
+#         nd_subset = not using dplyr (subset)
+#         d_filter = using dplyr (filter)
+# Result: function was too fast, no effect
+
+profvis({
+  nd_subset <- data_total[data_total$country == 'World',]
+  d_filter <- filter(data_total, country == 'World')
+})
+```
+```{r}
+#Data Long & Rate Long
+
+nd_long <- function(data){
+  data.long <- data[,!(names(data) %in% c("new.confirmed","new.deaths","new.recovered","rate.upper","rate.lower","rate.daily"))]
+  data.long <- melt(data.long,id = c("country","date")) 
+  data.long <- data.long %>% rename(c("variable" = "Type")) %>% rename(c("value" = "count"))
+  
+  data.long$Type <- as.character(data.long$Type)
+  data.long$Type[data.long$Type == "confirmed"] <- "Total Confirmed"
+  data.long$Type[data.long$Type == "current.confirmed"] <- "Current Confirmed"
+  data.long$Type[data.long$Type == "recovered"] <- "Recovered"
+
+  rates.long <- data[,!(names(data) %in% c("new.confirmed","new.deaths","new.recovered","confirmed","current.confirmed","recovered","deaths"))]
+  rates.long <- melt(rates.long,id = c("country","date")) 
+  rates.long <- rates.long %>% rename(c("variable" = "Type")) %>% rename(c("value" = "count"))
+
+  rates.long$Type <- as.character(rates.long$Type)
+  rates.long$Type[rates.long$Type == "rate.daily"] <- "Daily"
+  rates.long$Type[rates.long$Type == "rate.lower"] <- "Lower Bound"
+  rates.long$Type[rates.long$Type == "rate.upper"] <- "Upper Bound"
+  
+  return(data.long, rates.long)
+}
+
+profvis({
+  data_rate_nd <- nd_long()
+  
+  data.long <- data[,!(names(data) %in% c("new.confirmed","new.deaths","new.recovered","rate.upper","rate.lower","rate.daily"))]
+  data.long <- melt(data.long,id = c("country","date")) 
+  data.long <- data.long %>% rename(c("variable" = "Type")) %>% rename(c("value" = "count"))
+  
+  data.long$Type <- as.character(data.long$Type)
+  data.long$Type[data.long$Type == "confirmed"] <- "Total Confirmed"
+  data.long$Type[data.long$Type == "current.confirmed"] <- "Current Confirmed"
+  data.long$Type[data.long$Type == "recovered"] <- "Recovered"
+
+  rates.long <- data[,!(names(data) %in% c("new.confirmed","new.deaths","new.recovered","confirmed","current.confirmed","recovered","deaths"))]
+  rates.long <- melt(rates.long,id = c("country","date")) 
+  rates.long <- rates.long %>% rename(c("variable" = "Type")) %>% rename(c("value" = "count"))
+
+  rates.long$Type <- as.character(rates.long$Type)
+  rates.long$Type[rates.long$Type == "rate.daily"] <- "Daily"
+  rates.long$Type[rates.long$Type == "rate.lower"] <- "Lower Bound"
+  rates.long$Type[rates.long$Type == "rate.upper"] <- "Upper Bound"
+})
+
+  data
+  data.long <- data[,!(names(data) %in% c("new.confirmed","new.deaths","new.recovered","rate.upper","rate.lower","rate.daily"))]
+  data.long <- melt(data.long,id = c("country","date")) 
+  data.long <- data.long %>% rename(c("variable" = "Type")) %>% rename(c("value" = "count"))
+  
+  data.long$Type <- as.character(data.long$Type)
+  data.long$Type[data.long$Type == "confirmed"] <- "Total Confirmed"
+  data.long$Type[data.long$Type == "current.confirmed"] <- "Current Confirmed"
+  data.long$Type[data.long$Type == "recovered"] <- "Recovered"
+  data.long
+  
+  data
+  
+  rates.long <- data[,!(names(data) %in% c("new.confirmed","new.deaths","new.recovered","confirmed","current.confirmed","recovered","deaths"))]
+  rates.long
+  rates.long <- melt(rates.long,id = c("country","date")) 
+  rates.long <- rates.long %>% rename(c("variable" = "Type")) %>% rename(c("value" = "count"))
+
+  rates.long$Type <- as.character(rates.long$Type)
+  rates.long$Type[rates.long$Type == "rate.daily"] <- "Daily"
+  rates.long$Type[rates.long$Type == "rate.lower"] <- "Lower Bound"
+  rates.long$Type[rates.long$Type == "rate.upper"] <- "Upper Bound"
+```
+```{r}
+d_long <- function(data){
+  data.long <- data %>%
+  select(c(country, date, confirmed, current.confirmed, recovered, deaths)) %>%
+  gather(key=type, value=count, -c(country, date))
+
+  data.long %<>% mutate(type=recode_factor(type, confirmed='Total Confirmed',
+                                         current.confirmed='Current Confirmed',
+                                         recovered='Recovered',
+                                         deaths='Deaths'))
+
+  rates.long <- data %>%
+    select(c(country, date, rate.upper, rate.lower, rate.daily)) %>%
+    gather(key=type, value=count, -c(country, date))
+  rates.long %<>% mutate(type=recode_factor(type, rate.daily='Daily',
+                             rate.upper='Upper bound'))
+  return(data.long, rates.long)
+}
+
+profvis({
+  data_rate_d <- d_long()
+  
+  data.long <- data %>%
+  select(c(country, date, confirmed, current.confirmed, recovered, deaths)) %>%
+  gather(key=type, value=count, -c(country, date))
+
+  data.long %<>% mutate(type=recode_factor(type, confirmed='Total Confirmed',
+                                         current.confirmed='Current Confirmed',
+                                         recovered='Recovered',
+                                         deaths='Deaths'))
+
+  rates.long <- data %>%
+    select(c(country, date, rate.upper, rate.lower, rate.daily)) %>%
+    gather(key=type, value=count, -c(country, date))
+  rates.long %<>% mutate(type=recode_factor(type, rate.daily='Daily',
+                             rate.upper='Upper bound'))
+})
+  
+```
+
+
+
+
+
+
