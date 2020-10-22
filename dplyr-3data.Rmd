@@ -220,9 +220,11 @@ data.latest %<>% group_by(country) %>%
   summarise(confirmed=sum(confirmed), new.confirmed=sum(new.confirmed),
             current.confirmed=sum(current.confirmed),
             recovered=sum(recovered), deaths=sum(deaths), new.deaths=sum(new.deaths)) %>%
-  mutate(death.rate=(100 * deaths/confirmed) %>% round(1))
+  mutate(death.rate=(100 * deaths/confirmed) %>% round(1)) 
+data.latest
 data.latest %<>% select(c(country, confirmed, deaths, death.rate,
-                          new.confirmed, new.deaths, current.confirmed))
+                          new.confirmed, new.deaths, current.confirmed,recovered)) %>%
+  mutate(recover.rate=(100 * recovered/confirmed) %>% round(1))
 data.latest
 
 ```
@@ -243,14 +245,16 @@ data.latest.long %<>% mutate(type=recode_factor(type,
                                                 death.rate='Death Rate (%)',
                                                 new.confirmed='New Confirmed (compared with one day before)',
                                                 new.deaths='New Deaths (compared with one day before)',
-                                                current.confirmed='Current Confirmed'))
+                                                current.confirmed='Current Confirmed',
+                                                recover.rate = 'Recover Rate(%)'))
 #View(data.latest.long)
 data.one.dem <- filter(data.latest.long,type=='Total Confirmed'
                        | type=='Total Deaths'
                        | type=='Current Confirmed')
 data.two.dem <- filter(data.latest.long,type=='Death Rate (%)'
                        | type=='New Confirmed (compared with one day before)'
-                       | type=='New Deaths (compared with one day before)')
+                       | type=='New Deaths (compared with one day before)'
+                       | type=='Recover Rate(%)')
 ```
 
 ```{r}
@@ -313,18 +317,24 @@ data.top.world$confirmed <- normalize(data.top.world$confirmed)
 data.top.world$deaths <- normalize(data.top.world$deaths)
 data.top.world$death.rate <- normalize(data.top.world$death.rate)
 data.top.world$GDP <- normalize(data.top.world$GDP)
+data.top.world$recovered <- normalize(data.top.world$recovered)
+data.top.world$recover.rate <- normalize(data.top.world$recover.rate)
 View(data.top.world)
 normalize = function(data){
   return ((data - min(data,na.rm = TRUE))/(max(data,na.rm = TRUE) - min(data,na.rm = TRUE)))
 }
 #num_data <- topcountries.gdp2019[,c(2,3)]
-norm_data = as.data.frame(apply(data.top.world[,2:8],2,normalize))
+#norm_data = as.data.frame(apply(data.top.world[,2:8],2,normalize))
 
 #wide to long 
-data %<>% gather(key=date, value=count, -country)
-norm_data %<>% gather(key=type, value=count, -c(country))
-norm_data
+#data %<>% gather(key=date, value=count, -country)
+data.top.world %<>% gather(key=type, value=count, -c(country))
+View(data.top.world)
+ggplot(data = data.top.world, aes(x=type, y=country, fill=count)) + 
+  geom_tile()
 ```
+
+
 ```{r}
 #rank GDP
 data.top.hight <- data.gdp %>% select(country, year,GDP) %>%
