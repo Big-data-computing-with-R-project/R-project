@@ -16,6 +16,7 @@ Try executing this chunk by clicking the *Run* button within the chunk or by pla
 #install.packages("sqldf")
 #install.packages("data.table")
 #install.packages("gridExtra")
+#install.packages("ggcorrplot")
 
 library(RODBC) #connect mysql
 #library(odbc) #connect mysql
@@ -26,67 +27,9 @@ library(ggplot2)
 library(plyr)
 library(sqldf)
 library(gridExtra)
+library(ggcorrplot)
 #library(data.table)
-```
 
-```{r}
-#load data into R covid19_confirmed_global
-#odbc <- dbConnect(odbc::odbc(), dsn = "coronavirus19")
-data_confirmed <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
-#Data Cleaning
-
-data_confirmed <- sqlQuery(data_confirmed, "SELECT * FROM covid19_confirmed_global ")
-
-#Remove some columns and rename
-data_confirmed <- data_confirmed[,!(names(data_confirmed) %in% c("Province.State","Lat","Long"))]%>%rename(c("Country.Region" = "Country"))
-#covert from wide to long format
-data_confirmed <- data_confirmed %>% gather(key=date,value=count,-c(Country))
-
-View(data_confirmed)
-```
-
-```{r}
-#load data into R covid19_deaths_global
-data_deaths <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
-#Data Cleaning
-
-data_deaths <- sqlQuery(data_deaths, "SELECT * FROM covid19_deaths_global ")
-#Remove some columns and rename
-data_deaths <- data_deaths[,!(names(data_deaths) %in% c("Province.State","Lat","Long"))]%>%rename(c("Country.Region" = "Country"))
-#covert from wide to long format
-data_deaths <- melt(data_deaths,id = c("Country")) %>% rename(c("variable" = "Date"))%>% rename(c("value"="deaths"))
-
-#data2 <- sqldf("SELECT * FROM data1 WHERE date = '8/31/2020' group by Country order by confirmed desc ")
-data_deaths <- sqldf("SELECT * FROM data_deaths order by Country")
-#convert from charater to date and format
-data_deaths$Date <- as.Date(data_deaths$Date,tryFormats = c("%m/%d/%Y", "%Y-%m-%d")) 
-
-#check str
-str(data_deaths)
-View(data_deaths)
-```
-
-
-
-```{r}
-#load data into R covid19_recovered_global
-data_recovered <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
-#Data Cleaning
-
-data_recovered <- sqlQuery(data_recovered, "SELECT * FROM covid19_recovered_global ")
-#Remove some columns and rename
-data_recovered <- data_recovered[,!(names(data_recovered) %in% c("Province.State","Lat","Long"))]%>%rename(c("Country.Region" = "Country"))
-#covert from wide to long format
-data_recovered <- melt(data_recovered,id = c("Country")) %>% rename(c("variable" = "Date"))%>% rename(c("value"="recovered"))
-
-#data2 <- sqldf("SELECT * FROM data1 WHERE date = '8/31/2020' group by Country order by confirmed desc ")
-data_recovered <- sqldf("SELECT * FROM data_recovered order by Country")
-#convert from charater to date and format
-data_recovered$Date <- as.Date(data_recovered$Date,tryFormats = c("%m/%d/%Y", "%Y-%m-%d")) 
-
-#check str
-str(data_recovered)
-View(data_recovered)
 ```
 
 ```{r}
@@ -724,6 +667,207 @@ topcountries.gdp2020 <- top.countries %>% merge(dataYear, by = "country")
 topcountries.gdp2020 <- topcountries.gdp2020[,(names(topcountries.gdp2020) %in% c("country","confirmed","GDP"))]
 topcountries.gdp2020 <- topcountries.gdp2020 %>% arrange(desc(confirmed))
 View(topcountries.gdp2020)
+```
+
+```{r}
+#load data into R Function data cleaning 
+data <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
+#Data Cleaning
+dataGDP2019 <- sqlQuery(data, "SELECT * FROM gdp19")
+datapop <- sqlQuery(data, "SELECT * FROM population")
+dataHealthRank <- sqlQuery(data, "SELECT * FROM healthRanking")
+data.temp <- sqlQuery(data, "SELECT * FROM avg_world_temp_2020")
+
+data.temp <- data.temp[!(names(data.temp) %in% c("MyUnknownColumn", "Continent"))]  %>% rename(c("Country" = "country")) %>% rename(c("City" = "city"))
+data.temp$country[data.temp$country == "United States"] <- "US"
+
+data.long.temp <- melt(data.temp,id = c("country", "city"), variable.name = "month", value.name = "avg.temp")
+#View(data.long.temp)
+  
+count.city <- aggregate(city ~ country, data = data.temp, length) %>% rename(c("city" = "city.count"))
+#count.city
+
+sum.temp <- data.long.temp[!(names(data.long.temp) %in% c("city"))]
+sum.temp <- aggregate(. ~ country + month, data = sum.temp, sum, na.rm=TRUE) 
+sum.temp <- sum.temp[sum.temp$month %in% c("Apr", "May", "Jun", "Jul", "Aug"),]
+#sum.temp
+
+data.temp.month <- sum.temp %>%
+  dcast(country ~ month) %>% merge(count.city ,all = T) %>% 
+  melt(id = c("country", "city.count"), variable.name = "month", value.name = "avg.temp") %>% 
+  mutate(avg.temp = (avg.temp / city.count) %>% round(1)) 
+data.temp.month <- data.temp.month[!(names(data.temp.month) %in% c("city.count"))]
+data.temp.month
+
+data.latest.temp <- aggregate(avg.temp ~ country, data = data.temp.month, sum) %>%
+  mutate(avg.temp = (avg.temp / 5) %>% round(1))
+data.latest.temp
+View(data.latest.temp)
+
+
+
+dataHealthRank <- dataHealthRank[,!(names(dataHealthRank) %in% c("rank","infrastructure","professional","cost","medAvail","govReadiness"))]%>%rename(c("Country.Region"="country"))
+dataGDP2019 <- dataGDP2019[,!(names(dataGDP2019) %in% c("code"))]%>%rename(c("GDP (millions of US dollars)" = "GDP"))
+datapop <- datapop %>%rename(c("Country" = "country"))
+#View(dataGDP2019)
+#View(datapop)
+```
+
+```{r}
+top.countries$recovered.rate <- 100 * top.countries$recovered /top.countries$confirmed
+topcountries.gdp2019 <- top.countries %>% merge(dataGDP2019, by = "country") %>% merge(datapop, by = "country") %>% merge(dataHealthRank, by = "country")%>% merge(data.latest.temp, by = "country")
+topcountries.gdp2019 <- topcountries.gdp2019[,(names(topcountries.gdp2019) %in% c("country","confirmed","GDP","death.rate","recovered.rate","Population (2020)","healthCareIndex","avg.temp"))]
+topcountries.gdp2019$confirmed.rate <- 100* topcountries.gdp2019$confirmed/topcountries.gdp2019$`Population (2020)`
+View(topcountries.gdp2019)
+
+
+```
+
+
+```{r}
+topcountries.gdp2019 <- topcountries.gdp2019[,(names(topcountries.gdp2019) %in% c("country","GDP","death.rate","recovered.rate","confirmed.rate","healthCareIndex","avg.temp"))]
+#View(topcountries.gdp2019)
+normalize = function(data){
+  #return ((data - min(data,na.rm = TRUE))/(max(data,na.rm = TRUE) - min(data,na.rm = TRUE)))
+  #return ((data - mean(data,na.rm = TRUE))/(max(data,na.rm = TRUE) - min(data,na.rm = TRUE)))
+  #return ((data - mean(data,na.rm = TRUE))/(sd(data,na.rm = TRUE)))
+  z <- scale(data);
+  tanh(z/2)
+}
+norm_data = as.data.frame(apply(topcountries.gdp2019[,2:7],2,normalize))
+View(norm_data)
+```
+
+```{r}
+head(norm_data)
+cor(norm_data)
+ggcorrplot(cor(norm_data),hc.order = TRUE,
+           outline.color = "white",
+           colors = c("#6D9EC1","white","#E46726"),
+           lab = TRUE)+
+  theme(
+    axis.line = element_blank(),
+    axis.ticks = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    #legend.position = "none"
+  ) 
+```
+
+```{r}
+norm_data$country <- c("Argentina","Bangladesh","Brazil","Chile","Colombia","France","Germany","India","Iran","Italy","Mexico","Pakistan","Peru","Russia","Saudi Arabia","South Africa","Spain","Turkey","United Kingdom","US")
+View(norm_data)
+
+```
+
+```{r}
+
+data.longGDP <- melt(norm_data,id = c("country")) 
+data.longGDP <- data.longGDP %>% rename(c("variable" = "Type")) %>% rename(c("value" = "count"))
+#View(data.longGDP)
+level_order_y <- factor(data.longGDP$Type,levels = c("avg.temp","GDP","healthCareIndex","recovered.rate","death.rate","confirmed.rate"))
+level_order_x <- factor(data.longGDP$country,levels = c("US","Germany","Brazil","India","Russia","Peru","South Africa","Colombia","Mexico","Spain","Argentina","Chile","Iran","United Kingdom","France","Saudi Arabia","Bangladesh","Pakistan","Turkey","Italy"))
+ggplot(data.longGDP,aes(level_order_x,level_order_y,fill=count))+
+  geom_tile() +
+  scale_fill_gradient(low = "pink", high = "blue") +
+  xlab("") +
+  ylab("") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90,vjust = 1))+
+  theme(
+    axis.line = element_blank(),
+    axis.ticks = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    #legend.position = "none"
+  ) 
+```
+
+```{r}
+
+```
+
+```{r}
+
+ggplot(data.longGDP,aes(country,count,color=Type,group = Type))+
+  geom_line()+
+  xlab("") +
+  ylab("") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90,vjust = 1))+
+  theme(
+    axis.line = element_blank(),
+    axis.ticks = element_blank(),
+    #panel.grid.minor = element_blank(),
+    #panel.grid.major = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    #legend.position = "none"
+  )
+```
+
+```{r}
+ggplot(data.longGDP,aes(Type,count, fill=Type)) + geom_boxplot(size=1.2,alpha=.7,outlier.color = NA)+geom_jitter(aes(size=count,colour = country))+
+  xlab("") +
+  ylab("")
+```
+
+```{r}
+#Countries with the best health care systems,2019
+#load data into R Function data cleaning 
+data <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
+#Data Cleaning
+
+dataHealthRank1 <- sqlQuery(data, "SELECT * FROM healthRanking")
+datapop1 <- sqlQuery(data, "SELECT * FROM population")
+datapop1 <- datapop1 %>%rename(c("Country" = "country"))
+dataHealthRank1 <- top.countries %>% merge(dataHealthRank1, by = "country")%>% merge(datapop1, by = "country") 
+dataHealthRank1$confirmed.rate <- 100* dataHealthRank1$confirmed/dataHealthRank1$`Population (2020)`
+
+dataHealthRank1 <- dataHealthRank1[,!(names(dataHealthRank1) %in% c("date","recovered","deaths","ranking","current.confirmed","confirmed","rank","new.confirmed","new.deaths","Population (2020)"))]
+
+dataHealthRank1 <- melt(dataHealthRank1,id = c("country")) 
+dataHealthRank1 <- dataHealthRank1 %>% rename(c("variable" = "Type")) %>% rename(c("value" = "count"))
+
+View(dataHealthRank1)
+```
+
+```{r}
+ggplot(dataHealthRank1,aes(country,count,color=Type,group = Type))+
+  geom_line()+
+  xlab("") +
+  ylab("") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90,vjust = 1))+
+  theme(
+    axis.line = element_blank(),
+    axis.ticks = element_blank(),
+    #panel.grid.minor = element_blank(),
+    #panel.grid.major = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    #legend.position = "none"
+  )
+
+
+```
+```{r}
+dataHealthRank1 %>% ggplot(aes(x=country, y=count, fill=country, group=country)) +
+  geom_bar(stat='identity') +
+  geom_text(aes(label=count, y=count), size=1, vjust=1) +
+  xlab('') + ylab('') +
+  labs(title=paste0('Top 20 Countries with the best health care systems')) +
+  scale_fill_discrete(name='Country', labels=aes(count)) +
+  theme(legend.title=element_blank(),
+        legend.position='none',
+        plot.title=element_text(size=11),
+        axis.text=element_text(size=3),
+        axis.text.x=element_text(angle=45, hjust=1)) +
+  facet_wrap(~Type, ncol=2, scales='free_y')
 ```
 
 
