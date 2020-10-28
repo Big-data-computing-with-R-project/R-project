@@ -30,6 +30,66 @@ library(gridExtra)
 ```
 
 ```{r}
+#load data into R covid19_confirmed_global
+#odbc <- dbConnect(odbc::odbc(), dsn = "coronavirus19")
+data_confirmed <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
+#Data Cleaning
+
+data_confirmed <- sqlQuery(data_confirmed, "SELECT * FROM covid19_confirmed_global ")
+
+#Remove some columns and rename
+data_confirmed <- data_confirmed[,!(names(data_confirmed) %in% c("Province.State","Lat","Long"))]%>%rename(c("Country.Region" = "Country"))
+#covert from wide to long format
+data_confirmed <- data_confirmed %>% gather(key=date,value=count,-c(Country))
+
+View(data_confirmed)
+```
+
+```{r}
+#load data into R covid19_deaths_global
+data_deaths <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
+#Data Cleaning
+
+data_deaths <- sqlQuery(data_deaths, "SELECT * FROM covid19_deaths_global ")
+#Remove some columns and rename
+data_deaths <- data_deaths[,!(names(data_deaths) %in% c("Province.State","Lat","Long"))]%>%rename(c("Country.Region" = "Country"))
+#covert from wide to long format
+data_deaths <- melt(data_deaths,id = c("Country")) %>% rename(c("variable" = "Date"))%>% rename(c("value"="deaths"))
+
+#data2 <- sqldf("SELECT * FROM data1 WHERE date = '8/31/2020' group by Country order by confirmed desc ")
+data_deaths <- sqldf("SELECT * FROM data_deaths order by Country")
+#convert from charater to date and format
+data_deaths$Date <- as.Date(data_deaths$Date,tryFormats = c("%m/%d/%Y", "%Y-%m-%d")) 
+
+#check str
+str(data_deaths)
+View(data_deaths)
+```
+
+
+
+```{r}
+#load data into R covid19_recovered_global
+data_recovered <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
+#Data Cleaning
+
+data_recovered <- sqlQuery(data_recovered, "SELECT * FROM covid19_recovered_global ")
+#Remove some columns and rename
+data_recovered <- data_recovered[,!(names(data_recovered) %in% c("Province.State","Lat","Long"))]%>%rename(c("Country.Region" = "Country"))
+#covert from wide to long format
+data_recovered <- melt(data_recovered,id = c("Country")) %>% rename(c("variable" = "Date"))%>% rename(c("value"="recovered"))
+
+#data2 <- sqldf("SELECT * FROM data1 WHERE date = '8/31/2020' group by Country order by confirmed desc ")
+data_recovered <- sqldf("SELECT * FROM data_recovered order by Country")
+#convert from charater to date and format
+data_recovered$Date <- as.Date(data_recovered$Date,tryFormats = c("%m/%d/%Y", "%Y-%m-%d")) 
+
+#check str
+str(data_recovered)
+View(data_recovered)
+```
+
+```{r}
 #load data into R Function data cleaning 
 data <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
 #Data Cleaning
@@ -665,100 +725,5 @@ topcountries.gdp2020 <- topcountries.gdp2020[,(names(topcountries.gdp2020) %in% 
 topcountries.gdp2020 <- topcountries.gdp2020 %>% arrange(desc(confirmed))
 View(topcountries.gdp2020)
 ```
-
-
-```{r}
-#load data into R Function data cleaning 
-data <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
-#Data Cleaning
-
-dataGDP2019 <- sqlQuery(data, "SELECT * FROM gdp19")
-datapop <- sqlQuery(data, "SELECT * FROM population")
-
-dataGDP2019 <- dataGDP2019[,!(names(dataGDP2019) %in% c("code"))]%>%rename(c("GDP (millions of US dollars)" = "GDP"))
-datapop <- datapop %>%rename(c("Country" = "country"))
-
-#View(dataGDP2019)
-View(datapop)
-
-```
-
-```{r}
-
-top.countries$recovered.rate <- 100 * top.countries$recovered /top.countries$confirmed
-topcountries.gdp2019 <- top.countries %>% merge(dataGDP2019, by = "country") %>% merge(datapop, by = "country")
-topcountries.gdp2019 <- topcountries.gdp2019[,(names(topcountries.gdp2019) %in% c("country","confirmed","GDP","death.rate","recovered.rate","Population (2020)"))]
-topcountries.gdp2019$confirmed.rate <- 100* topcountries.gdp2019$confirmed/topcountries.gdp2019$`Population (2020)`
-View(topcountries.gdp2019)
-
-```
-
-```{r}
-topcountries.gdp2019 <- topcountries.gdp2019[,(names(topcountries.gdp2019) %in% c("country","GDP","death.rate","recovered.rate","confirmed.rate"))]
-#View(topcountries.gdp2019)
-
-normalize = function(data){
-  return ((data - min(data,na.rm = TRUE))/(max(data,na.rm = TRUE) - min(data,na.rm = TRUE)))
-}
-
-norm_data = as.data.frame(apply(topcountries.gdp2019[,2:5],2,normalize))
-View(norm_data)
-
-```
-
-```{r}
-norm_data$country <- c("Argentina","Bangladesh","Brazil","Chile","Colombia","France","Germany","India","Iran","Italy","Mexico","Pakistan","Peru","Russia","saudi Arabia","South Africa","Spain","Turkey","United Kingdom","US")
-View(norm_data)
-
-```
-
-```{r}
-data.longGDP <- melt(norm_data,id = c("country")) 
-data.longGDP <- data.longGDP %>% rename(c("variable" = "Type")) %>% rename(c("value" = "count"))
-#View(data.longGDP)
-ggplot(data.longGDP,aes(country,Type,fill=count))+
-  geom_tile() +
-  scale_fill_gradient(low = "pink", high = "black") +
-  xlab("") +
-  ylab("") +
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 90,vjust = 1))+
-  theme(
-    axis.line = element_blank(),
-    axis.ticks = element_blank(),
-    panel.grid.minor = element_blank(),
-    panel.grid.major = element_blank(),
-    panel.border = element_blank(),
-    panel.background = element_blank(),
-    #legend.position = "none"
-  ) 
-
-```
-```{r}
-ggplot(data.longGDP,aes(country,count,color=Type,group = Type))+
-  geom_line()+
-  xlab("") +
-  ylab("") +
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 90,vjust = 1))+
-  theme(
-    axis.line = element_blank(),
-    axis.ticks = element_blank(),
-    #panel.grid.minor = element_blank(),
-    #panel.grid.major = element_blank(),
-    panel.border = element_blank(),
-    panel.background = element_blank(),
-    #legend.position = "none"
-  )
-
-```
-```{r}
-
-ggplot(data.longGDP,aes(Type,count, fill=Type)) + geom_boxplot(size=1.2,alpha=.7,outlier.color = NA)+geom_jitter(aes(size=count,colour = country))+
-  xlab("") +
-  ylab("") 
-
-```
-
 
 
