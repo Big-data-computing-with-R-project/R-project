@@ -102,19 +102,6 @@ nd_cleanData <- function(data){
  return(data)
 }
 
-# cleanData2 : using dplyr
-d_cleanData <- function(data) {
-  ## remove some columns
-  data %<>% select(-c(Province.State, Lat, Long)) %>% rename(country = Country.Region)
-  ## convert from wide to long format
-  data %<>% gather(key=date, value=count, -country)
-  ## convert from character to date
-  data %<>% mutate(date = date %>% mdy())
-  ## aggregate by country
-  data %<>% group_by(country, date) %>% summarise(count=sum(count, na.rm=T)) %>% as.data.frame()
-  return(data)
-}
-
 ```
 ```{r}
 # cleanData1 : not using dplyr
@@ -129,14 +116,28 @@ profvis({
   raw.confirmed$date <- as.Date(raw.confirmed$date,tryFormats = c("%m/%d/%Y", "%Y-%m-%d")) 
 })
 ```
+
 ```{r}
+
+
 # cleanData2 : using dplyr
+d_cleanData <- function(data) {
+  ## remove some columns
+  data %<>% select(-c(Province.State, Lat, Long)) %>% rename(country = Country.Region)
+  ## convert from wide to long format
+  data %<>% gather(key=date, value=count, -country)
+  ## convert from character to date
+  data %<>% mutate(date = date %>% mdy())
+  ## aggregate by country
+  data %<>% group_by(country, date) %>% summarise(count=sum(count, na.rm=T)) %>% as.data.frame()
+  return(data)
+}
 profvis({
   dataConfirmed2 <- raw.confirmed %>% d_cleanData() %>% rename(confirmed=count)
   dataDeaths2 <- raw.deaths %>% d_cleanData() %>% rename(deaths=count)
   dataRecovered2 <- raw.recovered %>% d_cleanData() %>% rename(recovered=count)
   
-  df_conf %<>% select(-c(Province.State, Lat, Long)) %>% rename(country = Country.Region)
+  df_conf1 <- df_conf %<>% select(-c(Province.State, Lat, Long)) %>% rename(country = Country.Region)
   ## convert from wide to long format
   df_conf %<>% gather(key=date, value=count, -country)
   ## convert from character to date
@@ -144,6 +145,7 @@ profvis({
   ## aggregate by country
   df_conf %<>% group_by(country, date) %>% summarise(count=sum(count, na.rm=T)) %>% as.data.frame()
   })
+
 ```
 
 ```{r}
@@ -180,10 +182,6 @@ d_dataTotal <- function(conf, deaths, recov){
 
 profvis({
   nd_dataTotal(dataConfirmed1, dataDeaths1, dataRecovered1)
-  d_dataTotal(dataConfirmed2, dataDeaths2, dataRecovered2)
-})
-
-profvis({
   data_total <- dataConfirmed1 %>% merge(dataDeaths1,all = T) %>% merge(dataRecovered1,all = T)
   data_total1 <- data_total
   data_total1$country <- "World"
@@ -192,6 +190,8 @@ profvis({
   data_total <- sqldf("SELECT * FROM data_total group by country, date order by country")
   data_total$current.confirmed <- data_total$confirmed - data_total$deaths - data_total$recovered
   
+  
+  d_dataTotal(dataConfirmed2, dataDeaths2, dataRecovered2)
   data <- dataConfirmed2 %>% merge(dataDeaths2,all = T) %>% merge(dataRecovered2,all = T)
   data.world <- data %>% group_by(date) %>%
   summarise(country='World',
@@ -202,9 +202,9 @@ profvis({
   data %<>% mutate(current.confirmed = confirmed - deaths - recovered)
 })
 
+data_total %<>% arrange(country,date)
 
 ```
-
 ```{r}
 
 # Subset (base R) & Filter
@@ -219,10 +219,40 @@ profvis({
 })
 ```
 ```{r}
-#Data Long & Rate Long
+#daily increases of deaths and recovered cases
+#set NA to the increases on day1
+daily <- function(data){
+  n <- nrow(data)
+  day1 <- min(data$date)
+  data %<>% mutate(new.confirmed = confirmed - c(NA,head(confirmed,-1)),
+                 new.deaths = deaths - c(NA,head(deaths,-1)) ,
+                 new.recovered = recovered - c(NA,head(recovered,-1)))
 
-nd_long <- function(data){
-  data.long <- data[,!(names(data) %in% c("new.confirmed","new.deaths","new.recovered","rate.upper","rate.lower","rate.daily"))]
+  #change negative number of new case to zero
+  data %<>% mutate(new.confirmed = ifelse(new.confirmed < 0,0,new.confirmed),
+                       new.deaths = ifelse(new.deaths < 0,0,new.deaths),
+                       new.recovered = ifelse(new.recovered < 0,0,new.recovered))
+
+
+  #death rate based on total deaths and recovered cases
+  data %<>% mutate(rate.upper = (100*deaths/(deaths+recovered)) %>% round(1))
+  #lower bound: death rate based on total confirmed cases
+  data %<>% mutate(rate.lower = (100*deaths/confirmed) %>% round(1))
+  #death rate based on number of death/recovered on every single day
+  data %<>% mutate(rate.daily = (100*new.deaths/(new.deaths+new.recovered)) %>% round(1))
+}
+
+
+data_total <- data_total %>% daily()
+data <- data %>% daily()
+#View(data_total)
+#View(data)
+```
+
+```{r}
+# Data Long & Rate Long
+  nd_long <- function(){
+  data.long <- data_total[,!(names(data_total) %in% c("new.confirmed","new.deaths","new.recovered","rate.upper","rate.lower","rate.daily"))]
   data.long <- melt(data.long,id = c("country","date")) 
   data.long <- data.long %>% rename(c("variable" = "Type")) %>% rename(c("value" = "count"))
   
@@ -231,7 +261,7 @@ nd_long <- function(data){
   data.long$Type[data.long$Type == "current.confirmed"] <- "Current Confirmed"
   data.long$Type[data.long$Type == "recovered"] <- "Recovered"
 
-  rates.long <- data[,!(names(data) %in% c("new.confirmed","new.deaths","new.recovered","confirmed","current.confirmed","recovered","deaths"))]
+  rates.long <- data_total[,!(names(data_total) %in% c("new.confirmed","new.deaths","new.recovered","confirmed","current.confirmed","recovered","deaths"))]
   rates.long <- melt(rates.long,id = c("country","date")) 
   rates.long <- rates.long %>% rename(c("variable" = "Type")) %>% rename(c("value" = "count"))
 
@@ -239,14 +269,13 @@ nd_long <- function(data){
   rates.long$Type[rates.long$Type == "rate.daily"] <- "Daily"
   rates.long$Type[rates.long$Type == "rate.lower"] <- "Lower Bound"
   rates.long$Type[rates.long$Type == "rate.upper"] <- "Upper Bound"
-  
-  return(data.long, rates.long)
 }
+
 
 profvis({
   data_rate_nd <- nd_long()
   
-  data.long <- data[,!(names(data) %in% c("new.confirmed","new.deaths","new.recovered","rate.upper","rate.lower","rate.daily"))]
+  data.long <- data_total[,!(names(data_total) %in% c("new.confirmed","new.deaths","new.recovered","rate.upper","rate.lower","rate.daily"))]
   data.long <- melt(data.long,id = c("country","date")) 
   data.long <- data.long %>% rename(c("variable" = "Type")) %>% rename(c("value" = "count"))
   
@@ -255,7 +284,7 @@ profvis({
   data.long$Type[data.long$Type == "current.confirmed"] <- "Current Confirmed"
   data.long$Type[data.long$Type == "recovered"] <- "Recovered"
 
-  rates.long <- data[,!(names(data) %in% c("new.confirmed","new.deaths","new.recovered","confirmed","current.confirmed","recovered","deaths"))]
+  rates.long <- data_total[,!(names(data_total) %in% c("new.confirmed","new.deaths","new.recovered","confirmed","current.confirmed","recovered","deaths"))]
   rates.long <- melt(rates.long,id = c("country","date")) 
   rates.long <- rates.long %>% rename(c("variable" = "Type")) %>% rename(c("value" = "count"))
 
@@ -264,30 +293,10 @@ profvis({
   rates.long$Type[rates.long$Type == "rate.lower"] <- "Lower Bound"
   rates.long$Type[rates.long$Type == "rate.upper"] <- "Upper Bound"
 })
-
-  data
-  data.long <- data[,!(names(data) %in% c("new.confirmed","new.deaths","new.recovered","rate.upper","rate.lower","rate.daily"))]
-  data.long <- melt(data.long,id = c("country","date")) 
-  data.long <- data.long %>% rename(c("variable" = "Type")) %>% rename(c("value" = "count"))
-  
-  data.long$Type <- as.character(data.long$Type)
-  data.long$Type[data.long$Type == "confirmed"] <- "Total Confirmed"
-  data.long$Type[data.long$Type == "current.confirmed"] <- "Current Confirmed"
-  data.long$Type[data.long$Type == "recovered"] <- "Recovered"
-  data.long
-  
-  data
-  
-  rates.long <- data[,!(names(data) %in% c("new.confirmed","new.deaths","new.recovered","confirmed","current.confirmed","recovered","deaths"))]
-  rates.long
-  rates.long <- melt(rates.long,id = c("country","date")) 
-  rates.long <- rates.long %>% rename(c("variable" = "Type")) %>% rename(c("value" = "count"))
-
-  rates.long$Type <- as.character(rates.long$Type)
-  rates.long$Type[rates.long$Type == "rate.daily"] <- "Daily"
-  rates.long$Type[rates.long$Type == "rate.lower"] <- "Lower Bound"
-  rates.long$Type[rates.long$Type == "rate.upper"] <- "Upper Bound"
+#View(data.long)
+#View(rates.long)
 ```
+
 ```{r}
 d_long <- function(data){
   data.long <- data %>%
