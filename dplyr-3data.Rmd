@@ -7,7 +7,8 @@ output: html_notebook
 #install.packages("grid")
 #install.packages("MLRMPA")
 #install.packages("dprep")
-install.packages("normalr")
+#install.packages("normalr")
+#install.packages("ggcorrplot")
 ```
 
 ```{r}
@@ -19,6 +20,7 @@ library(ggplot2)
 library(tidyr)
 library(knitr)
 library(normalr)
+library(ggcorrplot)
 #library(MLRMPA)
 #??src_mysql
 my_db <- src_mysql(
@@ -116,7 +118,7 @@ data.long %<>% mutate(type=recode_factor(type, confirmed='Total Confirmed',
                                          current.confirmed='Current Confirmed',
                                          recovered='Recovered',
                                          deaths='Deaths'))
-View(data.long)
+#View(data.long)
 ```
 ```{r}
 ##Number of case World
@@ -324,6 +326,21 @@ df_healt <- as.data.frame(df_healt)
 df_healt <- select(df_healt,c("country","healthCareIndex"))
 df_healt
 ```
+```{r}
+#temp
+df_temp <- tbl(my_db, sql("select * from temp"))
+df_temp <- as.data.frame(df_temp)
+df_city <- select(df_temp,c("Country","City")) %>%
+  rename(country=Country) %>% 
+  rename(city=City)
+numofcity <- aggregate(city ~ country, data = df_city, length)
+df_temp <- select(df_temp,c("Country","Apr","May","Jun","Jul","Aug")) %>%
+  rename(country=Country)
+df_temp <- data.frame(country=df_temp[,1],avg=rowMeans(df_temp[,-1]))
+df_temp <- df_temp %<>% group_by(country) %>% summarise(avg_all = mean(avg,na.rm = TRUE))
+df_temp
+```
+
 
 
 ```{r}
@@ -334,29 +351,31 @@ data.top <- head(data.top,20)
 View(data.top)
 data.gdp <- filter(data.longGDP,year=='2020')
 #View(data.gdp)
+#merge
+mergcountry = function(data1,data2){
+  data <- merge(x = data1, y = data2, by = "country", all.x = TRUE) 
+  return(data)
+}
 data.top.world <- merge(x = data.top, y = df_gdp2019, by = "country", all.x = TRUE) %>% 
   select(-c(code,rank,new.confirmed,new.deaths,current.confirmed,population)) %>% 
   rename(GDP="GDP (millions of US dollars)")
 data.top.world <- merge(x = data.top.world, y = df_healt, by = "country", all.x = TRUE) %>%
   rename(healthcare="healthCareIndex")
-
+#data.top.world <- mergcountry(data.top.world, df_temp)
 View(data.top.world)
 normalize = function(data){
   #return ((data - min(data,na.rm = TRUE))/(max(data,na.rm = TRUE) - min(data,na.rm = TRUE)))
   z <- scale(data);
   tanh(z/2)
 }
-#num_data <- topcountries.gdp2019[,c(2,3)]
 norm_data = as.data.frame(apply(data.top.world[,2:9],2,normalize))
+corr_data <- norm_data
 norm_data$country <- c("Argentina","Bangladesh","Brazil","Chile","Colombia","France","Germany","India","Iran","Italy","Mexico","Pakistan","Peru","Russia","saudi Arabia","South Africa","Spain","Turkey","United Kingdom","US")
 View(norm_data)
 norm_data_plot <- select(norm_data,"country","confirm.rate","death.rate","recover.rate","healthcare","GDP")
-#View(norm_data_plot)
-#wide to long 
-#data %<>% gather(key=date, value=count, -country)
 norm_data_plot %<>% gather(key=type, value=count, -c(country))
-#View(norm_data_plot)
-level_order <- factor(norm_data_plot$type, level = c("GDP","healthcare","recover.rate","death.rate","confirm.rate"))
+level_order <- factor(norm_data_plot$type, 
+                      level = c("GDP","healthcare","recover.rate","death.rate","confirm.rate"))
 ggplot(data = norm_data_plot, aes(x=country, y=level_order, fill=count)) + 
   geom_tile() +
   scale_fill_gradient(low = "pink", high = "blue") +
@@ -400,7 +419,14 @@ low.gdp
 
 
 ```{r}
-
+#correlation
+corr_data %<>% select(c(GDP,confirm.rate,death.rate,recover.rate,healthcare))
+head(corr_data)
+cor(corr_data)
+ggcorrplot(cor(corr_data),hc.order = TRUE,
+           outline.color = "white",
+           colors = c("#6D9EC1","white","#E46726"),
+           lab = TRUE)
 ```
 
 
