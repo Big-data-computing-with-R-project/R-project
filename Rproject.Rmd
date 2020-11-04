@@ -17,6 +17,7 @@ Try executing this chunk by clicking the *Run* button within the chunk or by pla
 #install.packages("data.table")
 #install.packages("gridExtra")
 #install.packages("ggcorrplot")
+#install.packages("leaflet")
 
 library(RODBC) #connect mysql
 #library(odbc) #connect mysql
@@ -29,6 +30,8 @@ library(sqldf)
 library(gridExtra)
 library(ggcorrplot)
 #library(data.table)
+#library(tidyverse)
+library(leaflet) # map
 
 ```
 
@@ -40,7 +43,7 @@ data <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
 raw.confirmed <- sqlQuery(data, "SELECT * FROM covid19_confirmed_global")
 raw.deaths <- sqlQuery(data, "SELECT * FROM covid19_deaths_global")
 raw.recovered <- sqlQuery(data, "SELECT * FROM covid19_recovered_global")
-
+#View(raw.confirmed)
 n.col <- ncol(raw.confirmed)
 ## get dates from column names
 dates <- names(raw.confirmed)[5:n.col] %>% mdy()
@@ -75,11 +78,6 @@ View(data_total)
 
 ```{r}
 #counts for the whole world
-
-##dataDate <- sqldf("SELECT * FROM data_total group by Date")
-#data_total1 <- subset(data_total1, select = -c(Country))
-#world.Total <- aggregate(x = data_total[c("confirmed", "deaths", "recovered")], by = list(country = data_total$Country, date = data_total$Date), sum)
-#world.Total
 
 data_total <- dataConfirmed %>% merge(dataDeaths,all = T) %>% merge(dataRecovered,all = T)
 data(data_total)
@@ -168,8 +166,38 @@ data_total %<>% mutate(rate.daily = (100*new.deaths/(new.deaths+new.recovered)) 
 
 View(data_total)
 #covert from wide to long format,for drawing area plots
-#dataSelect1 <- sqldf("select Country,Date,confirmed,recovered,deaths from data_total")
-#data_total
+data_total
+
+```
+
+```{r}
+
+#World Map
+#select last column,which is the number of latest confirmed cases
+x <- raw.confirmed
+x$confirmed <- x[, ncol(x)]
+x %<>% select(c(Country.Region, Province.State, Lat, Long, confirmed)) %>%
+mutate(txt=paste0(Country.Region, ' - ', Province.State, ': ', confirmed))
+m <- leaflet(width=1200, height=800) %>% addTiles()
+# circle marker (units in pixels)
+m %<>% addCircleMarkers(x$Long, x$Lat,
+# radius=2+log2(x$confirmed),
+radius=0.03*sqrt(x$confirmed),
+stroke=F,
+color='red', fillOpacity=0.3,
+popup=x$txt)
+# world
+m
+```
+```{r}
+## China
+m %>% setView(95, 35, zoom=4)
+## Australia and New Zealand
+m %>% setView(135, -27, zoom=4)
+## US and Canada
+m %>% setView(-105, 40, zoom=4)
+## Europe
+m %>% setView(10, 50, zoom=4)
 
 ```
 
@@ -212,6 +240,22 @@ plot4 <- ggplot(data.world, aes(x=date, y=new.recovered)) +
 grid.arrange(plot1, plot2, plot3, plot4, nrow=2)
 
 ```
+```{r}
+## three death rates
+plot1 <- ggplot(data.world, aes(x=date)) +
+  geom_line(aes(y=rate.upper, colour='Upper bound')) +
+  geom_line(aes(y=rate.lower, colour='Lower bound')) +
+  geom_line(aes(y=rate.daily, colour='Daily')) +
+  xlab('') + ylab('Death Rate (%)') + labs(title='Overall') +
+  theme(legend.position='bottom', legend.title=element_blank(),
+  legend.text=element_text(size=8),
+  legend.key.size=unit(0.5, 'cm'),
+  axis.text.x=element_text(angle=45, hjust=1)) +
+  ylim(c(0, 99))
+
+grid.arrange(plot1,ncol=1)
+
+```
 
 ```{r}
 data.long <- data_total[,!(names(data_total) %in% c("new.confirmed","new.deaths","new.recovered","rate.upper","rate.lower","rate.daily"))]
@@ -238,6 +282,7 @@ rates.long$Type[rates.long$Type == "rate.lower"] <- "Lower Bound"
 rates.long$Type[rates.long$Type == "rate.upper"] <- "Upper Bound"
 View(rates.long)  
 #set factor levels to show them in a desirable order
+rates.long
 
 ```
 
@@ -293,6 +338,7 @@ data.latest.long$Type[data.latest.long$Type == "new.confirmed"] <- "New Confirme
 data.latest.long$Type[data.latest.long$Type == "new.deaths"] <- "New Deaths"
 data.latest.long$Type[data.latest.long$Type == "current.confirmed"] <- "Current Confirmed"
 View(data.latest.long)
+data.latest.long
 ```
 
 ```{r}
@@ -310,6 +356,37 @@ data.latest.long %>% ggplot(aes(x=country, y=count, fill=country, group=country)
   facet_wrap(~Type, ncol=1, scales='free_y')
 
 ```
+```{r}
+## cases by country - area plot
+
+## if Australia in not in top 20, add it in and remove 'Others'
+if(!('Australia' %in% top.countries)) {
+top.countries %<>% setdiff('Others') %>% c('Australia')
+df <- data.long %>% filter(country %in% top.countries) %<>%
+mutate(country=country %>% factor(levels=c(top.countries)))
+}
+
+data.latest[data.latest$country != 'World',]
+df %>% filter(country != 'World' & type != 'Total Confirmed') %>%
+        ggplot(aes(x=date, y=count, fill=Type)) +
+        geom_area(alpha=0.5) +
+        # xlab('') + ylab('') +
+        labs(title=paste0('Numbers of COVID-19 Cases in Top 20 Countries - ',
+        max.date.txt)) +
+        scale_fill_manual(values=c('red', 'green', 'black')) +
+theme(legend.title=element_blank(), legend.position='bottom',
+     plot.title = element_text(size=12),
+      axis.title.x=element_blank(),
+      axis.title.y=element_blank(),
+      legend.key.size=unit(0.4, 'cm'),
+      # legend.text=element_text(size=7),
+      strip.text.x=element_text(size=7),
+      axis.text=element_text(size=7),
+      axis.text.x=element_text(angle=45, hjust=1)) +
+      facet_wrap(~country, ncol=4, scales='free_y')
+
+
+```
 
 
 ```{r}
@@ -318,7 +395,6 @@ data <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
 #Data Cleaning
 
 dataGDP <- sqlQuery(data, "SELECT * FROM GDP")
-#View(dataGDP)
 dataGDP <- dataGDP[,c(1,34:43)]
 rownames(dataGDP) <- NULL
 
@@ -326,10 +402,7 @@ data.longGDP <- melt(dataGDP,id = c(1))
 #View(data.longGDP)
 data.longGDP <- data.longGDP %>% rename(c("variable" = "Year")) %>% rename(c("value" = "GDP"))%>%rename(c("Real GDP growth (Annual percent change)" = "country"))
 View(data.longGDP)
-
-#raw.dataGDP <- sqldf("SELECT * FROM raw_dataGDP")
-#View(dataGDP)
-#dataGDP
+data.longGDP
 
 ```
 
@@ -412,10 +485,7 @@ grid.arrange(plot5)
 grid.arrange(plot6)
 
 ```
-```{r}
-#data_total_GDP <- data.longGDP %>% merge(dataConfirmed,by = "country") 
-#View(data_total_GDP)
-```
+
 ```{r}
 #Top 20 Countries in GDP 2020 desc
 #ranking by GDP
@@ -434,7 +504,6 @@ top.GDP
 #View(top.GDP)
 #View(top.countries)
 
-
 ```
 ```{r}
 #Top 20 Countries in GDP 2020 desc
@@ -452,6 +521,7 @@ head(data.latest.GDP.desc)
 top.GDP.desc <- data.latest.GDP.desc[data.latest.GDP.desc$ranking <= k+1,] %>% arrange(ranking) 
 View(top.GDP.desc)
 #View(top.countries)
+top.GDP.desc
 
 ```
 
@@ -465,12 +535,14 @@ k <- 28
 head(data.latest.GDP.top)
 top.GDP <- data.latest.GDP.top[data.latest.GDP.top$ranking <= k+1,] %>% arrange(ranking) 
 View(top.GDP)
+top.GDP
 ```
 
 ```{r}
 topcountries.gdp <- top.countries %>% merge(data.longGDP, by = "country")
 topcountries.gdp <- topcountries.gdp[,(names(topcountries.gdp) %in% c("country","Year","GDP"))]
 View(topcountries.gdp)
+topcountries.gdp
 ```
 
 ```{r}
@@ -667,6 +739,7 @@ topcountries.gdp2020 <- top.countries %>% merge(dataYear, by = "country")
 topcountries.gdp2020 <- topcountries.gdp2020[,(names(topcountries.gdp2020) %in% c("country","confirmed","GDP"))]
 topcountries.gdp2020 <- topcountries.gdp2020 %>% arrange(desc(confirmed))
 View(topcountries.gdp2020)
+topcountries.gdp2020
 ```
 
 ```{r}
@@ -719,6 +792,7 @@ topcountries.gdp2019 <- top.countries %>% merge(dataGDP2019, by = "country") %>%
 topcountries.gdp2019 <- topcountries.gdp2019[,(names(topcountries.gdp2019) %in% c("country","confirmed","GDP","death.rate","recovered.rate","Population (2020)","healthCareIndex","avg.temp"))]
 topcountries.gdp2019$confirmed.rate <- 100* topcountries.gdp2019$confirmed/topcountries.gdp2019$`Population (2020)`
 View(topcountries.gdp2019)
+topcountries.gdp2019
 
 
 ```
@@ -736,6 +810,7 @@ normalize = function(data){
 }
 norm_data = as.data.frame(apply(topcountries.gdp2019[,2:7],2,normalize))
 View(norm_data)
+norm_data
 ```
 
 ```{r}
@@ -759,6 +834,7 @@ ggcorrplot(cor(norm_data),hc.order = TRUE,
 ```{r}
 norm_data$country <- c("Argentina","Bangladesh","Brazil","Chile","Colombia","France","Germany","India","Iran","Italy","Mexico","Pakistan","Peru","Russia","Saudi Arabia","South Africa","Spain","Turkey","United Kingdom","US")
 View(norm_data)
+norm_data
 
 ```
 
@@ -788,11 +864,7 @@ ggplot(data.longGDP,aes(level_order_x,level_order_y,fill=count))+
 ```
 
 ```{r}
-
-```
-
-```{r}
-
+#plot line
 ggplot(data.longGDP,aes(country,count,color=Type,group = Type))+
   geom_line()+
   xlab("") +
@@ -811,6 +883,7 @@ ggplot(data.longGDP,aes(country,count,color=Type,group = Type))+
 ```
 
 ```{r}
+#plot boxplot
 ggplot(data.longGDP,aes(Type,count, fill=Type)) + geom_boxplot(size=1.2,alpha=.7,outlier.color = NA)+geom_jitter(aes(size=count,colour = country))+
   xlab("") +
   ylab("")
@@ -834,9 +907,11 @@ dataHealthRank1 <- melt(dataHealthRank1,id = c("country"))
 dataHealthRank1 <- dataHealthRank1 %>% rename(c("variable" = "Type")) %>% rename(c("value" = "count"))
 
 View(dataHealthRank1)
+dataHealthRank1
 ```
 
 ```{r}
+#plot line Countries with the best health care systems,2019
 ggplot(dataHealthRank1,aes(country,count,color=Type,group = Type))+
   geom_line()+
   xlab("") +
@@ -856,9 +931,10 @@ ggplot(dataHealthRank1,aes(country,count,color=Type,group = Type))+
 
 ```
 ```{r}
+#plot Countries with the best health care systems,2019
 dataHealthRank1 %>% ggplot(aes(x=country, y=count, fill=country, group=country)) +
   geom_bar(stat='identity') +
-  geom_text(aes(label=count, y=count), size=1, vjust=1) +
+  #geom_text(aes(label=count, y=count), size=1, vjust=1) +
   xlab('') + ylab('') +
   labs(title=paste0('Top 20 Countries with the best health care systems')) +
   scale_fill_discrete(name='Country', labels=aes(count)) +
@@ -869,5 +945,57 @@ dataHealthRank1 %>% ggplot(aes(x=country, y=count, fill=country, group=country))
         axis.text.x=element_text(angle=45, hjust=1)) +
   facet_wrap(~Type, ncol=2, scales='free_y')
 ```
+```{r}
+#Countries with the best health care systems,2019
+#load data into R Function data cleaning 
+data <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
+#Data Cleaning
+
+dataage <- sqlQuery(data, "SELECT * FROM worldpopulationbyage2020")
+dataage <- dataage %>% rename(c("Location" = "country"))
+#View(top.countries)
+#View(dataage)
+top.countries.nw <- top.countries[top.countries$country != "World",]
+dataage <- top.countries.nw %>% merge(dataage, by = "country")
+
+dataage <- dataage[,!(names(dataage) %in% c("date","recovered.rate","death.rate","ranking","current.confirmed","rank","new.confirmed","new.deaths"))] %>%
+  mutate(PopMale = PopMale*1000 ,
+         PopFemale = PopFemale*1000,
+         PopTotal = PopTotal*1000)
+
+View(dataage)
+```
+
+```{r}
+dataage <- dataage[,!(names(dataage) %in% c("date","recovered","deaths","ranking","current.confirmed","confirmed","rank","new.confirmed","new.deaths","Population (2020)"))]
+
+dataage <- melt(dataage,id = c("country","AgeGrp")) 
+dataage <- dataage %>% rename(c("variable" = "Type")) %>% rename(c("value" = "count"))
+
+View(dataage)
+
+```
+
+
+```{r}
+#plot line Countries with the best health care systems,2019
+ggplot(dataage,aes(country,count,color=Type,group = Type))+
+  geom_line()+
+  xlab("") +
+  ylab("") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90,vjust = 1))+
+  theme(
+    axis.line = element_blank(),
+    axis.ticks = element_blank(),
+    #panel.grid.minor = element_blank(),
+    #panel.grid.major = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    #legend.position = "none"
+  )
+
+```
+
 
 
