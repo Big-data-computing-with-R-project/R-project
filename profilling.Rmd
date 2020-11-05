@@ -218,6 +218,7 @@ profvis({
   d_filter <- filter(data_total, country == 'World')
 })
 ```
+
 ```{r}
 #daily increases of deaths and recovered cases
 #set NA to the increases on day1
@@ -244,9 +245,11 @@ daily <- function(data){
 
 
 data_total <- data_total %>% daily()
-data <- data %>% daily()
+data <- data_total
+#data <- data %>% daily()
 #View(data_total)
 #View(data)
+data
 ```
 
 ```{r}
@@ -313,11 +316,10 @@ d_long <- function(data){
     gather(key=type, value=count, -c(country, date))
   rates.long %<>% mutate(type=recode_factor(type, rate.daily='Daily',
                              rate.upper='Upper bound'))
-  return(data.long, rates.long)
 }
 
 profvis({
-  data_rate_d <- d_long()
+  data_rate_d <- d_long(data)
   
   data.long <- data %>%
   select(c(country, date, confirmed, current.confirmed, recovered, deaths)) %>%
@@ -334,8 +336,204 @@ profvis({
   rates.long %<>% mutate(type=recode_factor(type, rate.daily='Daily',
                              rate.upper='Upper bound'))
 })
+```
+
+```{r}
+data
+data_total
+```
+
+```{r}
+# Top 20 countries
+
+nd_top20 <- function(data){
+  dataDate <- data[data$date  == "2020-08-31",]%>%rename(c("rate.lower" = "death.rate"))
+  data.latest.all <- dataDate[,c("country","date","confirmed","new.confirmed","current.confirmed","recovered","deaths","new.deaths","death.rate")]
+  data.latest.all <- arrange(data.latest.all,desc(confirmed)) %>% mutate(ranking = rank(desc(confirmed)))
+  
+  #View(data.latest.all)
+  k <- 20
+  #top 20 countries 21 incl.'World'
+  top.countries <- data.latest.all[data.latest.all$ranking <= k+1,] %>% arrange(ranking) 
+  #top.countries
+  
+  #add 'Others'
+  data.latest <- data.latest.all[!is.na(data.latest.all$country),] %>% 
+    mutate(country = ifelse(ranking <= k + 1, as.character(country), 'Others')) 
+    mutate(data.latest, country = country %>% factor(levels=c(as.character(top.countries), 'Others')))
+    
+  data.latest <-  ddply(data.latest, .(country, date), summarise,
+                        confirmed = sum(confirmed), new.confirmed = sum(new.confirmed),
+                        current.confirmed = sum(current.confirmed),
+                        recovered = sum(recovered), deaths = sum(deaths), new.deaths = sum(new.deaths)) %>%
+  mutate(death.rate=(100 * deaths/confirmed) %>% round(1)) 
+  
+  data.latest <- arrange(data.latest,desc(confirmed)) %>% mutate(ranking = rank(desc(confirmed)))
+  data.latest <- data.latest[,c("country", "confirmed", "deaths", "death.rate", "new.confirmed", "new.deaths", "current.confirmed")] 
+  data.latest <- data.latest[c(1:2, nrow(data.latest) , 4:21, 3),]
+  rownames(data.latest) <- NULL
+
+return(data.latest)
+  
+}
+
+profvis({
+  # d_top 20: Top 20 countries with no dplyr
+  data1 <- data %>% nd_top20() 
+  
+  dataDate <- data_total[data_total$date  == "2020-08-31",]%>%rename(c("rate.lower" = "death.rate"))
+  data.latest.all <- dataDate[,c("country","date","confirmed","new.confirmed","current.confirmed","recovered","deaths","new.deaths","death.rate")]
+  data.latest.all <- arrange(data.latest.all,desc(confirmed)) %>% mutate(ranking = rank(desc(confirmed)))
+  
+  k <- 20
+  #top 20 countries 21 incl.'World'
+  head(data.latest.all)
+  top.countries <- data.latest.all[data.latest.all$ranking <= k+1,] %>% arrange(ranking) 
+  #top.countries
+  
+  #add 'Others'
+  data.latest <- data.latest.all[!is.na(data.latest.all$country),] %>% 
+    mutate(country = ifelse(ranking <= k + 1, as.character(country), 'Others')) 
+    mutate(data.latest, country = country %>% factor(levels=c(as.character(top.countries), 'Others')))
+    
+  data.latest <-  ddply(data.latest, .(country, date), summarise,
+                        confirmed = sum(confirmed), new.confirmed = sum(new.confirmed),
+                        current.confirmed = sum(current.confirmed),
+                        recovered = sum(recovered), deaths = sum(deaths), new.deaths = sum(new.deaths)) %>%
+  mutate(death.rate=(100 * deaths/confirmed) %>% round(1)) 
+  
+  data.latest <- arrange(data.latest,desc(confirmed)) %>% mutate(ranking = rank(desc(confirmed)))
+  data.latest <- data.latest[,c("country", "confirmed", "deaths", "death.rate", "new.confirmed", "new.deaths", "current.confirmed")] 
+  data.latest <- data.latest[c(1:2, nrow(data.latest) , 4:21, 3),]
+  rownames(data.latest) <- NULL
+  
+})
+```
+
+```{r}
+d_top20 <- function(data){
+  data.latest.all <- data %>% filter(date == max(date)) %>%
+  select(country, date,confirmed, new.confirmed, current.confirmed,
+         recovered, deaths, new.deaths, death.rate=rate.lower) %>%
+  mutate(ranking = dense_rank(desc(confirmed)))
+
+  k <- 20
+  ## top 20 countries: 21 incl. 'World'
+  top.countries <- data.latest.all %>% filter(ranking <= k + 1) %>%
+    arrange(ranking) %>% pull(country) %>% as.character()
+  #top.countries %>% setdiff('World') %>% print()
+  
+  data.latest <- data.latest.all %>% filter(!is.na(country)) %>%
+  mutate(country=ifelse(ranking <= k + 1, as.character(country), 'Others')) %>%
+  mutate(country=country %>% factor(levels=c(top.countries, 'Others')))
+  data.latest %<>% group_by(country) %>%
+  summarise(confirmed=sum(confirmed), new.confirmed=sum(new.confirmed),
+            current.confirmed=sum(current.confirmed),
+            recovered=sum(recovered), deaths=sum(deaths), new.deaths=sum(new.deaths)) %>%
+  mutate(death.rate=(100 * deaths/confirmed) %>% round(1))
+  data.latest %<>% select(c(country, confirmed, deaths, death.rate,
+                          new.confirmed, new.deaths, current.confirmed))
+  return(data.latest)
+}
+
+profvis({
+  # d_top 20: Top 20 countries with dplyr
+  data2 <- data %>% d_top20()
+  data.latest.all <- data %>% filter(date == max(date)) %>%
+  select(country, date,confirmed, new.confirmed, current.confirmed,
+         recovered, deaths, new.deaths, death.rate=rate.lower) %>%
+  mutate(ranking = dense_rank(desc(confirmed)))
+  
+  k <- 20
+  ## top 20 countries: 21 incl. 'World'
+  top.countries <- data.latest.all %>% filter(ranking <= k + 1) %>%
+    arrange(ranking) %>% pull(country) %>% as.character()
+  #top.countries %>% setdiff('World') %>% print()
+  
+  data.latest <- data.latest.all %>% filter(!is.na(country)) %>%
+  mutate(country=ifelse(ranking <= k + 1, as.character(country), 'Others')) %>%
+  mutate(country=country %>% factor(levels=c(top.countries, 'Others')))
+  data.latest %<>% group_by(country) %>%
+  summarise(confirmed=sum(confirmed), new.confirmed=sum(new.confirmed),
+            current.confirmed=sum(current.confirmed),
+            recovered=sum(recovered), deaths=sum(deaths), new.deaths=sum(new.deaths)) %>%
+  mutate(death.rate=(100 * deaths/confirmed) %>% round(1))
+  data.latest %<>% select(c(country, confirmed, deaths, death.rate,
+                          new.confirmed, new.deaths, current.confirmed))
+})
+
+```
+
+```{r}
+profvis({
+  #use pipe
+  data.latest.all <- data %>% filter(date == max(date)) %>%
+  select(country, date,confirmed, new.confirmed, current.confirmed,
+         recovered, deaths, new.deaths, death.rate=rate.lower) %>%
+  mutate(ranking = dense_rank(desc(confirmed)))
+  
+  #not use pipe
+  data.latest.all <- filter(data, date == max(date)) 
+  data.latest.all <- select(data.latest.all, country, date,confirmed, new.confirmed, current.confirmed,
+         recovered, deaths, new.deaths, death.rate=rate.lower) 
+  data.latest.all <- mutate(data.latest.all, ranking = dense_rank(desc(confirmed))) 
+  
+  
+})
   
 ```
+
+```{r}
+data.latest
+profvis({
+  # no dplyr
+  data.latest <-  ddply(data.latest, .(country, date), summarise,
+                        confirmed = sum(confirmed), new.confirmed = sum(new.confirmed),
+                        current.confirmed = sum(current.confirmed),
+                        recovered = sum(recovered), deaths = sum(deaths), new.deaths = sum(new.deaths)) %>%
+  mutate(death.rate=(100 * deaths/confirmed) %>% round(1)) 
+  
+  data.latest <- arrange(data.latest,desc(confirmed)) %>% mutate(ranking = rank(desc(confirmed)))
+  data.latest <- data.latest[,c("country", "confirmed", "deaths", "death.rate", "new.confirmed", "new.deaths", "current.confirmed")] 
+  data.latest <- data.latest[c(1:2, nrow(data.latest) , 4:21, 3),]
+  rownames(data.latest) <- NULL
+  View(data.latest)
+  
+  # dplyr
+  data.latest %<>% group_by(country) %>%
+  summarise(confirmed=sum(confirmed), new.confirmed=sum(new.confirmed),
+            current.confirmed=sum(current.confirmed),
+            recovered=sum(recovered), deaths=sum(deaths), new.deaths=sum(new.deaths)) %>%
+  mutate(death.rate=(100 * deaths/confirmed) %>% round(1))
+  data.latest %<>% select(c(country, confirmed, deaths, death.rate,
+                          new.confirmed, new.deaths, current.confirmed))
+})
+  
+```
+
+```{r}
+  data.latest <-  ddply(data.latest, .(country, date), summarise,
+                        confirmed = sum(confirmed), new.confirmed = sum(new.confirmed),
+                        current.confirmed = sum(current.confirmed),
+                        recovered = sum(recovered), deaths = sum(deaths), new.deaths = sum(new.deaths)) %>%
+  mutate(death.rate=(100 * deaths/confirmed) %>% round(1)) 
+  
+  data.latest <- arrange(data.latest,desc(confirmed)) %>% mutate(ranking = rank(desc(confirmed)))
+  data.latest <- data.latest[,c("country", "confirmed", "deaths", "death.rate", "new.confirmed", "new.deaths", "current.confirmed")] 
+  data.latest <- data.latest[c(1:2, nrow(data.latest) , 4:21, 3),]
+  rownames(data.latest) <- NULL
+  View(data.latest)
+```
+
+```{r}
+
+```
+
+
+
+
+
+
 
 
 
