@@ -308,100 +308,65 @@ data.latest.long %>% ggplot(aes(x=country, y=count, fill=country, group=country)
 
 ```{r}
 data <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
-
-#Data Cleaning
-data.temp <- sqlQuery(data, "SELECT * FROM World_Temp")
-data.temp <- data.temp[!(names(data.temp) %in% c("MyUnknownColumn"))] %>% rename(c("Country" = "country")) %>% rename(c("City" = "city")) %>% rename(c("Continent" = "continent"))
-data.temp$country[data.temp$country == "United States"] <- "US"
-View(data.temp)
-
-datapop <- sqlQuery(data, "SELECT * FROM population")
-datapop <- datapop %>%rename(c("Country" = "country"))
 #View(datapop)
+#Data Cleaning
+raw.temp <- sqlQuery(data, "SELECT * FROM World_Temp")
+raw.temp <- raw.temp[!(names(raw.temp) %in% c("MyUnknownColumn"))] %>% rename(c("Country" = "country")) %>% rename(c("City" = "city")) %>% rename(c("Continent" = "continent"))
+raw.temp$country[raw.temp$country == "United States"] <- "US"
+#View(data.temp)
+
+data.temp <- raw.temp[, names(raw.temp) %in% c("country", "city", "Apr", "May", "Jun", "Jul", "Aug")] 
+data.temp <- data.frame(country = data.temp[,1], city = data.temp[,2], avg.temp = rowMeans(data.temp[,-c(1:2)])) 
+data.temp <- aggregate(avg.temp ~ country, data = data.temp.all, mean) %>%
+  mutate(avg.temp = (avg.temp %>% round(1)))
+View(data.temp)
 ```
 
 ```{r}
-# data long temperature
-data.long.temp <- data.temp[!(names(data.temp) %in% c("continent"))] %>%
-  melt(id = c("country", "city"), variable.name = "month", value.name = "avg.temp")
-#View(data.long.temp)
-
-# count number of city of each country  
-count.city <- aggregate(city ~ country, data = data.temp, length) %>% rename(c("city" = "city.count"))
-#count.city
-
-# sum average temperature in Apr to Aug 
-sum.temp <- data.long.temp[!(names(data.long.temp) %in% c("city"))]
-sum.temp <- aggregate(. ~ country + month, data = sum.temp, sum, na.rm=TRUE) 
-sum.temp <- sum.temp[sum.temp$month %in% c("Apr", "May", "Jun", "Jul", "Aug"),]
-View(sum.temp)
+datapop <- sqlQuery(data, "SELECT * FROM population")
+datapop <- datapop %>% rename(c("Country" = "country")) %>% rename(c("Population (2020)" = "pop")) 
+datapop
+data_total.all <- dataDate %>% merge(datapop, by = "country") 
+data_total.all <- mutate(data_total.all, 
+                         confirmed.rate = ((100 * confirmed / pop) %>% round(1)),
+                         recovered.rate = ((100 * recovered / confirmed )%>% round(1))
+                         )
+                         
+data_total.all
 ```
 
 ```{r}
-# average temperature in each country (sum.temp / count.city)
-data.temp.month <- sum.temp %>%
-  dcast(country ~ month) %>% merge(count.city ,all = T) %>% 
-  melt(id = c("country", "city.count"), variable.name = "month", value.name = "avg.temp") %>% 
-  mutate(avg.temp = (avg.temp / city.count) %>% round(1)) 
-data.temp.month <- data.temp.month[!(names(data.temp.month) %in% c("city.count"))]
-data.temp.month
+data_total.temp <- data_total.all %>% merge(data.temp, by = "country")
+data_total.temp
 
-# graph: average temperature in top 20 countries
-top.temp.month <- top.countries %>% merge(data.temp.month, by = "country") %>% arrange(ranking) %>%
-  ggplot(aes(x = month, y = avg.temp, color = country, group = country)) + 
-  geom_line() +
-  xlab("") +
-  ylab("Average Temperature") 
-#top.temp.month
-```
-
-```{r}
-# average temperature in top 20 countries
-data.latest.temp <- aggregate(avg.temp ~ country, data = data.temp.month, sum) %>%
-  mutate(avg.temp = (avg.temp / 5) %>% round(1))
-data.latest.temp
-#View(data.latest.temp)
-
-# add world's average temperature
-world.temp.add <- (sum(data.latest.temp$avg.temp) / nrow(data.latest.temp)) %>% round(1)
-
-data.latest.temp[nrow(data.latest.temp) + 1,] = c("World", world.temp.add) 
-rownames(data.latest.temp) <- NULL
-data.latest.temp
-#View(data.latest.temp)
+data_total.temp.top <- data_total.all[, names(data_total.all) %in% c("country","new.recovered", "rate.upper", "pop", "confirmed.rate", "recovered.rate")] %>%
+  merge(data.temp, by = "country") %>% merge(top.countries, by = "country") %>% arrange(ranking)
+data_total.temp.top
 ```
 
 
 ```{r}
-#top.countries
-top.countries$recovered.rate <- (100 * top.countries$recovered / top.countries$confirmed) %>% round(1)
-topcountries.temp <- top.countries %>% merge(data.latest.temp, by = "country")  %>% merge(datapop, by = "country") %>% arrange(ranking)
-topcountries.temp <- topcountries.temp[,(names(topcountries.temp) %in% c("country","confirmed","avg.temp","death.rate","recovered.rate","Population (2020)"))]
-View(topcountries.temp)
-
 # graph: top 20 countries temperature 
-world.temp <- topcountries.temp[(names(topcountries.temp) %in% c("country", "avg.temp"))] 
-world.temp %>%
+g.temp.top <- data_total.temp.top[(names(data_total.temp.top) %in% c("country", "avg.temp"))] 
+g.temp.top %>%
   ggplot(aes(country ,avg.temp, fill = factor(country))) + 
   geom_col() +
   theme(axis.text.x = element_text(angle = 90,  vjust = 1)) +
   labs(title = 'Average World Temperature in April - August')
-world.temp
+g.temp.top
 
 ```
 ```{r}
 # rates of top countries compared with temperature
-
-topcountries.temp$confirmed.rate <- (100 * topcountries.temp$confirmed / topcountries.temp$'Population (2020)') %>% round(1)
-
-top.temp.rate <- topcountries.temp[,!(names(topcountries.temp) %in% c("confirmed","Population (2020)"))]
-top.temp.rate <- melt(top.temp.rate, id = c("country"))
-top.temp.rate <- top.temp.rate %>% rename(c("variable" = "Type")) %>% rename(c("value" = "count"))
-top.temp.rate$Type <- as.character(top.temp.rate$Type)
+temp.top.rate <- data_total.temp.top[,(names(data_total.temp.top) %in% c("country","avg.temp", "confirmed.rate", "death.rate", "recovered.rate"))]
+temp.top.rate
+temp.top.rate <- melt(temp.top.rate, id = c("country"))
+temp.top.rate <- temp.top.rate %>% rename(c("variable" = "Type")) %>% rename(c("value" = "count"))
+temp.top.rate$Type <- as.character(temp.top.rate$Type)
 #top.temp.long$Type[top.temp.long$Type == "confirmed"] <- "Total Confirmed"
-#View(top.temp.rate)
+#View(temp.top.rate)
 
-top.temp.rate %>% ggplot(aes(x=country, y=count, fill=country, group=country)) +
+temp.top.rate %>% ggplot(aes(x=country, y=count, fill=country, group=country)) +
   geom_bar(stat='identity') +
   geom_text(aes(label=count, y=count), size=3, vjust=-0.5) +
   xlab('') + ylab('Rate') +
@@ -418,14 +383,14 @@ top.temp.rate %>% ggplot(aes(x=country, y=count, fill=country, group=country)) +
   facet_wrap(~Type, ncol=1, scales='free_y')
 ```
 ```{r}
-top.temp.rate <- top.temp.rate %>%
+temp.top.rate <- temp.top.rate %>%
   ggplot(aes(x = country, y = count, group = Type, color = Type)) + 
   geom_line() + 
   xlab("") +
   ylab("") +
   theme(axis.text.x = element_text(angle = 90,  vjust = 1)) +
   labs(title = 'Average World Temperature compared to Rates')
-top.temp.rate
+temp.top.rate
 ```
 
 ```{r}
@@ -450,6 +415,7 @@ data.latest.continent %>%
   ggplot(aes(x = month, y = avg.temp, group = continent, color = continent)) +
   geom_line(size = 1) 
 ```
+
 ```{r}
 #topcountries.nw <- top.countries[top.countries$country != "World",]
 #View(topcountries.nw)
@@ -458,42 +424,55 @@ lat.long <- lat.long[lat.long$city == "",]
 lat.long <- lat.long[,!(names(lat.long) %in% c("city"))]
 lat.long
 
-top.latlong <- world.temp %>% merge(lat.long, by = "country") %>% merge(top.countries, by = "country") %>%
+top.latlong <- lat.long %>% merge(data_total.temp.top, by = "country") %>%
+#%>% merge(dataDate[,names(dataDate) %in% c("confirmed", "")], by = "country")
   mutate(ranking = rank(desc(confirmed))) %>% arrange(ranking)
-top.latlong <- top.latlong[,(names(top.latlong) %in% c("country", "avg.temp", "Lat", "Long", "ranking"))]
-m.top <- top.latlong 
-m.top$avg.temp <- as.numeric(m.top[, 2])
-m.top <- m.top %>% 
-  #mutate(txt=paste0('<b>', ranking, '</b>','<br>',country, ': ', avg.temp, ' °C'))
-  mutate(txt=paste0(ranking))
-top.latlong
+
+top.latlong <- top.latlong[,(names(top.latlong) %in% c("country", "avg.temp", "Lat", "Long", "confirmed", "deaths", "recovered", "ranking"))]
+label.top <- top.latlong 
+label.top <- label.top %>% 
+  mutate(txt=paste0('<b>',ranking, '</b>'))
+label.top$txt <- label.top$txt %>% lapply(htmltools::HTML)
+label.top
+#View(top.latlong)
 
 ```
 
 ```{r}
-lat.long <- raw.confirmed[,(names(raw.confirmed) %in% c("Province.State", "Country.Region", "Lat", "Long"))] %>% rename(c("Province.State" = "city")) %>% rename(c("Country.Region" = "country"))
-lat.long <- lat.long[lat.long$city == "",]
-lat.long <- lat.long[,!(names(lat.long) %in% c("city"))]
-lat.long
+m.top <- top.latlong
+m.top$avg.temp <- as.numeric(m.top[, 4])
+m.top <- m.top %>%
+  mutate(txt=paste0('<b>',ranking, '</b>',
+                    '<br/>','<b>',country, '</b>',
+                    '<br/>', "Temperature:  ",avg.temp, ' °C',
+                    '<br/>', "Confirmed:  ", confirmed, 
+                    '<br/>', "Deaths: ", deaths,
+                    '<br/>', "Recovered: ", recovered
+                    )) 
+m.top$txt <- m.top$txt %>% lapply(htmltools::HTML)
+m.top
+```
 
-world.latlong <- lat.long %>% merge(data.latest.temp.nw, by = "country") %>% merge(top.countries, all = T) %>%
-   mutate(ranking = if_else(is.na(ranking), "", ranking))
 
-View(world.latlong)
-
+```{r}
+world.latlong <- lat.long %>% merge(data_total.temp, by = "country") 
+world.latlong <- world.latlong[!(world.latlong$country %in% as.character(top.countries.name)),]
+#world.latlong
 
 m.world <- world.latlong 
-m.world$avg.temp <- as.numeric(m.world[, 4])
+m.world$avg.temp <- as.numeric(m.world[, names(m.world) %in% c("avg.temp")])
 m.world <- m.world %>% 
-  mutate(txt=paste0(ranking, ' ', country, ': ', avg.temp, ' °C'))
+  mutate(txt=paste0('<b>',country, '</b>',
+                    '<br/>', "Temperature:  ",avg.temp, ' °C',
+                    '<br/>', "Confirmed:  ", confirmed, 
+                    '<br/>', "Deaths: ", deaths,
+                    '<br/>', "Recovered: ", recovered
+                    )) 
+m.world$txt <- m.world$txt %>% lapply(htmltools::HTML)
 m.world
-#View(m.world)
 
-#m.world$group <- cut(m.world$country, breaks = as.character(top.countries$country), right = F)      
 
-#pal <- colorFactor(palette = c("red", "blue"), levels = c(as.character(topcountries.temp$country), !(as.character(topcountries.temp$country))))
-
-wpal <- colorQuantile("YlOrRd", m.world$avg.temp, n = 4)
+wpal <- colorNumeric("YlOrRd", m.world$avg.temp, n = 4)
   
 #View(m.world)
 topIcon <- makeIcon("star.png",
@@ -511,56 +490,89 @@ m %<>%  addCircleMarkers(m.world$Long, m.world$Lat,
                         #color='red',
                         color = wpal(m.world$avg.temp), 
                         fillOpacity=0.5,
-                        #popup=m.top$txt
-                        label= m.world$txt
+                        #popup=label.top$txt
+                        label= m.world$txt,
+                        group = "World"
                         ) %>%
-  #addMarkers(m.top$Long, m.top$Lat, label = m.world$txt) %>%
-  addLabelOnlyMarkers(m.top$Long, m.top$Lat, label = m.top$txt,
+  
+  addCircleMarkers(m.top$Long, m.top$Lat,
+                        # radius=2+log2(x$confirmed),
+                        radius=10,#*log2(m.world$avg.temp),
+                        stroke=F,
+                        #color='red',
+                        color = wpal(m.top$avg.temp), 
+                        fillOpacity=0.5,
+                        #popup=label.top$txt
+                        label= m.top$txt,
+                        group = "Top 20 Countries"
+                        ) %>%
+  
+  addLabelOnlyMarkers(label.top$Long, label.top$Lat, label = label.top$txt,
                       labelOptions = labelOptions(noHide = TRUE, textOnly = TRUE, 
                                                   direction = "head", 
-                                                  offset = c(5,5)))
-  #addMarkers(m.top$Long, m.top$Lat, m.top$txt,label = m.top$txt)
+                                                  offset = c(5,5)),
+                      group = "Top 20 Countries") %>%
   
-  #addPopups(m.top$Long, m.top$Lat, as.character(m.top$ranking))
-  #addPopups(m.top$Long, m.top$Lat, label = m.top$ranking, labelOptions = labelOptions(noHide = T, textOnly = TRUE)) #%>%
-  #addLegend(pal = wpal, values = m.world$avg.temp, opacity = 0.7, title = NULL, position = "bottomright")
-# world
+  addLegend("bottomright", pal = wpal, values = m.world$avg.temp, opacity = 1,
+            labFormat = labelFormat(suffix = " °C"),
+            title = "Temperature") %>% 
+  
+  addLayersControl(
+    #baseGroups = c("OSM (default)", "Toner", "Toner Lite"),
+    overlayGroups = c("World", "Top 20 Countries"),
+    options = layersControlOptions(collapsed = FALSE)
+  )
 m
 
 ```
+```{r}
+first.date <- as.Date("2020-04-01")
+#last.date <- seq(as.Date("2020-05-01"),length=5,by="months")-1
+
+data_total.month <- data_total[, c(1:5)] %>%
+  mutate(month.confirmed = confirmed - c(NA,head(confirmed,-1)),
+         month.deaths = deaths - c(NA,head(deaths,-1)) ,
+         month.recovered = recovered - c(NA,head(recovered,-1)))
+
+data_total.month$month.confirmed[data_total.month$date %in% first.date] <- 0
+data_total.month$month.deaths[data_total.month$date %in% first.date] <- 0
+data_total.month$month.recovered[data_total.month$date %in% first.date] <- 0
+
+#View(data_total.month)
+
+data_total.mean <- aggregate(cbind(month.confirmed, month.deaths,month.recovered) ~ month(date) + country,
+             data=data_total.month ,FUN=mean)
+
+data_total.mean <- data_total.mean %>% 
+  mutate(month.confirmed = month.confirmed %>% round(1),
+         month.deaths = month.deaths %>% round(1) ,
+         month.recovered = month.recovered %>% round(1)
+         ) %>%
+  rename(c("month(date)" = "month"))
+
+data_total.mean$month[data_total.mean$month == 4] <- "Apr"
+data_total.mean$month[data_total.mean$month == 5] <- "May"
+data_total.mean$month[data_total.mean$month == 6] <- "Jun"
+data_total.mean$month[data_total.mean$month == 7] <- "Jul"
+data_total.mean$month[data_total.mean$month == 8] <- "Aug"
+
+View(data_total.mean)
+```
 
 ```{r}
-top.continent <- continent.temp[,(names(continent.temp) %in% c("country", "city", "continent"))]
-#View(top.continent )
-
-top.countries.nw <- top.countries[top.countries$country != "World",]
-#View(top.countries.nw)
-
-lat.long <- raw.confirmed[,(names(raw.confirmed) %in% c("Province.State", "Country.Region", "Lat", "Long"))] %>% rename(c("Province.State" = "city")) %>% rename(c("Country.Region" = "country"))
-lat.long <- lat.long[lat.long$city == "",]
-#View(lat.long)
-
-top.continent.latlong <- top.continent %>% merge(top.countries.nw, by = "country") %>% merge(lat.long, by = "country")
-#top.continent <- top.continent[,(names(top.continent) %in% c("country", "city", "continent", "Lat", "Long"))]
-top.continent.latlong <- unique(top.continent.latlong[,(names(top.continent.latlong) %in% c("country", "city", "continent", "Lat", "Long"))])
-top.continent.latlong
+data.temp.month <- raw.temp[, names(raw.temp) %in% c("country", "city", "Apr", "May", "Jun", "Jul", "Aug")] 
+data.temp.month <- aggregate(. ~ country, data = data.temp.month[,-c(2)], mean) 
+data.temp.month[-c(1)] <- data.temp.month[-c(1)] %>% round(1)
+data.temp.month <- melt(data.temp.month, id = c("country")) %>% rename(c("variable" = "month")) %>% rename(c("value" = "avg.temp"))
+data.temp.month
+```
+```{r}
+data.latest.temp <- data_total.mean %>% merge(data.temp.month)
+data.latest.temp
 ```
 
 
 
-
-```{r}
-normalize <- function(data){
-  #return ((data - min(data,na.rm = TRUE))/(max(data,na.rm = TRUE) - min(data,na.rm = TRUE)))
-  #return ((data - mean(data,na.rm = TRUE))/(max(data,na.rm = TRUE) - min(data,na.rm = TRUE)))
-  #return ((data - mean(data,na.rm = TRUE))/(sd(data,na.rm = TRUE)))
-  z <- scale(data);
-  tanh(z/2)
-}
-topcountries.temp[,2:5]
-norm_data <- as.data.frame(apply(topcountries.temp[,2:5],2,normalize))
-View(norm_data)
-```
 
 
 
