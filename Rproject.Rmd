@@ -18,6 +18,7 @@ Try executing this chunk by clicking the *Run* button within the chunk or by pla
 #install.packages("gridExtra")
 #install.packages("ggcorrplot")
 #install.packages("leaflet")
+#install.packages("fmsb")
 
 library(RODBC) #connect mysql
 #library(odbc) #connect mysql
@@ -32,6 +33,7 @@ library(ggcorrplot)
 #library(data.table)
 #library(tidyverse)
 library(leaflet) # map
+library(fmsb) # Radar chart with fmsb package
 
 ```
 
@@ -104,13 +106,13 @@ View(data_total)
 ```{r}
 world.long <- data.long[data.long$country == 'World',]
 rownames(world.long) <- NULL
-#world.long
+#View(world.long)
 #case-area plot
 plot1 <- world.long[world.long$Type != 'Total Confirmed',] %>%
   ggplot(aes(x=date, y=count)) +
   geom_area(aes(fill=Type), alpha=0.5) +
   labs(title=paste0('Numbers of Cases Worldwide - ', max.date.txt)) +
-  scale_fill_manual(values=c('pink', 'green', 'orange')) +
+  scale_fill_manual(values=c('red', 'green', 'black')) +
   theme(legend.title=element_blank(), legend.position='bottom',
   plot.title = element_text(size=7),
   axis.title.x=element_blank(),
@@ -124,7 +126,7 @@ plot2 <- world.long %>%
   ggplot(aes(x=date, y=count)) +
   geom_line(aes(color=Type)) +
   labs(title=paste0('Numbers of Cases Worldwide (log scale) - ', max.date.txt)) +
-  scale_color_manual(values=c('purple', 'red', 'orange', 'black')) +
+  scale_color_manual(values=c('purple', 'red', 'green', 'black')) +
   theme(legend.title=element_blank(), legend.position='bottom',
   plot.title = element_text(size=7),
   axis.title.x=element_blank(),
@@ -242,11 +244,12 @@ grid.arrange(plot1, plot2, plot3, plot4, nrow=2)
 ```
 ```{r}
 ## three death rates
+#View(data.world)
 plot1 <- ggplot(data.world, aes(x=date)) +
   geom_line(aes(y=rate.upper, colour='Upper bound')) +
   geom_line(aes(y=rate.lower, colour='Lower bound')) +
   geom_line(aes(y=rate.daily, colour='Daily')) +
-  xlab('') + ylab('Death Rate (%)') + labs(title='Overall') +
+  xlab('') + ylab('Death Rate (%)') + labs(title='Overall Death Rate') +
   theme(legend.position='bottom', legend.title=element_blank(),
   legend.text=element_text(size=8),
   legend.key.size=unit(0.5, 'cm'),
@@ -256,6 +259,26 @@ plot1 <- ggplot(data.world, aes(x=date)) +
 grid.arrange(plot1,ncol=1)
 
 ```
+```{r}
+
+## three death rates
+
+plot1 <- ggplot(data.world, aes(x=date)) +
+  geom_line(aes(y=confirmed, colour='Confirmed')) +
+  geom_line(aes(y=deaths, colour='Deaths')) +
+  geom_line(aes(y=recovered, colour='Recovered')) +
+  xlab('') + ylab('Quantity') + labs(title='Overall') +
+  theme(legend.position='bottom', legend.title=element_blank(),
+  legend.text=element_text(size=8),
+  legend.key.size=unit(0.5, 'cm'),
+  axis.text.x=element_text(angle=45, hjust=1)) +
+  ylim(c(0, 100000000))
+
+grid.arrange(plot1,ncol=1)
+View(data.world)
+#write.csv(data.world,"C:\\Users\\ASUS\\Desktop\\R poject\\dataworld.csv",row.names = F)
+```
+
 
 ```{r}
 data.long <- data_total[,!(names(data_total) %in% c("new.confirmed","new.deaths","new.recovered","rate.upper","rate.lower","rate.daily"))]
@@ -268,7 +291,9 @@ data.long$Type <- as.character(data.long$Type)
 data.long$Type[data.long$Type == "confirmed"] <- "Total Confirmed"
 data.long$Type[data.long$Type == "current.confirmed"] <- "Current Confirmed"
 data.long$Type[data.long$Type == "recovered"] <- "Recovered"
+data.long$Type[data.long$Type == "deaths"] <- "Deaths"
 View(data.long)
+
 
 
 rates.long <- data_total[,!(names(data_total) %in% c("new.confirmed","new.deaths","new.recovered","confirmed","current.confirmed","recovered","deaths"))]
@@ -280,7 +305,7 @@ rates.long$Type <- as.character(rates.long$Type)
 rates.long$Type[rates.long$Type == "rate.daily"] <- "Daily"
 rates.long$Type[rates.long$Type == "rate.lower"] <- "Lower Bound"
 rates.long$Type[rates.long$Type == "rate.upper"] <- "Upper Bound"
-View(rates.long)  
+#View(rates.long)  
 #set factor levels to show them in a desirable order
 rates.long
 
@@ -319,7 +344,7 @@ mutate(death.rate=(100 * deaths/confirmed) %>% round(1))
 
 data.latest <- arrange(data.latest,desc(confirmed)) %>% mutate(ranking = rank(desc(confirmed)))
 data.latest <- data.latest[,c("country", "confirmed", "deaths", "death.rate", "new.confirmed", "new.deaths", "current.confirmed")] 
-data.latest <- data.latest[c(1:2, nrow(data.latest) , 4:21, 3),]
+data.latest <- data.latest[c(1:2, 4:nrow(data.latest), 3),]
 rownames(data.latest) <- NULL
 
 data.latest
@@ -340,13 +365,45 @@ data.latest.long$Type[data.latest.long$Type == "current.confirmed"] <- "Current 
 View(data.latest.long)
 data.latest.long
 ```
+```{r}
+## bar chart
+data.latest.long %>% ggplot(aes(x=country, y=count, fill=country, group=country)) +
+geom_bar(stat='identity') +
+geom_text(aes(label=count, y=count), size=2, vjust=0) +
+xlab('') + ylab('') +
+labs(title=paste0('Top 20 Countries with Most Confirmed Cases - ', max.date.txt)) +
+scale_fill_discrete(name='Country', labels=aes(count)) +
+theme(legend.title=element_blank(),
+      legend.position='none',
+      plot.title=element_text(size=11),
+      axis.text=element_text(size=7),
+      axis.text.x=element_text(angle=45, hjust=1)) +
+facet_wrap(~Type, ncol=1, scales='free_y')
+
+```
+
+
 
 ```{r}
-data.latest.long %>% ggplot(aes(x=country, y=count, fill=country, group=country)) +
+top.countries$recovered.rate <- 100 * top.countries$recovered /top.countries$confirmed
+#View(top.countries)
+data_recovered_case <- top.countries %>% merge(datapop, by = "country") 
+
+#View(data_recovered_case)
+data_recovered_case$confirmed.rate <-  100*data_recovered_case$confirmed/data_recovered_case$`Population (2020)`  
+data_recovered_case <- data_recovered_case[,c("country","confirmed.rate","death.rate","recovered.rate","confirmed","deaths","recovered")] 
+View(data_recovered_case)
+data.recoveredcase.long <- melt(data_recovered_case, id = c("country")) 
+data.recoveredcase.long <- data.recoveredcase.long%>% rename(c("variable" = "Type")) %>% rename(c("value" = "count"))
+
+
+```
+
+```{r}
+data.recoveredcase.long %>% ggplot(aes(x=country, y=count, fill=country, group=country)) +
   geom_bar(stat='identity') +
-  geom_text(aes(label=count, y=count), size=2, vjust=0) +
   xlab('') + ylab('') +
-  labs(title=paste0('Top 20 Countries with Most Confirmed Cases- ', max.date.txt)) +
+  labs(title=paste0('Top 20 Countries with Most Cases- ', max.date.txt)) +
   scale_fill_discrete(name='Country', labels=aes(count)) +
   theme(legend.title=element_blank(),
         legend.position='none',
@@ -354,392 +411,6 @@ data.latest.long %>% ggplot(aes(x=country, y=count, fill=country, group=country)
         axis.text=element_text(size=7),
         axis.text.x=element_text(angle=45, hjust=1)) +
   facet_wrap(~Type, ncol=1, scales='free_y')
-
-```
-```{r}
-## cases by country - area plot
-
-## if Australia in not in top 20, add it in and remove 'Others'
-if(!('Australia' %in% top.countries)) {
-top.countries %<>% setdiff('Others') %>% c('Australia')
-df <- data.long %>% filter(country %in% top.countries) %<>%
-mutate(country=country %>% factor(levels=c(top.countries)))
-}
-
-data.latest[data.latest$country != 'World',]
-df %>% filter(country != 'World' & type != 'Total Confirmed') %>%
-        ggplot(aes(x=date, y=count, fill=Type)) +
-        geom_area(alpha=0.5) +
-        # xlab('') + ylab('') +
-        labs(title=paste0('Numbers of COVID-19 Cases in Top 20 Countries - ',
-        max.date.txt)) +
-        scale_fill_manual(values=c('red', 'green', 'black')) +
-theme(legend.title=element_blank(), legend.position='bottom',
-     plot.title = element_text(size=12),
-      axis.title.x=element_blank(),
-      axis.title.y=element_blank(),
-      legend.key.size=unit(0.4, 'cm'),
-      # legend.text=element_text(size=7),
-      strip.text.x=element_text(size=7),
-      axis.text=element_text(size=7),
-      axis.text.x=element_text(angle=45, hjust=1)) +
-      facet_wrap(~country, ncol=4, scales='free_y')
-
-
-```
-
-
-```{r}
-#load data into R Function data cleaning 
-data <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
-#Data Cleaning
-
-dataGDP <- sqlQuery(data, "SELECT * FROM GDP")
-dataGDP <- dataGDP[,c(1,34:43)]
-rownames(dataGDP) <- NULL
-
-data.longGDP <- melt(dataGDP,id = c(1)) 
-#View(data.longGDP)
-data.longGDP <- data.longGDP %>% rename(c("variable" = "Year")) %>% rename(c("value" = "GDP"))%>%rename(c("Real GDP growth (Annual percent change)" = "country"))
-View(data.longGDP)
-data.longGDP
-
-```
-
-```{r}
-world.longGDP <- data.longGDP[data.longGDP$country == 'World',]
-rownames(world.longGDP) <- NULL
-africa.longGDP <- data.longGDP[data.longGDP$country == 'Africa (Region)',]
-rownames(africa.longGDP) <- NULL
-asia.longGDP <- data.longGDP[data.longGDP$country == 'Asia and Pacific',]
-rownames(asia.longGDP) <- NULL
-europe.longGDP <- data.longGDP[data.longGDP$country == 'Europe',]
-rownames(europe.longGDP) <- NULL
-asean.longGDP <- data.longGDP[data.longGDP$country == 'ASEAN-5',]
-rownames(asean.longGDP) <- NULL
-pacific.longGDP <- data.longGDP[data.longGDP$country == 'Pacific Islands',]
-rownames(pacific.longGDP) <- NULL
-#world.longGDP
-
-world.longGDP$group <- cut(world.longGDP$GDP,c(-Inf,0,Inf),labels = c("-","+"))
-africa.longGDP$group <- cut(africa.longGDP$GDP,c(-Inf,0,Inf),labels = c("-","+"))
-asia.longGDP$group <- cut(asia.longGDP$GDP,c(-Inf,0,Inf),labels = c("-","+"))
-europe.longGDP$group <- cut(europe.longGDP$GDP,c(-Inf,0,Inf),labels = c("-","+"))
-asean.longGDP$group <- cut(asean.longGDP$GDP,c(-Inf,0,Inf),labels = c("-","+"))
-pacific.longGDP$group <- cut(pacific.longGDP$GDP,c(-Inf,0,Inf),labels = c("-","+"))
-#world.longGDP
-
-plot1 <- ggplot(world.longGDP,aes(x=Year,y=GDP,fill = group ))+
-    labs(title=paste0('Real GDP growth (Annual percent change) of World from 2012-2021'))+
-    geom_bar(stat = "identity")+
-    scale_fill_manual(values = c("-" = "red","+" = "limegreen"))+
-    theme_bw() + theme(legend.position = "none")+
-    xlab("")+
-    theme(legend.title=element_blank(),
-    plot.title = element_text(size=7))
-plot2 <- ggplot(africa.longGDP,aes(x=Year,y=GDP,fill = group ))+
-    labs(title=paste0('Real GDP growth (Annual percent change) of Africa (Region) from 2012-2021'))+
-    geom_bar(stat = "identity")+
-    scale_fill_manual(values = c("-" = "red","+" = "limegreen"))+
-    theme_bw() + theme(legend.position = "none")+
-    xlab("")+
-    theme(legend.title=element_blank(),
-    plot.title = element_text(size=7))
-plot3 <- ggplot(asia.longGDP,aes(x=Year,y=GDP,fill = group ))+
-    labs(title=paste0('Real GDP growth (Annual percent change) of Asia and Pacific from 2012-2021'))+
-    geom_bar(stat = "identity")+
-    scale_fill_manual(values = c("-" = "red","+" = "limegreen"))+
-    theme_bw() + theme(legend.position = "none")+
-    xlab("")+
-    theme(legend.title=element_blank(),
-    plot.title = element_text(size=7))
-plot4 <- ggplot(europe.longGDP,aes(x=Year,y=GDP,fill = group ))+
-    labs(title=paste0('Real GDP growth (Annual percent change) of Europe from 2012-2021'))+
-    geom_bar(stat = "identity")+
-    scale_fill_manual(values = c("-" = "red","+" = "limegreen"))+
-    theme_bw() + theme(legend.position = "none")+
-    xlab("")+
-    theme(legend.title=element_blank(),
-    plot.title = element_text(size=7))
-plot5 <- ggplot(asean.longGDP,aes(x=Year,y=GDP,fill = group ))+
-    labs(title=paste0('Real GDP growth (Annual percent change) of ASEAN-5 from 2012-2021'))+
-    geom_bar(stat = "identity")+
-    scale_fill_manual(values = c("-" = "red","+" = "limegreen"))+
-    theme_bw() + theme(legend.position = "none")+
-    xlab("")+
-    theme(legend.title=element_blank(),
-    plot.title = element_text(size=7))
-plot6 <- ggplot(pacific.longGDP,aes(x=Year,y=GDP,fill = group ))+
-    labs(title=paste0('Real GDP growth (Annual percent change) of Pacific Islands from 2012-2021'))+
-    geom_bar(stat = "identity")+
-    scale_fill_manual(values = c("-" = "red","+" = "limegreen"))+
-    theme_bw() + theme(legend.position = "none")+
-    xlab("")+
-    theme(legend.title=element_blank(),
-    plot.title = element_text(size=7))
-grid.arrange(plot1)
-grid.arrange(plot2)
-grid.arrange(plot3)
-grid.arrange(plot4)
-grid.arrange(plot5)
-grid.arrange(plot6)
-
-```
-
-```{r}
-#Top 20 Countries in GDP 2020 desc
-#ranking by GDP
-head(data.longGDP)
-dataYear <- data.longGDP[data.longGDP$Year  == "2020",]
-data.latest.GDP <- dataYear[,c("country","Year","GDP")]
-data.latest.GDP <- arrange(data.latest.GDP,desc(GDP)) %>% mutate(ranking = rank(GDP))
-
-
-#View(data.latest.all)
-k <- 20
-#top 20 countries 21 incl.'World'
-head(data.latest.GDP)
-top.GDP <- data.latest.GDP[data.latest.GDP$ranking <= k+1,] %>% arrange(ranking) 
-top.GDP
-#View(top.GDP)
-#View(top.countries)
-
-```
-```{r}
-#Top 20 Countries in GDP 2020 desc
-#ranking by GDP
-head(data.longGDP)
-dataYear <- data.longGDP[data.longGDP$Year  == "2020",]
-head(dataYear)
-data.latest.GDP <- dataYear[,c("country","Year","GDP")]
-data.latest.GDP.desc <- arrange(data.latest.GDP,desc(GDP)) %>% mutate(ranking = rank(GDP, na.last = TRUE, ties.method = "min"))
-
-#View(data.latest.all)
-k <- 28
-#top 20 countries 21 incl.'World'
-head(data.latest.GDP.desc)
-top.GDP.desc <- data.latest.GDP.desc[data.latest.GDP.desc$ranking <= k+1,] %>% arrange(ranking) 
-View(top.GDP.desc)
-#View(top.countries)
-top.GDP.desc
-
-```
-
-```{r}
-#View(data.latest.GDP)
-data.latest.GDP.top <- arrange(data.latest.GDP, desc(GDP)) %>% mutate(ranking = rank(desc(GDP), na.last = TRUE, ties.method = "min"))
-data.latest.GDP.top
-
-k <- 28
-#top 20 countries 21 incl.'World'
-head(data.latest.GDP.top)
-top.GDP <- data.latest.GDP.top[data.latest.GDP.top$ranking <= k+1,] %>% arrange(ranking) 
-View(top.GDP)
-top.GDP
-```
-
-```{r}
-topcountries.gdp <- top.countries %>% merge(data.longGDP, by = "country")
-topcountries.gdp <- topcountries.gdp[,(names(topcountries.gdp) %in% c("country","Year","GDP"))]
-View(topcountries.gdp)
-topcountries.gdp
-```
-
-```{r}
-world.gdp <- topcountries.gdp[topcountries.gdp$country == 'World',] %>% arrange(Year) %>%
-  ggplot(aes(x=Year, y=GDP)) +
-  geom_line() +
-  labs(title = 'World GDP 2012 - 2021') +
-  theme(legend,title = element_blank(), legend.position = 'bottom',
-        plot.title = element_text(size=12),
-        axis.title.x=element_blank(),
-        axis.title.y=element_blank(),
-        legend.key.size = unit(0.4, 'cm'),
-        strip.text.x = element_text(size=7),
-        axis.text = element_text(size=7),
-        axis.text.x=element_text(angle=45, hjust = 1)) +
-  scale_y_continuous(trans='log10')
-#world.gdp + facet_wrap(~country, ncol=2, scales = 'free_y')
-world.gdp
-
-```
-
-
-```{r}
-gdp.all <- topcountries.gdp %>% arrange(Year) %>%
-  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
-  geom_line(size = 1) +
-  #geom_point() +
-  labs(title = 'Top 20 Countries Real GDP growth (Annual percent change) 2012 - 2021')
-#gdp.all
-
-gdp.us <- topcountries.gdp[ which (topcountries.gdp$country == 'US' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
-  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
-  geom_line(size = 1) +
-  geom_point() +
-  labs(title = 'World & US GDP 2012 - 2021')
-#gdp.us
-
-gdp.brazil <- topcountries.gdp[ which (topcountries.gdp$country == 'Brazil' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
-  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
-  geom_line(size = 1) +
-  geom_point() +
-  labs(title = 'World & Brazil GDP 2012 - 2021')
-#gdp.brazil
-
-gdp.india <- topcountries.gdp[ which (topcountries.gdp$country == 'India' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
-  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
-  geom_line(size = 1) +
-  geom_point() +
-  labs(title = 'World & India GDP 2012 - 2021')
-#gdp.india
-
-gdp.russia <- topcountries.gdp[ which (topcountries.gdp$country == 'Russia' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
-  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
-  geom_line(size = 1) +
-  geom_point() +
-  labs(title = 'World & Russia GDP 2012 - 2021')
-#gdp.russia
-
-gdp.peru <- topcountries.gdp[ which (topcountries.gdp$country == 'Peru' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
-  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
-  geom_line(size = 1) +
-  geom_point() +
-  labs(title = 'World & Peru GDP 2012 - 2021')
-#gdp.peru
-
-gdp.southAf <- topcountries.gdp[ which (topcountries.gdp$country == 'South Africa' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
-  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
-  geom_line(size = 1) +
-  geom_point() +
-  labs(title = 'World & South Africa GDP 2012 - 2021')
-#gdp.southAf
-
-gdp.colombia <- topcountries.gdp[ which (topcountries.gdp$country == 'Colombia' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
-  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
-  geom_line(size = 1) +
-  geom_point() +
-  labs(title = 'World & Colombia GDP 2012 - 2021')
-#gdp.colombia
-
-gdp.mexico <- topcountries.gdp[ which (topcountries.gdp$country == 'Mexico' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
-  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
-  geom_line(size = 1) +
-  geom_point() +
-  labs(title = 'World & Mexico GDP 2012 - 2021')
-#gdp.mexico
-
-gdp.spain <- topcountries.gdp[ which (topcountries.gdp$country == 'Spain' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
-  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
-  geom_line(size = 1) +
-  geom_point() +
-  labs(title = 'World & Spain GDP 2012 - 2021')
-#gdp.spain
-
-gdp.argentina <- topcountries.gdp[ which (topcountries.gdp$country == 'Argentina' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
-  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
-  geom_line(size = 1) +
-  geom_point() +
-  labs(title = 'World & Argentina GDP 2012 - 2021')
-#gdp.argentina
-
-gdp.chile <- topcountries.gdp[ which (topcountries.gdp$country == 'Chile' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
-  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
-  geom_line(size = 1) +
-  geom_point() +
-  labs(title = 'World & Chile GDP 2012 - 2021')
-#gdp.chile
-
-gdp.iran <- topcountries.gdp[ which (topcountries.gdp$country == 'Iran' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
-  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
-  geom_line(size = 1) +
-  geom_point() +
-  labs(title = 'World & Iran GDP 2012 - 2021')
-#gdp.iran
-
-gdp.uk <- topcountries.gdp[ which (topcountries.gdp$country == 'United Kingdom' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
-  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
-  geom_line(size = 1) +
-  geom_point() +
-  labs(title = 'World & United Kingdom GDP 2012 - 2021')
-#gdp.uk
-
-gdp.france <- topcountries.gdp[ which (topcountries.gdp$country == 'France' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
-  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
-  geom_line(size = 1) +
-  geom_point() +
-  labs(title = 'World & France GDP 2012 - 2021')
-#gdp.france
-
-gdp.saudi <- topcountries.gdp[ which (topcountries.gdp$country == 'Saudi Arabia' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
-  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
-  geom_line(size = 1) +
-  geom_point() +
-  labs(title = 'World & Saudi Arabia GDP 2012 - 2021')
-#gdp.saudi
-
-gdp.bangladesh <- topcountries.gdp[ which (topcountries.gdp$country == 'Bangladesh' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
-  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
-  geom_line(size = 1) +
-  geom_point() +
-  labs(title = 'World & Bangladesh GDP 2012 - 2021')
-#gdp.bangladesh
-
-gdp.pakistan <- topcountries.gdp[ which (topcountries.gdp$country == 'Pakistan' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
-  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
-  geom_line(size = 1) +
-  geom_point() +
-  labs(title = 'World & Pakistan GDP 2012 - 2021')
-#gdp.pakistan
-
-gdp.turkey <- topcountries.gdp[ which (topcountries.gdp$country == 'Turkey' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
-  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
-  geom_line(size = 1) +
-  geom_point() +
-  labs(title = 'World & Turkey GDP 2012 - 2021')
-#gdp.turkey
-
-gdp.italy <- topcountries.gdp[ which (topcountries.gdp$country == 'Italy' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
-  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
-  geom_line(size = 1) +
-  geom_point() +
-  labs(title = 'World & Italy GDP 2012 - 2021')
-#gdp.italy
-
-gdp.germany <- topcountries.gdp[ which (topcountries.gdp$country == 'Germany' | topcountries.gdp$country == 'World'),] %>% arrange(Year) %>%
-  ggplot(aes(x=Year, y=GDP, group = country, color = country)) +
-  geom_line(size = 1) +
-  geom_point() +
-  labs(title = 'World & Germany GDP 2012 - 2021')
-#gdp.germany
-```
-
-```{r}
-grid.arrange(gdp.all)
-
-grid.arrange(gdp.us, gdp.brazil, nrow=2)
-grid.arrange(gdp.india, gdp.russia, nrow=2)
-grid.arrange(gdp.peru, gdp.southAf, nrow=2)
-grid.arrange(gdp.colombia, gdp.mexico, nrow=2)
-grid.arrange(gdp.spain, gdp.argentina, nrow=2)
-grid.arrange(gdp.chile, gdp.iran, nrow=2)
-grid.arrange(gdp.uk, gdp.france, nrow=2)
-grid.arrange(gdp.saudi, gdp.bangladesh, nrow=2)
-grid.arrange(gdp.pakistan, gdp.turkey, nrow=2)
-grid.arrange(gdp.italy, gdp.germany, nrow=2)
-
-
-#grid.arrange(gdp.us, gdp.brazil, gdp.india, gdp.russia, gdp.peru, gdp.southAf, gdp.colombia, gdp.mexico, #gdp.spain, gdp.argentina, gdp.chile, gdp.iran, gdp.uk, gdp.france, gdp.saudi, gdp.bangladesh, #gdp.pakistan, gdp.turkey, gdp.italy, gdp.germany, nrow=20)
-
-
-```
-
-```{r}
-topcountries.gdp2020 <- top.countries %>% merge(dataYear, by = "country")
-topcountries.gdp2020 <- topcountries.gdp2020[,(names(topcountries.gdp2020) %in% c("country","confirmed","GDP"))]
-topcountries.gdp2020 <- topcountries.gdp2020 %>% arrange(desc(confirmed))
-View(topcountries.gdp2020)
-topcountries.gdp2020
 ```
 
 ```{r}
@@ -749,41 +420,12 @@ data <- odbcConnect("coronavirus19",uid = "root",pwd = "1234" )
 dataGDP2019 <- sqlQuery(data, "SELECT * FROM gdp19")
 datapop <- sqlQuery(data, "SELECT * FROM population")
 dataHealthRank <- sqlQuery(data, "SELECT * FROM healthRanking")
-data.temp <- sqlQuery(data, "SELECT * FROM avg_world_temp_2020")
-
-data.temp <- data.temp[!(names(data.temp) %in% c("MyUnknownColumn", "Continent"))]  %>% rename(c("Country" = "country")) %>% rename(c("City" = "city"))
-data.temp$country[data.temp$country == "United States"] <- "US"
-
-data.long.temp <- melt(data.temp,id = c("country", "city"), variable.name = "month", value.name = "avg.temp")
-#View(data.long.temp)
-  
-count.city <- aggregate(city ~ country, data = data.temp, length) %>% rename(c("city" = "city.count"))
-#count.city
-
-sum.temp <- data.long.temp[!(names(data.long.temp) %in% c("city"))]
-sum.temp <- aggregate(. ~ country + month, data = sum.temp, sum, na.rm=TRUE) 
-sum.temp <- sum.temp[sum.temp$month %in% c("Apr", "May", "Jun", "Jul", "Aug"),]
-#sum.temp
-
-data.temp.month <- sum.temp %>%
-  dcast(country ~ month) %>% merge(count.city ,all = T) %>% 
-  melt(id = c("country", "city.count"), variable.name = "month", value.name = "avg.temp") %>% 
-  mutate(avg.temp = (avg.temp / city.count) %>% round(1)) 
-data.temp.month <- data.temp.month[!(names(data.temp.month) %in% c("city.count"))]
-data.temp.month
-
-data.latest.temp <- aggregate(avg.temp ~ country, data = data.temp.month, sum) %>%
-  mutate(avg.temp = (avg.temp / 5) %>% round(1))
-data.latest.temp
-View(data.latest.temp)
-
-
-
-dataHealthRank <- dataHealthRank[,!(names(dataHealthRank) %in% c("rank","infrastructure","professional","cost","medAvail","govReadiness"))]%>%rename(c("Country.Region"="country"))
+raw.temp <- sqlQuery(data, "SELECT * FROM avg_world_temp_2020")
+dataHealthRank <- dataHealthRank[,!(names(dataHealthRank) %in% c("rank","infrastructure","professional","cost","medAvail","govReadiness"))]
+#View(dataHealthRank)
 dataGDP2019 <- dataGDP2019[,!(names(dataGDP2019) %in% c("code"))]%>%rename(c("GDP (millions of US dollars)" = "GDP"))
 datapop <- datapop %>%rename(c("Country" = "country"))
 #View(dataGDP2019)
-#View(datapop)
 ```
 
 ```{r}
@@ -795,6 +437,63 @@ View(topcountries.gdp2019)
 topcountries.gdp2019
 
 
+```
+```{r}
+raw.temp <- sqlQuery(data, "SELECT * FROM avg_world_temp_2020")
+raw.temp <- raw.temp[!(names(raw.temp) %in% c("MyUnknownColumn"))] %>% rename(c("Country" = "country")) %>% rename(c("City" = "city")) %>% rename(c("Continent" = "continent"))
+raw.temp$country[raw.temp$country == "United States"] <- "US"
+#View(data.temp)
+raw.temp
+
+data.temp <- raw.temp[, names(raw.temp) %in% c("country", "city", "Apr", "May", "Jun", "Jul", "Aug")] 
+data.temp <- data.frame(country = data.temp[,1], city = data.temp[,2], avg.temp = rowMeans(data.temp[,-c(1:2)])) 
+data.temp <- aggregate(avg.temp ~ country, data = data.temp, mean) %>%
+  mutate(avg.temp = (avg.temp %>% round(1)))
+```
+
+
+```{r}
+first.date <- as.Date("2020-04-01")
+#last.date <- seq(as.Date("2020-05-01"),length=5,by="months")-1
+
+data_total.month <- data_total[, c(1:5)] %>%
+  mutate(month.confirmed = confirmed - c(NA,head(confirmed,-1)),
+         month.deaths = deaths - c(NA,head(deaths,-1)) ,
+         month.recovered = recovered - c(NA,head(recovered,-1)))
+
+data_total.month$month.confirmed[data_total.month$date %in% first.date] <- 0
+data_total.month$month.deaths[data_total.month$date %in% first.date] <- 0
+data_total.month$month.recovered[data_total.month$date %in% first.date] <- 0
+
+#View(data_total.month)
+
+data_total.mean <- aggregate(cbind(month.confirmed, month.deaths,month.recovered) ~ month(date) + country,
+             data=data_total.month ,FUN=mean)
+
+data_total.mean <- data_total.mean %>% 
+  mutate(month.confirmed = month.confirmed %>% round(1),
+         month.deaths = month.deaths %>% round(1) ,
+         month.recovered = month.recovered %>% round(1)
+         ) %>%
+  rename(c("month(date)" = "month"))
+
+data_total.mean$month[data_total.mean$month == 4] <- "Apr"
+data_total.mean$month[data_total.mean$month == 5] <- "May"
+data_total.mean$month[data_total.mean$month == 6] <- "Jun"
+data_total.mean$month[data_total.mean$month == 7] <- "Jul"
+data_total.mean$month[data_total.mean$month == 8] <- "Aug"
+
+View(data_total.mean)
+```
+
+```{r}
+data.temp.month <- raw.temp[, names(raw.temp) %in% c("country", "city", "Apr", "May", "Jun", "Jul", "Aug")] 
+data.temp.month <- aggregate(. ~ country, data = data.temp.month[,-c(2)], mean) 
+data.temp.month[-c(1)] <- data.temp.month[-c(1)] %>% round(1)
+data.temp.month <- melt(data.temp.month, id = c("country")) %>% rename(c("variable" = "month")) %>% rename(c("value" = "avg.temp"))
+data.latest.temp <- data_total.mean %>% merge(data.temp.month)
+data.latest.temp <- top.countries %>% merge(data.latest.temp , by = "country") 
+View(data.latest.temp)
 ```
 
 
@@ -809,11 +508,46 @@ normalize = function(data){
   tanh(z/2)
 }
 norm_data = as.data.frame(apply(topcountries.gdp2019[,2:7],2,normalize))
+norm_data <- norm_data[,!(names(norm_data) %in% c("GDP","healthCareIndex","avg.temp"))]
 View(norm_data)
 norm_data
 ```
+```{r}
+##Spider plot all data
+topcountries.gdp2019 <- topcountries.gdp2019[,(names(topcountries.gdp2019) %in% c("country","GDP","death.rate","recovered.rate","confirmed.rate","healthCareIndex","avg.temp","GDP"))]
+#View(topcountries.gdp2019)
+normalize = function(data){
+  return ((data - min(data,na.rm = TRUE))/(max(data,na.rm = TRUE) - min(data,na.rm = TRUE)))
+  #return ((data - mean(data,na.rm = TRUE))/(max(data,na.rm = TRUE) - min(data,na.rm = TRUE)))
+  #return ((data - mean(data,na.rm = TRUE))/(sd(data,na.rm = TRUE)))
+}
+dataSpider = as.data.frame(apply(topcountries.gdp2019[,2:7],2,normalize))
+dataSpider <- dataSpider %>% round(3)
+  
+View(dataSpider)
+```
+
 
 ```{r}
+
+data.latest.temp <- data.latest.temp[,(names(data.latest.temp) %in% c("month","country","month.confirmed","month.deaths","month.recovered","avg.temp"))]
+#View(data.latest.temp)
+normalize = function(data){
+  #return ((data - min(data,na.rm = TRUE))/(max(data,na.rm = TRUE) - min(data,na.rm = TRUE)))
+  #return ((data - mean(data,na.rm = TRUE))/(max(data,na.rm = TRUE) - min(data,na.rm = TRUE)))
+  #return ((data - mean(data,na.rm = TRUE))/(sd(data,na.rm = TRUE)))
+  #z <- scale(data);
+  tanh(z/2)
+}
+norm_dataNew = as.data.frame(apply(data.latest.temp[,3:6],2,normalize))
+#norm_dataNew <- norm_dataNew[,!(names(norm_dataNew) %in% c("GDP","healthCareIndex","avg.temp"))]
+View(norm_dataNew)
+```
+
+
+
+```{r}
+## correlation of daily
 head(norm_data)
 cor(norm_data)
 ggcorrplot(cor(norm_data),hc.order = TRUE,
@@ -830,13 +564,71 @@ ggcorrplot(cor(norm_data),hc.order = TRUE,
     #legend.position = "none"
   ) 
 ```
+```{r}
+## correlation of month
+head(norm_dataNew)
+cor(norm_dataNew)
+ggcorrplot(cor(norm_dataNew),hc.order = TRUE,
+           outline.color = "white",
+           colors = c("#6D9EC1","white","#E46726"),
+           lab = TRUE)+
+  theme(
+    axis.line = element_blank(),
+    axis.ticks = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    #legend.position = "none"
+  ) 
+```
 
 ```{r}
+head(norm_data)
+Rsquared <- (cor(norm_data))^2
+ggcorrplot(Rsquared,hc.order = TRUE,
+           outline.color = "white",
+           colors = c("#6D9EC1","white","#E46726"),
+           lab = TRUE)+
+  theme(
+    axis.line = element_blank(),
+    axis.ticks = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    #legend.position = "none"
+  ) 
+
+```
+
+```{r}
+## add country name of daily
 norm_data$country <- c("Argentina","Bangladesh","Brazil","Chile","Colombia","France","Germany","India","Iran","Italy","Mexico","Pakistan","Peru","Russia","Saudi Arabia","South Africa","Spain","Turkey","United Kingdom","US")
+
 View(norm_data)
 norm_data
 
 ```
+
+```{r}
+## add country name of month
+norm_dataNew$country <- data.latest.temp$country
+
+View(norm_dataNew)
+norm_dataNew
+
+```
+```{r}
+## add country name of Spider table
+dataSpider$country <- topcountries.gdp2019$country
+
+View(dataSpider)
+dataSpider
+
+```
+
+
 
 ```{r}
 
@@ -844,7 +636,7 @@ data.longGDP <- melt(norm_data,id = c("country"))
 data.longGDP <- data.longGDP %>% rename(c("variable" = "Type")) %>% rename(c("value" = "count"))
 #View(data.longGDP)
 level_order_y <- factor(data.longGDP$Type,levels = c("avg.temp","GDP","healthCareIndex","recovered.rate","death.rate","confirmed.rate"))
-level_order_x <- factor(data.longGDP$country,levels = c("US","Germany","Brazil","India","Russia","Peru","South Africa","Colombia","Mexico","Spain","Argentina","Chile","Iran","United Kingdom","France","Saudi Arabia","Bangladesh","Pakistan","Turkey","Italy"))
+level_order_x <- factor(data.longGDP$country,levels = c("US","Brazil","India","Russia","Peru","South Africa","Colombia","Mexico","Spain","Argentina","Chile","Iran","United Kingdom","France","Saudi Arabia","Bangladesh","Pakistan","Turkey","Italy","Germany"))
 ggplot(data.longGDP,aes(level_order_x,level_order_y,fill=count))+
   geom_tile() +
   scale_fill_gradient(low = "pink", high = "blue") +
@@ -862,11 +654,36 @@ ggplot(data.longGDP,aes(level_order_x,level_order_y,fill=count))+
     #legend.position = "none"
   ) 
 ```
+```{r}
+
+data.longGDPNew <- melt(norm_dataNew,id = c("country")) 
+data.longGDPNew <- data.longGDPNew %>% rename(c("variable" = "Type")) %>% rename(c("value" = "count"))
+#View(data.longGDP)
+level_order_y <- factor(data.longGDPNew$Type,levels = c("month.confirmed","month.deaths","month.recovered","avg.temp"))
+level_order_x <- factor(data.longGDPNew$country,levels = c("US","Brazil","India","Russia","Peru","South Africa","Colombia","Mexico","Spain","Argentina","Chile","Iran","United Kingdom","France","Saudi Arabia","Bangladesh","Pakistan","Turkey","Italy","Germany"))
+ggplot(data.longGDPNew,aes(level_order_x,level_order_y,fill=count))+
+  geom_tile() +
+  scale_fill_gradient(low = "pink", high = "blue") +
+  xlab("") +
+  ylab("") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90,vjust = 1))+
+  theme(
+    axis.line = element_blank(),
+    axis.ticks = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    #legend.position = "none"
+  ) 
+```
+
 
 ```{r}
 #plot line
-ggplot(data.longGDP,aes(country,count,color=Type,group = Type))+
-  geom_line()+
+ggplot(data.longGDP,aes(country,count,color=Type,group = Type))+geom_smooth(method = "lm")+
+  geom_point()+
   xlab("") +
   ylab("") +
   theme_bw() +
@@ -879,8 +696,114 @@ ggplot(data.longGDP,aes(country,count,color=Type,group = Type))+
     panel.border = element_blank(),
     panel.background = element_blank(),
     #legend.position = "none"
-  )
+  )+ facet_grid(Type~.)
 ```
+
+
+```{r}
+dataSS <- dataSpider[, c(ncol(dataSpider),1:(ncol(dataSpider)-1))]
+dataSS <- rbind(rep(max(dataSS),1),rep(0,1),dataSS)
+
+View(dataSS)
+```
+
+
+```{r}
+
+
+#Define fill colors
+colors_fill <- c(scales::alpha("red",0.1),
+                 scales::alpha("orange",0.1),
+                 scales::alpha("yellow",0.1),
+                 scales::alpha("lightgreen",0.1),
+                 scales::alpha("blue",0.1),
+                 scales::alpha("purple",0.1))
+#Define line colors
+colors_line <- c(scales::alpha("darkred",0.9),
+                 scales::alpha("darkorange",0.9),
+                 scales::alpha("gold",0.9),
+                 scales::alpha("darkgreen",0.9),
+                 scales::alpha("darkblue",0.9),
+                 scales::alpha("purple",0.9))
+#Create plot
+radarchart(dataSS,
+           seg = 7, #Number of axis segments
+           title = "Top 20 Country",
+           pcol = colors_line,
+           pfcol = colors_fill,
+           plwd = 2)
+#Add a legend
+legend(x = 0.6,
+       y = 1.35,
+       legend = rownames(dataR[-c(1,2),]),
+       bty = "n",pch = 20,col = colors_line,cex = 1.2 ,pt.cex = 3)
+```
+
+
+
+
+```{r}
+#Construct the data set
+dataR <- data.frame(confirmed.rate = c(1,0,0.835,0),
+                    death.rate = c(1,0,0.15,0.075),
+                    recovered.rate = c(1,0,0.379,1),
+                    GDP = c(1,0,1,0.002),
+                    healthCareIndex = c(1,0,0.399,0),
+                    row.names = c("max","min","US","Pakistan")
+                    )
+#Define fill colors
+colors_fill <- c(scales::alpha("tomato",0.1),
+                 scales::alpha("skyblue",0.1))
+#Define line colors
+colors_line <- c(scales::alpha("tomato",0.9),
+                 scales::alpha("royalblue",0.9))
+#Create plot
+radarchart(dataR,
+           seg = 5, #Number of axis segments
+           title = "Top 20 COVID-19 cases",
+           pcol = colors_line,
+           pfcol = colors_fill,
+           plwd = 2)
+#Add a legend
+legend(x = 0.6,
+       y = 1.35,
+       legend = rownames(dataR[-c(1,2),]),
+       bty = "n",pch = 20,col = colors_line,cex = 1 ,pt.cex = 3)
+```
+```{r}
+#Construct the data set
+dataR <- data.frame(confirmed.rate = c(1,0,0.18,1,0.835,0),
+                    death.rate = c(1,0,0.925,0.125,0.15,0.075),
+                    recovered.rate = c(1,0,0,0.983,0.379,1),
+                    GDP = c(1,0,0.123,0.003,1,0.002),
+                    healthCareIndex = c(1,0,0.822,0.288,0.399,0),
+                    row.names = c("max","min","United kingdom","Chile","US","Pakistan")
+                    )
+#Define fill colors
+colors_fill <- c(scales::alpha("#f48476",0.2),
+                 scales::alpha("#4699c2",0.2),
+                 scales::alpha("yellow",0.2),
+                 scales::alpha("#466bc2",0.2))
+#Define line colors
+colors_line <- c(scales::alpha("#f48476",0.9),
+                 scales::alpha("#4699c2",0.9),
+                 scales::alpha("gold",0.9),
+                 scales::alpha("#466bc2",0.9))
+#Create plot
+radarchart(dataR,
+           seg = 5, #Number of axis segments
+           title = "Top 20 COVID-19 cases",
+           pcol = colors_line,
+           pfcol = colors_fill,
+           plwd = 2)
+#Add a legend
+legend(x = 0.6,
+       y = 1.35,
+       legend = rownames(dataR[-c(1,2),]),
+       bty = "n",pch = 20,col = colors_line,cex = 0.8 ,pt.cex = 3)
+```
+
+
 
 ```{r}
 #plot boxplot
@@ -888,6 +811,18 @@ ggplot(data.longGDP,aes(Type,count, fill=Type)) + geom_boxplot(size=1.2,alpha=.7
   xlab("") +
   ylab("")
 ```
+```{r}
+ggplot(data.longGDP,aes(Type,count, fill=Type)) + geom_violin() + coord_flip()
+```
+```{r}
+ggplot(data.longGDP,aes(x = count,color = Type, fill=Type,linetypes = Type)) + geom_density(alpha = .3)+
+  facet_grid(Type~.)
+
+View(data.longGDP)
+
+```
+
+
 
 ```{r}
 #Countries with the best health care systems,2019
