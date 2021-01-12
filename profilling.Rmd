@@ -32,7 +32,6 @@ library(dplyr)
 library(tidyr)
 ```
 
-
 ```{r}
 # ---------- Database Diagnosis (RODBC / sqldf) -----------
 
@@ -438,7 +437,7 @@ d_top20 <- function(data){
 
 profvis({
   # d_top 20: Top 20 countries with dplyr
-  data2 <- data %>% d_top20()
+  #data2 <- data %>% d_top20()
   data.latest.all <- data %>% filter(date == max(date)) %>%
   select(country, date,confirmed, new.confirmed, current.confirmed,
          recovered, deaths, new.deaths, death.rate=rate.lower) %>%

@@ -269,7 +269,7 @@ mutate(death.rate=(100 * deaths/confirmed) %>% round(1))
 
 data.latest <- arrange(data.latest,desc(confirmed)) %>% mutate(ranking = rank(desc(confirmed)))
 data.latest <- data.latest[,c("country", "confirmed", "deaths", "death.rate", "new.confirmed", "new.deaths", "current.confirmed")] 
-data.latest <- data.latest[c(1:2, nrow(data.latest) , 4:21, 3),]
+data.latest <- data.latest[c(1:2, 4:nrow(data.latest), 3),]
 rownames(data.latest) <- NULL
 
 data.latest
@@ -451,6 +451,9 @@ m.top <- m.top %>%
                     )) 
 m.top$txt <- m.top$txt %>% lapply(htmltools::HTML)
 m.top
+
+test.m <- mean(m.top[,c("avg.temp")])
+test.m
 ```
 
 
@@ -566,10 +569,51 @@ data.temp.month[-c(1)] <- data.temp.month[-c(1)] %>% round(1)
 data.temp.month <- melt(data.temp.month, id = c("country")) %>% rename(c("variable" = "month")) %>% rename(c("value" = "avg.temp"))
 data.temp.month
 ```
+
 ```{r}
-data.latest.temp <- data_total.mean %>% merge(data.temp.month)
+top.countries
+```
+
+```{r}
+top.countries.name <- top.countries[,1]
+data.latest.temp <- data_total.mean %>% merge(data.temp.month[data.temp.month$country %in% top.countries.name,]) 
 data.latest.temp
 ```
+
+```{r}
+#data_total.month
+data_total.avg <- aggregate(cbind(month.confirmed, month.deaths,month.recovered) ~ country,
+             data=data_total.month ,FUN=mean)
+
+data_total.avg <- data_total.avg %>% 
+  mutate(avg.confirmed = month.confirmed %>% round(1),
+         avg.deaths = month.deaths %>% round(1) ,
+         avg.recovered = month.recovered %>% round(1)
+         ) 
+
+data_total.avg <- data_total.avg[, c(1, 5:7)]
+#data_total.avg
+```
+```{r}
+data_total.avg.top <- data_total.avg[data_total.avg$country %in% as.character(top.countries.name),] 
+data_total.avg.top.temp <- data_total.avg.top %>% merge(data.temp)
+data_total.avg.top.temp
+```
+```{r}
+data.latest
+world.confirmed <- data.latest[1,2]
+
+world.ratio <- data.latest[!(data.latest$country == c("World")),1:2] %>%
+  mutate(percentage =  (100 *confirmed / world.confirmed) %>% round(1))
+
+rownames(world.ratio) <- NULL
+View(world.ratio)
+
+write.csv(world.ratio,"D:/4D/Pre Project/files/world_ratio.csv", row.names = FALSE)
+```
+
+
+
 
 
 
