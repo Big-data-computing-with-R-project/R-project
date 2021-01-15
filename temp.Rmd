@@ -19,7 +19,7 @@ output: html_notebook
 library(RODBC) #connect mysql
 #library(odbc) #connect mysql
 library(lubridate) #date operation
-library(magrittr) #pipe operation
+library(magrittr ) #pipe operation
 library(reshape2)
 library(ggplot2)
 library(plyr)

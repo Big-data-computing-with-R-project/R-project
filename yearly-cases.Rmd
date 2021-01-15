@@ -9,6 +9,9 @@ output: html_notebook
 #install.packages("dprep")
 #install.packages("normalr")
 #install.packages("ggcorrplot")
+#install.packages("RColorBrewer")
+#install.packages("rgdal")
+#install.packages("jsonlite")
 ```
 
 ```{r}
@@ -21,7 +24,13 @@ library(tidyr)
 library(knitr)
 library(normalr)
 library(ggcorrplot)
+library(leaflet)
+#library(jsonlite)
+#library(RColorBrewer)
+#library(rgdal)
+#library(wesanderson)
 #library(MLRMPA)
+
 #??src_mysql
 my_db <- src_mysql(
   dbname = "covid",
@@ -98,13 +107,20 @@ data %<>% mutate(new.confirmed = ifelse(new.confirmed < 0, 0, new.confirmed),
                  new.deaths = ifelse(new.deaths < 0, 0, new.deaths),
                  new.recovered = ifelse(new.recovered < 0, 0, new.recovered))
 ## death rate based on total deaths and recovered cases
-data %<>% mutate(rate.upper = (100 * deaths / (deaths + recovered)) %>% round(1))
+data %<>% mutate(rate.upper = (100 * deaths / (deaths + recovered)) %>% round(1),
+                 rate.upper = ifelse(is.nan(rate.upper), 0, rate.upper))
+
 ## lower bound: death rate based on total confirmed cases
-data %<>% mutate(rate.lower = (100 * deaths / confirmed) %>% round(1))
+data %<>% mutate(rate.lower = (100 * deaths / confirmed) %>% round(1),
+                 rate.lower = ifelse(is.nan(rate.lower), 0, rate.lower))
+
 ## death rate based on the number of death/recovered on every single day
-data %<>% mutate(rate.daily = (100 * new.deaths / (new.deaths + new.recovered)) %>% round(1))
+data %<>% mutate(rate.daily = (100 * new.deaths / (new.deaths + new.recovered)) %>% round(1),
+                 rate.daily = ifelse(is.nan(rate.daily), 0, rate.daily))
+
 View(data)
 ```
+
 ```{r}
 ## convert from wide to long format
 data.long <- data %>%
@@ -117,6 +133,7 @@ data.long %<>% mutate(type=recode_factor(type, confirmed='Total Confirmed',
                                          deaths='Deaths'))
 View(data.long)
 ```
+
 ```{r}
 ##Number of case World
 world <- filter(data.long,country == 'World')
@@ -198,19 +215,21 @@ rates.long <- data %>%
 rates.long %<>% mutate(type=recode_factor(type, rate.daily='Daily',
                              rate.upper='Upper bound'))
 ```
+
 ```{r}
 ## ranking by confirmed cases
 data.latest.all <- data %>% filter(date == max(date)) %>%
   select(country, date,confirmed, new.confirmed, current.confirmed,
          recovered, deaths, new.deaths, death.rate=rate.lower) %>%
-  mutate(ranking = dense_rank(desc(confirmed)))
-#View(data.latest.all)
+  mutate(ranking = dense_rank(desc(confirmed))) %>%
+  arrange(ranking)
+View(data.latest.all)
+
 k <- 20
 ## top 20 countries: 21 incl. 'World'
 top.countries <- data.latest.all %>% filter(ranking <= k + 1) %>%
   arrange(ranking) %>% pull(country) %>% as.character()
 top.countries %>% setdiff('World') %>% print()
-
 ```
 
 ```{r}
@@ -256,7 +275,6 @@ data.latest
 ```
 ```{r}
 data.latest %>% mutate(death.rate=death.rate %>% format(nsmall=1) %>% paste0('%'))
-
 
 ```
 
@@ -337,20 +355,144 @@ df_healt <- as.data.frame(df_healt)
 df_healt <- select(df_healt,c("country","healthCareIndex"))
 View(df_healt)
 ```
+
 ```{r}
 #temp
-df_temp <- tbl(my_db, sql("select * from temp"))
-df_temp <- as.data.frame(df_temp)
+df_temp <- tbl(my_db, sql("select * from world_temp"))
+df_temp <- as.data.frame(df_temp) 
+df_temp$Country[df_temp$Country == "United States"] <- "US"
+
 df_city <- select(df_temp,c("Country","City")) %>%
   rename(country=Country) %>% 
   rename(city=City)
+
 numofcity <- aggregate(city ~ country, data = df_city, length)
-df_temp <- select(df_temp,c("Country","Apr","May","Jun","Jul","Aug")) %>%
+
+df_temp <- select(df_temp,c("Country","Avg_Year")) %>%
   rename(country=Country)
-df_temp <- data.frame(country=df_temp[,1],avg=rowMeans(df_temp[,-1]))
-df_temp <- df_temp %<>% group_by(country) %>% summarise(avg_all = mean(avg,na.rm = TRUE))
+View(df_temp)
+
+#df_temp <- data.frame(country=df_temp[,1],avg=rowMeans(df_temp[,-1]))
+df_temp <- df_temp %<>% group_by(country) %>% summarise(avg_temp = mean(Avg_Year,na.rm = TRUE)%>% round(1))
 df_temp
 ```
+```{r}
+#display.brewer.all()
+df_temp.all <- df_temp  %>% merge(data.latest.all)
+View(df_temp.all)
+df_temp_top.all <- df_temp.all %>% filter(country %in% top.countries) %>%
+  mutate(ranking = ranking - 1) %>%
+  arrange(ranking)
+View(df_temp_top)
+g_temp_top <- df_temp_top %>%
+  ggplot(aes(x = reorder(country, ranking), y = avg_temp, fill = avg_temp)) +
+  labs(title=paste0("Temperature in Top  20 countries"), subtitle = "Average Temperature in Top 20 countries with most confirmed cases (°C) (2020)") +
+  scale_color_gradient(low = "#93DBFF", high = "#FF7771") +
+  geom_text(aes(label=avg_temp, y=avg_temp), size=4, vjust=-0.5) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme(
+        legend.title=element_blank(),
+        legend.position='none',
+        plot.title=element_text(size = 15, hjust = 0.5),
+        plot.subtitle = element_text(size = 12, hjust = 0.5),
+        axis.text=element_text(size=8),
+        axis.text.x=element_text(size = 9, angle=45, hjust=1)) +
+  scale_x_discrete(name = "Country") +
+  scale_y_discrete(name = "Average Temperature")
+
+           #labs(title = "Temperature in Top  20 countries", subtitle = "Temperature in Top 20 countries with most confirmed cases (°C)")
+         
+#g_temp_top         
+g_temp_top 
+```
+
+
+```{r}
+#df_conf
+#data.latest.all
+lat.long <- rename(df_conf, "country" = "Country.Region", "city" = "Province.State") %>% 
+  select("country", "Lat", "Long") %>% 
+  merge(df_temp.all[c("country","confirmed", "recovered", "deaths", "avg_temp", "ranking")], by = "country") %>%
+  distinct(country, .keep_all = TRUE) %>%
+  mutate(ranking = ranking - 1) %>%
+  arrange(ranking)
+View(lat.long)
+```
+```{r}
+label_world <- lat.long 
+label_world$avg_temp <- as.numeric(label_world[, names(label_world) %in% c("avg_temp")])
+label_world <- label_world %>%  
+  mutate(txt=paste0('<b>',ranking, '</b>',
+                    '<br/>','<b>',country, '</b>',
+                    '<br/>', "Temperature:  ",avg_temp, ' °C',
+                    '<br/>', "Confirmed:  ", confirmed, 
+                    '<br/>', "Deaths: ", deaths,
+                    '<br/>', "Recovered: ", recovered
+                    )) 
+
+label_world$txt <- label_world$txt %>% lapply(htmltools::HTML)
+label_world 
+
+label_top <- label_world %>% filter(ranking < 21)
+label_top
+```
+
+```{r}
+wpal <- colorNumeric("YlOrRd", label_world$avg_temp, n = 4)
+
+topIcon <- makeIcon("star.png",
+  #iconUrl = "https://static.vecteezy.com/system/resources/previews/001/189/063/non_2x/star-rounded-png.png",
+  iconWidth = 10, iconHeight = 10
+  #iconAnchorX = 20, iconAnchorY = 20
+  
+)
+
+label_world <- label_world %>% filter(ranking > 20) 
+  
+m <- leaflet(width=1200, height=800) %>% addTiles()  
+m %<>%  addCircleMarkers(label_world$Long, label_world$Lat,
+                        # radius=2+log2(x$confirmed),
+                        radius=10,#*log2(m.world$avg.temp),
+                        stroke=F,
+                        #color='red',
+                        color = wpal(label_world$avg_temp), 
+                        fillOpacity=0.5,
+                        #popup=label.top$txt
+                        label= label_world$txt,
+                        group = "World"
+                        ) %>%
+  
+  addCircleMarkers(label_top$Long, label_top$Lat,
+                        # radius=2+log2(x$confirmed),
+                        radius=10,#*log2(m.world$avg.temp),
+                        stroke=F,
+                        #color='red',
+                        color = wpal(label_top$avg_temp), 
+                        fillOpacity=0.5,
+                        #popup=label.top$txt
+                        label= label_top$txt,
+                        group = "Top 20 Countries"
+                        ) %>%
+  
+  addLabelOnlyMarkers(label_top$Long, label_top$Lat, label = label_top$ranking,
+                      labelOptions = labelOptions(noHide = TRUE, textOnly = TRUE, 
+                                                  direction = "head", 
+                                                  offset = c(5,4)),
+                      group = "Top 20 Countries") %>%
+  
+  addLegend("bottomright", pal = wpal, values = label_world$avg_temp, opacity = 1,
+            labFormat = labelFormat(suffix = " °C"),
+            title = "Temperature") %>% 
+  
+  addLayersControl(
+    #baseGroups = c("OSM (default)", "Toner", "Toner Lite"),
+    overlayGroups = c("Top 20 Countries", "World"),
+    options = layersControlOptions(collapsed = FALSE)
+  )
+m
+
+```
+
 
 
 
