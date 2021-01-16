@@ -12,6 +12,7 @@ output: html_notebook
 #install.packages("RColorBrewer")
 #install.packages("rgdal")
 #install.packages("jsonlite")
+#install.packages("plotly")
 ```
 
 ```{r}
@@ -25,6 +26,7 @@ library(knitr)
 library(normalr)
 library(ggcorrplot)
 library(leaflet)
+library(plotly)
 #library(jsonlite)
 #library(RColorBrewer)
 #library(rgdal)
@@ -95,6 +97,39 @@ data %<>% mutate(current.confirmed = confirmed - deaths - recovered)
 View(data)
 
 ```
+
+```{r}
+#World Map (with State)
+#select last column,which is the number of latest confirmed cases
+x <- df_conf
+x
+x$confirmed <- x[, ncol(x)]
+x %<>% select(c(Country.Region, Province.State, Lat, Long, confirmed)) %>%
+  mutate(txt=paste0(Country.Region, ' - ', Province.State, ': ', confirmed))
+
+m <- leaflet(width=1200, height=800) %>% addTiles()
+# circle marker (units in pixels)
+m %<>% addCircleMarkers(x$Long, x$Lat,
+                        radius=1+log2(x$confirmed),
+                        #radius=0.01*sqrt(x$confirmed),
+                        stroke=F,
+                        color='red', fillOpacity=0.3,
+                        label = x$txt
+                        #popup=x$txt
+                        )
+# world
+m
+```
+```{r}
+#View(lat.long)
+m.confirmed <- data %>%
+  select(country, date, confirmed) %>%
+  merge((lat.long %>% select(country, Lat, Long)), by = "country") %>% 
+  arrange(country, date)
+m.confirmed
+```
+
+
 ```{r}
 #rate
 data %<>% arrange(country, date)
@@ -135,6 +170,7 @@ View(data.long)
 ```
 
 ```{r}
+world
 ##Number of case World
 world <- filter(data.long,country == 'World')
 plot1 <- world %>% filter(type != 'Total Confirmed') %>%
@@ -174,13 +210,17 @@ n <- nrow(data.world)
 plot1 <- ggplot(data.world, aes(x=date, y=current.confirmed)) +
   geom_point() + geom_smooth() +
   xlab('') + ylab('Count') + labs(title='Current Confirmed Cases') +
-  theme(axis.text.x=element_text(angle=45, hjust=1))
+  theme(axis.text.x=element_text(angle=45, hjust=1)) 
+gly.plot1 <- ggplotly(plot1)
+
 plot2 <- ggplot(data.world, aes(x=date, y=new.confirmed)) +
   geom_point() + geom_smooth() +
   xlab('') + ylab('Count') + labs(title='Daily New Confirmed Cases') +
-  theme(axis.text.x=element_text(angle=45, hjust=1))
+  theme(axis.text.x=element_text(angle=45, hjust=1)) 
+gly.plot2 <- ggplotly(plot2)
 ## show two plots side by side
 grid.arrange(plot1, plot2, ncol=2)
+#subplot(gly.plot1, gly.plot2)
 ```
 ```{r}
 ## a scatter plot with a smoothed line and vertical x-axis labels
@@ -212,8 +252,27 @@ rates.long <- data %>%
   select(c(country, date, rate.upper, rate.lower, rate.daily)) %>%
   gather(key=type, value=count, -c(country, date))
 # set factor levels to show them in a desirable order
-rates.long %<>% mutate(type=recode_factor(type, rate.daily='Daily',
-                             rate.upper='Upper bound'))
+rates.long %<>% mutate(type=recode_factor(type, rate.daily = "Daily",
+                             rate.upper="Upper bound",
+                             rate.lower = "Lower bound")
+                      )
+
+g.death <- rates.long %>% filter(country == "World") %>% rename(c("Rate" = "count", "Date" = "date", "Type" = "type")) %>%
+  ggplot(aes(x = Date, y = Rate)) +
+  labs(title=paste0("Death Cases & Death Rates"), subtitle = "Death Cases & Death Rates in Top 20 Countries (%) (2020)") +
+  geom_line(aes(color = Type)) + 
+  #stat_smooth(aes(color = type))
+  #stat_smooth(aes(x = date, y = count), method = "lm", formula = y ~ poly(x, 21), se = FALSE) +
+  theme(
+    axis.text.x = element_text(size=12),
+    axis.text.y = element_text(size=12),
+        plot.title=element_text(size = 15, hjust = 0.5),
+        plot.subtitle = element_text(size = 12, hjust = 0.5),
+        ) +
+  xlab("Date") + ylab("Rates (%)")
+
+gly.death <- ggplotly(g.death)
+gly.death
 ```
 
 ```{r}
@@ -397,13 +456,16 @@ g_temp_top <- df_temp_top %>%
         plot.subtitle = element_text(size = 12, hjust = 0.5),
         axis.text=element_text(size=8),
         axis.text.x=element_text(size = 9, angle=45, hjust=1)) +
-  scale_x_discrete(name = "Country") +
-  scale_y_discrete(name = "Average Temperature")
+  xlab("Country") + ylab("Average Temperature")
+  
+  #scale_x_discrete(name = "Country") +
+  #scale_y_discrete(name = "Average Temperature")
 
            #labs(title = "Temperature in Top  20 countries", subtitle = "Temperature in Top 20 countries with most confirmed cases (°C)")
          
 #g_temp_top         
 g_temp_top 
+
 ```
 
 
@@ -438,7 +500,7 @@ label_top
 ```
 
 ```{r}
-wpal <- colorNumeric("YlOrRd", label_world$avg_temp, n = 4)
+wpal <- colorNumeric("YlOrRd", label_world$avg_temp, n = 5)
 
 topIcon <- makeIcon("star.png",
   #iconUrl = "https://static.vecteezy.com/system/resources/previews/001/189/063/non_2x/star-rounded-png.png",
@@ -481,7 +543,7 @@ m %<>%  addCircleMarkers(label_world$Long, label_world$Lat,
                       group = "Top 20 Countries") %>%
   
   addLegend("bottomright", pal = wpal, values = label_world$avg_temp, opacity = 1,
-            labFormat = labelFormat(suffix = " °C"),
+            labFormat = labelFormat(suffix = ' °C'),
             title = "Temperature") %>% 
   
   addLayersControl(
@@ -493,16 +555,81 @@ m
 
 ```
 
+```{r}
+data.gdp
+#rank GDP
+data.top.hight <- data.gdp %>%
+  mutate(ranking = dense_rank(desc(GDP)))
+data.top.hight
+k <- 15
+top.gdp <- data.top.hight %>% 
+  #filter(ranking <= k + 1) %>% 
+  arrange(ranking)
+top.gdp <- head(top.gdp,21)
 
+data.top.low <- data.gdp %>%
+  mutate(ranking = dense_rank(GDP))
+low.gdp.long <- data.top.low %>% 
+  #filter(ranking <= k + 1) %>% 
+  arrange(ranking)
+#View(low.gdp.long)
+low.gdp <- head(low.gdp.long,23)
 
+top20.gdp <- data.gdp %>% 
+  filter(country %in% top.countries & country != "World") %>%
+  merge(data.latest.all %>% select(country, ranking), by = "country") %>%
+  mutate(ranking = ranking - 1) %>%
+  arrange(ranking)
+  
+top.gdp
+low.gdp
+top20.gdp
+```
+```{r}
+world.gdp <- df_gdp %>% 
+  filter(country == "World") %>% 
+  gather(key = Year, value = GDP, -country) 
+world.gdp$group <- cut(world.gdp$GDP,c(-Inf,0,Inf),labels = c("-","+"))
+
+g.world.gdp <- ggplot(world.gdp, aes(x = Year, y = GDP, fill = group)) +
+  labs(title=paste0("World's Real GDP Growth from 2012-2021")) +
+  geom_bar(stat = "identity") +
+  #geom_text(aes(label=GDP), size=4, hjust = 1.2) +
+  scale_fill_manual(values = c("-" = "red","+" = "limegreen")) +
+  theme_bw() + theme(legend.position = "none") +
+  ylab("") +
+  theme(legend.title=element_blank(),
+        plot.title = element_text(size=9, face = "bold")
+    )
+
+gly.world.gdp <- ggplotly(g.world.gdp) 
+gly.world.gdp
+```
 
 ```{r}
+top20.gdp$group <- cut(top20.gdp$GDP,c(-Inf,0,Inf),labels = c("-","+"))
+g.gdp <- top20.gdp %>%
+  ggplot(aes(x = GDP, y = reorder(country, -ranking), fill = group)) +
+  labs(title=paste0("Real GDP Growth of top 20 countries from 2019-2020")) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label=GDP), size=4, hjust = 1.2) +
+  scale_fill_manual(values = c("-" = "red","+" = "limegreen")) +
+  theme_bw() + theme(legend.position = "none") +
+  ylab("") +
+  theme(legend.title=element_blank(),
+        plot.title = element_text(size=9, face = "bold")
+    )
+g.gdp
+```
+
+```{r}
+data.latest.all
 #Top 20 with gdp
 data.longGDP <- df_gdp %>% gather(key=year, value=GDP, -c(country))
 data.top <- data.latest %>% filter(country!='World'& country!='Others')
 #data.top <- head(data.top,20)
-View(data.top)
-data.gdp <- filter(data.longGDP,year=='2020')
+#View(data.top)
+data.gdp <- filter(data.longGDP,year=='2020') %>% select(country, year,GDP)
 #View(data.gdp)
 #merge
 mergcountry = function(data1,data2){
@@ -514,22 +641,25 @@ data.top.world <- merge(x = data.top, y = df_gdp2019, by = "country", all.x = TR
   rename(GDP="GDP (millions of US dollars)")
 data.top.world <- merge(x = data.top.world, y = df_healt, by = "country", all.x = TRUE) %>%
   rename(healthcare="healthCareIndex")
+data.top.world <- merge(x = data.top.world, y = df_temp, by = "country", all.x = TRUE) 
 #data.top.world <- mergcountry(data.top.world, df_temp)
-View(data.top.world)
+#View(data.top.world)
 normalize = function(data){
   #return ((data - min(data,na.rm = TRUE))/(max(data,na.rm = TRUE) - min(data,na.rm = TRUE)))
   z <- scale(data);
   tanh(z/2)
 }
-norm_data = as.data.frame(apply(data.top.world[,2:9],2,normalize))
+norm_data = as.data.frame(apply(data.top.world[,2:10],2,normalize))
 corr_data <- norm_data
 norm_data$country <- c("Argentina","Bangladesh","Brazil","Chile","Colombia","France","Germany","India","Iran","Italy","Mexico","Pakistan","Peru","Russia","saudi Arabia","South Africa","Spain","Turkey","United Kingdom","US")
-View(norm_data)
-norm_data_plot <- select(norm_data,"country","confirm.rate","death.rate","recover.rate","healthcare","GDP")
+#View(norm_data)
+norm_data_plot <- select(norm_data,"country","confirm.rate","death.rate","recover.rate","healthcare","GDP", "avg_temp")
 norm_data_plot %<>% gather(key=type, value=count, -c(country))
 level_order <- factor(norm_data_plot$type, 
-                      level = c("GDP","healthcare","recover.rate","death.rate","confirm.rate"))
-ggplot(data = norm_data_plot, aes(x=country, y=level_order, fill=count)) + 
+                      level = c("avg_temp","GDP","healthcare","recover.rate","death.rate","confirm.rate"))
+
+
+ggplot(data = norm_data_plot, aes(x = country, y=level_order, fill=count)) + 
   geom_tile() +
   scale_fill_gradient(low = "pink", high = "blue") +
   xlab("") +
@@ -549,31 +679,11 @@ ggplot(data = norm_data_plot, aes(x=country, y=level_order, fill=count)) +
 ```
 
 
-```{r}
-#rank GDP
-data.top.hight <- data.gdp %>% select(country, year,GDP) %>%
-  mutate(ranking = dense_rank(desc(GDP)))
-data.top.hight
-k <- 15
-top.gdp <- data.top.hight %>% 
-  #filter(ranking <= k + 1) %>% 
-  arrange(ranking)
-top.gdp <- head(top.gdp,21)
-data.top.low <- data.gdp %>% select(country, year,GDP) %>%
-  mutate(ranking = dense_rank(GDP))
-low.gdp.long <- data.top.low %>% 
-  #filter(ranking <= k + 1) %>% 
-  arrange(ranking)
-View(low.gdp.long)
-low.gdp <- head(low.gdp.long,23)
-low.gdp
-```
-
 
 
 ```{r}
 #correlation
-corr_data %<>% select(c(GDP,confirm.rate,death.rate,recover.rate,healthcare))
+corr_data %<>% select(c(GDP,confirm.rate,death.rate,recover.rate,healthcare,avg_temp))
 head(corr_data)
 cor(corr_data)
 ggcorrplot(cor(corr_data),hc.order = TRUE,
