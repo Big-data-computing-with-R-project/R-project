@@ -1,0 +1,557 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+#install.packages("knitr")
+#install.packages("grid")
+install.packages("MLRMPA")
+#install.packages("dprep")
+#install.packages("normalr")
+#install.packages("ggcorrplot")
+```
+
+```{r}
+library(gridExtra)
+library(dplyr)
+library(lubridate)
+library(magrittr)
+library(ggplot2)
+library(tidyr)
+library(knitr)
+library(normalr)
+library(ggcorrplot)
+#library(MLRMPA)
+#??src_mysql
+my_db <- src_mysql(
+  dbname = "coronavirus",
+  host = "localhost",
+  user = "root",
+  password = "1234"
+)
+my_db
+
+##import data
+df_conf <- tbl(my_db, sql("select * from covid19_confirmed "))
+df_conf <- as.data.frame(df_conf)
+df_conf
+df_deaths <- tbl(my_db, sql("select * from covid19_deaths "))
+df_deaths <- as.data.frame(df_deaths)
+df_deaths
+df_recover <- tbl(my_db, sql("select * from covid19_recovered "))
+df_recover <- as.data.frame(df_recover)
+df_recover
+```
+```{r}
+##check the time frame of the data
+n.col <- ncol(df_conf)
+dates <- names(df_conf)[5:n.col]%>% mdy()
+range(dates)
+min.date <- min(dates)
+max.date <- max(dates)
+min.date.txt <- min.date %>% format('%d %b %Y')
+max.date.txt <- max.date %>% format('%d %b %Y')
+```
+```{r}
+#clean data
+cleanData <- function(data) {
+  ## remove some columns
+  data %<>% select(-c(Province.State, Lat, Long)) %>% rename(country=Country.Region)
+  ## convert from wide to long format
+  data %<>% gather(key=date, value=count, -country)
+  ## convert from character to date
+  data %<>% mutate(date = date %>% mdy())
+  ## aggregate by country
+  data %<>% group_by(country, date) %>% summarise(count=sum(count, na.rm=T)) %>% as.data.frame()
+  return(data)
+}
+## clean the three data sets
+data.confirmed <- df_conf %>% cleanData() %>% rename(confirmed=count)
+data.deaths <- df_deaths %>% cleanData() %>% rename(deaths=count)
+data.recovered <- df_recover %>% cleanData() %>% rename(recovered=count)
+data <- data.confirmed %>% merge(data.deaths, all=T) %>% merge(data.recovered, all=T)
+data
+## countries/regions with confirmed cases, excl. cruise ships
+countries <- data %>% pull(country) %>% setdiff('Cruise Ship')
+data 
+```
+
+
+```{r}
+data.world <- data %>% group_by(date) %>%
+  summarise(country='World',
+            confirmed = sum(confirmed, na.rm=T),
+            deaths = sum(deaths, na.rm=T),
+            recovered = sum(recovered, na.rm=T))
+data %<>% rbind(data.world)
+data
+data %<>% mutate(current.confirmed = confirmed - deaths - recovered)
+data
+
+```
+```{r}
+#rate
+data %<>% arrange(country, date)
+n <- nrow(data)
+day1 <- min(data$date)
+data %<>% mutate(new.confirmed = ifelse(date == day1, NA, confirmed - lag(confirmed, n=1)),
+                 new.deaths = ifelse(date == day1, NA, deaths - lag(deaths, n=1)),
+                 new.recovered = ifelse(date == day1, NA, recovered - lag(recovered, n=1)))
+data %<>% mutate(new.confirmed = ifelse(new.confirmed < 0, 0, new.confirmed),
+                 new.deaths = ifelse(new.deaths < 0, 0, new.deaths),
+                 new.recovered = ifelse(new.recovered < 0, 0, new.recovered))
+## death rate based on total deaths and recovered cases
+data %<>% mutate(rate.upper = (100 * deaths / (deaths + recovered)) %>% round(1))
+## lower bound: death rate based on total confirmed cases
+data %<>% mutate(rate.lower = (100 * deaths / confirmed) %>% round(1))
+## death rate based on the number of death/recovered on every single day
+data %<>% mutate(rate.daily = (100 * new.deaths / (new.deaths + new.recovered)) %>% round(1))
+View(data)
+```
+```{r}
+## convert from wide to long format
+data.long <- data %>%
+  select(c(country, date, confirmed, current.confirmed, recovered, deaths)) %>%
+  gather(key=type, value=count, -c(country, date))
+## set factor levels to show them in a desirable order
+data.long %<>% mutate(type=recode_factor(type, confirmed='Total Confirmed',
+                                         current.confirmed='Current Confirmed',
+                                         recovered='Recovered',
+                                         deaths='Deaths'))
+#View(data.long)
+```
+```{r}
+##Number of case World
+world <- filter(data.long,country == 'World')
+plot1 <- world %>% filter(type != 'Total Confirmed') %>%
+  ggplot(aes(x=date, y=count)) +
+  geom_area(aes(fill=type), alpha=0.5) +
+  labs(title=paste0('Numbers of Cases Worldwide - ', max.date.txt)) +
+  scale_fill_manual(values=c('red', 'green', 'black')) +
+  theme(legend.title=element_blank(), legend.position='bottom',
+        plot.title = element_text(size=7),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank(),
+        legend.key.size=unit(0.2, 'cm'),
+        legend.text=element_text(size=6),
+        axis.text=element_text(size=7),
+        axis.text.x=element_text(angle=45, hjust=1))
+plot2 <- world %>%
+  ggplot(aes(x=date, y=count)) +
+  geom_line(aes(color=type)) +
+  labs(title=paste0('Numbers of Cases Worldwide (log scale) - ', max.date.txt)) +
+  scale_color_manual(values=c('purple', 'red', 'green', 'black')) +
+  theme(legend.title=element_blank(), legend.position='bottom',
+        plot.title = element_text(size=14),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank(),
+        legend.key.size=unit(0.2, 'cm'),
+        legend.text=element_text(size=14),
+        axis.text=element_text(size=14),
+        axis.text.x=element_text(angle=45, hjust=1)) +
+  scale_y_continuous(trans='log10')
+## show two plots side by side
+grid.arrange(plot1, plot2, ncol=2)
+```
+
+
+```{r}
+plot2
+```
+```{r}
+## Current Confirmed Cases
+data.world <- data %>% filter(country=='World')
+n <- nrow(data.world)
+plot1 <- ggplot(data.world, aes(x=date, y=current.confirmed)) +
+  geom_point() + geom_smooth() +
+  xlab('') + ylab('Count') + labs(title='Current Confirmed Cases') +
+  theme(axis.text.x=element_text(angle=45, hjust=1))
+plot2 <- ggplot(data.world, aes(x=date, y=new.confirmed)) +
+  geom_point() + geom_smooth() +
+  xlab('') + ylab('Count') + labs(title='Daily New Confirmed Cases') +
+  theme(axis.text.x=element_text(angle=45, hjust=1))
+## show two plots side by side
+grid.arrange(plot1, plot2, ncol=2)
+View(data.world)
+```
+```{r}
+## a scatter plot with a smoothed line and vertical x-axis labels
+plot1 <- ggplot(data.world, aes(x=date, y=deaths)) +
+  geom_point() + geom_smooth() +
+  xlab('') + ylab('Count') + labs(title='Accumulative Deaths') +
+  theme(axis.text.x=element_text(angle=45, hjust=1))
+plot2 <- ggplot(data.world, aes(x=date, y=recovered)) +
+  geom_point() + geom_smooth() +
+  xlab('') + ylab('Count') + labs(title='Accumulative Recovered Cases') +
+  theme(axis.text.x=element_text(angle=45, hjust=1))
+plot3 <- ggplot(data.world, aes(x=date, y=new.deaths)) +
+  geom_point() + geom_smooth() +
+  xlab('') + ylab('Count') + labs(title='New Deaths') +
+  theme(axis.text.x=element_text(angle=45, hjust=1))
+plot4 <- ggplot(data.world, aes(x=date, y=new.recovered)) +
+  geom_point() + geom_smooth() +
+  xlab('') + ylab('Count') + labs(title='New Recovered Cases') +
+  theme(axis.text.x=element_text(angle=45, hjust=1))
+## show four plots together, with 2 plots in each row
+grid.arrange(plot1, plot2, plot3, plot4, nrow=2)
+```
+
+
+
+```{r}
+## convert from wide to long format, for drawing area plots
+rates.long <- data %>%
+  select(c(country, date, rate.upper, rate.lower, rate.daily)) %>%
+  gather(key=type, value=count, -c(country, date))
+# set factor levels to show them in a desirable order
+rates.long %<>% mutate(type=recode_factor(type, rate.daily='Daily',
+                             rate.upper='Upper bound'))
+```
+```{r}
+## ranking by confirmed cases
+data.latest.all <- data %>% filter(date == max(date)) %>%
+  select(country, date,confirmed, new.confirmed, current.confirmed,
+         recovered, deaths, new.deaths, death.rate=rate.lower) %>%
+  mutate(ranking = dense_rank(desc(confirmed)))
+#View(data.latest.all)
+k <- 20
+## top 20 countries: 21 incl. 'World'
+top.countries <- data.latest.all %>% filter(ranking <= k + 1) %>%
+  arrange(ranking) %>% pull(country) %>% as.character()
+top.countries %>% setdiff('World') %>% print()
+
+```
+
+```{r}
+data.latest <- data.latest.all %>% filter(!is.na(country)) %>%
+  mutate(country=ifelse(ranking <= k + 1, as.character(country), 'Others')) %>%
+  mutate(country=country %>% factor(levels=c(top.countries, 'Others')))
+data.latest %<>% group_by(country) %>%
+  summarise(confirmed=sum(confirmed), new.confirmed=sum(new.confirmed),
+            current.confirmed=sum(current.confirmed),
+            recovered=sum(recovered), deaths=sum(deaths), new.deaths=sum(new.deaths)) %>%
+  mutate(death.rate=(100 * deaths/confirmed) %>% round(1)) 
+data.latest
+data.latest %<>% select(c(country, confirmed, deaths, death.rate,
+                          new.confirmed, new.deaths, current.confirmed,recovered)) %>%
+  mutate(recover.rate=(100 * recovered/confirmed) %>% round(1))
+data.latest
+df_pop <- tbl(my_db, sql("select * from population "))
+df_pop <- as.data.frame(df_pop)
+df_pop <- rename(df_pop,"country"="Country")
+df_pop
+data.latest <- merge(x = data.latest, y = df_pop, by = "country", all.x = TRUE) 
+data.latest <- rename(data.latest,"population" = "Population (2020)")
+data.latest
+data.latest  %<>% select(c(country, confirmed, deaths, death.rate,
+                          new.confirmed, new.deaths,
+                          current.confirmed,recovered,recover.rate,population)) %>%
+  mutate(confirm.rate=(100 *confirmed/population) %>% round(1))
+data.latest
+
+```
+```{r}
+data.latest %>% mutate(death.rate=death.rate %>% format(nsmall=1) %>% paste0('%'))
+
+
+```
+
+```{r}
+## convert from wide to long format, for drawing area plots
+data.latest.long <- data.latest %>% filter(country!='World') %>%
+  gather(key=type, value=count, -country)
+## set factor levels to show them with proper text and in a desirable order
+data.latest.long %<>% mutate(type=recode_factor(type,
+                                                confirmed='Total Confirmed',
+                                                deaths='Total Deaths',
+                                                death.rate='Death Rate (%)',
+                                                new.confirmed='New Confirmed (compared with one day before)',
+                                                new.deaths='New Deaths (compared with one day before)',
+                                                current.confirmed='Current Confirmed',
+                                                recover.rate = 'Recover Rate(%)',
+                                                confirm.rate = 'Confirmed Rate(%)'))
+#View(data.latest.long)
+data.one.dem <- filter(data.latest.long,type=='Total Confirmed'
+                       | type=='Total Deaths'
+                       | type=='Current Confirmed')
+data.two.dem <- filter(data.latest.long,type=='Death Rate (%)'
+                       | type=='New Confirmed (compared with one day before)'
+                       | type=='New Deaths (compared with one day before)'
+                       | type=='Recover Rate(%)'
+                       | type=='Confirmed Rate(%)')
+data.two.dem
+```
+
+```{r}
+## bar chart
+data.one.dem %>% ggplot(aes(x=country, y=count, fill=country, group=country)) +
+  geom_bar(stat='identity') +
+  geom_text(aes(label=count, y=count), size=2, vjust=0) +
+  xlab('') + ylab('') +
+  labs(title=paste0('Top 20 Countries with Most Confirmed Cases - ', max.date.txt)) +
+  scale_fill_discrete(name='Country', labels=aes(count)) +
+  theme(legend.title=element_blank(),
+        legend.position='none',
+        plot.title=element_text(size=11),
+        axis.text=element_text(size=7),
+        axis.text.x=element_text(angle=45, hjust=1)) +
+  facet_wrap(~type, ncol=1, scales='free_y')
+
+```
+```{r}
+
+data.two.dem %>% ggplot(aes(x=country, y=count, fill=country, group=country)) +
+  geom_bar(stat='identity') +
+  geom_text(aes(label=count, y=count), size=2, vjust=0) +
+  xlab('') + ylab('') +
+  labs(title=paste0('Top 20 Countries with Most Confirmed Cases - ', max.date.txt)) +
+  scale_fill_discrete(name='Country', labels=aes(count)) +
+  theme(legend.title=element_blank(),
+        legend.position='none',
+        plot.title=element_text(size=11),
+        axis.text=element_text(size=7),
+        axis.text.x=element_text(angle=45, hjust=1)) +
+  facet_wrap(~type, ncol=1, scales='free_y')
+```
+
+```{r}
+##GDP
+df_gdp <- tbl(my_db, sql("select * from gdp"))
+df_gdp <- as.data.frame(df_gdp)
+df_gdp <- rename(df_gdp,"country"="Real GDP growth (Annual percent change)")
+df_gdp <- select(df_gdp,c("country","2012","2013","2014","2015","2016","2017","2018","2019","2020","2021"))
+df_gdp
+df_gdp2019 <- tbl(my_db, sql("select * from gdp19"))
+df_gdp2019 <- as.data.frame(df_gdp2019)
+df_gdp2019
+
+```
+```{r}
+#healthranking
+df_healt <- tbl(my_db, sql("select * from healthranking"))
+df_healt <- as.data.frame(df_healt)
+df_healt <- select(df_healt,c("country","healthCareIndex"))
+df_healt
+```
+```{r}
+#Top20Pornhub
+df_pornhub <- tbl(my_db, sql("select * from Pornhub"))
+df_pornhub <- as.data.frame(df_pornhub)
+df_pornhub
+
+```
+
+
+```{r}
+#temp
+df_temp <- tbl(my_db, sql("select * from Avg_World_Temp_2020"))
+df_temp <- as.data.frame(df_temp)
+df_city <- select(df_temp,c("Country","City")) %>%
+  rename(country=Country) %>% 
+  rename(city=City)
+numofcity <- aggregate(city ~ country, data = df_city, length)
+df_temp <- select(df_temp,c("Country","Apr","May","Jun","Jul","Aug")) %>%
+  rename(country=Country)
+df_temp <- data.frame(country=df_temp[,1],avg=rowMeans(df_temp[,-1]))
+df_temp <- df_temp %<>% group_by(country) %>% summarise(avg_temp = mean(avg,na.rm = TRUE))
+df_temp <- df_temp %>% mutate(country=ifelse(country=="United States","US", country ) ) 
+df_temp$avg_temp <- df_temp$avg_temp %>% 
+  sprintf(df_temp$avg_temp, fmt = '%#.1f') %>%
+  as.numeric(df_temp$avg_temp)
+df_temp
+```
+
+
+
+```{r}
+#Top 20 with gdp
+data.longGDP <- df_gdp %>% gather(key=year, value=GDP, -c(country))
+data.top <- data.latest %>% filter(country!='World')
+data.top <- head(data.top,20)
+#View(data.top)
+data.gdp <- filter(data.longGDP,year=='2020')
+#View(data.gdp)
+#merge
+mergcountry = function(data1,data2){
+  data <- merge(x = data1, y = data2, by = "country", all.x = TRUE) 
+  return(data)
+}
+data.top.world <- merge(x = data.top, y = df_gdp2019, by = "country", all.x = TRUE) %>% 
+  select(-c(code,rank,new.confirmed,new.deaths,current.confirmed,population)) %>% 
+  rename(GDP="GDP (millions of US dollars)")
+
+data.top.world <- merge(x = data.top.world, y = df_healt, by = "country", all.x = TRUE) %>%
+  rename(healthcare="healthCareIndex")
+#data.top.world <- mergcountry(data.top.world, df_temp)
+
+data.top.world <- merge(x = data.top.world, y = df_pornhub, by = "country", all.x = TRUE) %>%
+  rename(Pornhub = "PornhubIndex(%)")
+
+data.top.world <- mergcountry(data.top.world, df_temp)
+index <- is.na(data.top.world)
+data.top.world[index] <- 0
+data.top.world
+#View(data.top.world)
+
+normalize = function(data){
+  #return ((data - min(data,na.rm = TRUE))/(max(data,na.rm = TRUE) - min(data,na.rm = TRUE)))
+  z <- scale(data);
+  tanh(z/2)
+}
+norm_data = as.data.frame(apply(data.top.world[,2:12],2,normalize))
+corr_data <- norm_data
+norm_data$country <- c("Argentina","Bangladesh","Brazil","Chile","Colombia","France","Germany","India","Iran","Italy","Mexico","Pakistan","Peru","Russia","saudi Arabia","South Africa","Spain","Turkey","United Kingdom","US")
+#View(norm_data)
+
+
+norm_data_plot <- select(norm_data,"country","confirm.rate","death.rate","recover.rate","healthcare","Pornhub","GDP","avg_temp")
+norm_data_plot %<>% gather(key=type, value=count, -c(country))
+level_order <- factor(norm_data_plot$type, 
+                      level = c("GDP","avg_temp","healthcare","recover.rate","death.rate","confirm.rate","Pornhub"))
+ggplot(data = norm_data_plot, aes(x=country, y=level_order, fill=count)) + 
+  geom_tile() +
+  scale_fill_gradient(low = "pink", high = "blue") +
+  xlab("") +
+  ylab("") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90,vjust = 1))+
+  theme(
+    axis.line = element_blank(),
+    axis.ticks = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    #legend.position = "none"
+  )
+
+  
+```
+
+
+```{r}
+#rank GDP
+data.top.hight <- data.gdp %>% select(country, year,GDP) %>%
+  mutate(ranking = dense_rank(desc(GDP)))
+data.top.hight
+k <- 15
+top.gdp <- data.top.hight %>% 
+  #filter(ranking <= k + 1) %>% 
+  arrange(ranking)
+top.gdp <- head(top.gdp,21)
+data.top.low <- data.gdp %>% select(country, year,GDP) %>%
+  mutate(ranking = dense_rank(GDP))
+low.gdp.long <- data.top.low %>% 
+  #filter(ranking <= k + 1) %>% 
+  arrange(ranking)
+View(low.gdp.long)
+low.gdp <- head(low.gdp.long,23)
+low.gdp
+```
+
+
+
+```{r}
+#correlation
+corr_data %<>% select(c(GDP,confirm.rate,death.rate,recover.rate,healthcare,avg_temp,Pornhub))
+head(corr_data)
+cor(corr_data)
+ggcorrplot(cor(corr_data),hc.order = TRUE,
+           outline.color = "white",
+           colors = c("#6D9EC1","white","#E46726"),
+           lab = TRUE)
+```
+```{r}
+df <- data.long %>% filter(country %in% top.countries) %<>%
+  mutate(country=country %>% factor(levels=c(top.countries)))
+df %>% filter(country != 'World' & type != 'Total Confirmed') %>%
+  ggplot(aes(x=date, y=count, fill=type)) +
+  geom_area(alpha=0.5) +
+# xlab('') + ylab('') +
+  labs(title=paste0('Numbers of COVID-19 Cases in Top 20 Countries - ',
+                    max.date.txt)) +
+  scale_fill_manual(values=c('red', 'green', 'black')) +
+  theme(legend.title=element_blank(), legend.position='bottom',
+        plot.title = element_text(size=12),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank(),
+        legend.key.size=unit(0.4, 'cm'),
+        legend.text=element_text(size=12),
+        strip.text.x=element_text(size=12),
+        axis.text=element_text(size=12),
+        axis.text.x=element_text(angle=45, hjust=1)) +
+  facet_wrap(~country, ncol=4, scales='free_y')
+
+```
+```{r}
+p <- df %>% filter(country != 'World') %>%
+  ggplot(aes(x=date, y=count, color=type)) +
+  geom_line() +
+  labs(title=paste0('Numbers of COVID-19 Cases in Top 20 Countries (log scale) - ',
+                    max.date.txt)) +
+  scale_color_manual(values=c('purple', 'red', 'green', 'black')) +
+  theme(legend.title=element_blank(), legend.position='bottom',
+        plot.title = element_text(size=10),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank(),
+        legend.key.size=unit(0.4, 'cm'),
+        legend.text=element_text(size=10),
+        strip.text.x=element_text(size=10),
+        axis.text=element_text(size=10),
+        axis.text.x=element_text(angle=45, hjust=1)) +
+  scale_y_continuous(trans='log10')
+p + facet_wrap(~country, ncol=4, scales='free_y')
+```
+```{r}
+data.world %<>% arrange(desc(date)) %>%
+  select(c(date, confirmed, deaths, recovered, current.confirmed,new.confirmed, new.deaths, new.recovered, rate.lower, rate.upper, rate.daily))
+data.world %>%
+  mutate(rate.upper = rate.upper %>% format(nsmall=1) %>% paste0('\\%'),
+         rate.lower = rate.lower %>% format(nsmall=1) %>% paste0('\\%'),
+         rate.daily = rate.daily %>% format(nsmall=1) %>% paste0('\\%')) 
+```
+```{r}
+#sars_2003
+df_sars <- tbl(my_db, sql("select * from sars_2003_update"))
+df_sars <- as.data.frame(df_sars)
+df_sars
+```
+
+
+```{r}
+## convert from character to date
+#datesSar <- as.Date(df_sars$Date,format = "%m/%d/%y")
+
+df_sars %<>%  mutate(Date = as.Date(df_sars$Date,format = "%m/%d/%y"))
+df_sars
+```
+
+```{r}
+## convert from wide to long format
+dataSar.long <- df_sars %>%
+  select(c(Date, country, Cumulative_number , Number_deaths, Number_recovered)) %>%
+  gather(key=type, value=count, -c(country, Date))
+## set factor levels to show them in a desirable order
+dataSar.long %<>% mutate(type=recode_factor(type, Cumulative_number ='Cumulative Number',
+                                         Number_deaths ='Number of deaths',
+                                         Number_recovered ='Number of recovered'))
+View(dataSar.long)
+ 
+```
+
+
+
+
+```{r}
+g <-
+  ggplot(dataSar.long,aes(Date,count,color = type)) +
+  geom_line()+
+  geom_point()+
+  xlab("")+
+  ylab("")
+g
+  
+```
+
+
+
