@@ -1766,19 +1766,31 @@ summary {
 <p>Try executing this chunk by clicking the <em>Run</em> button within the chunk or by placing your cursor inside it and pressing <em>Ctrl+Shift+Enter</em>.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2luc3RhbGwucGFja2FnZXMoXCJzaGlueWRhc2hib2FyZFwiKVxubGlicmFyeShzaGlueSlcbmxpYnJhcnkoc2hpbnlkYXNoYm9hcmQpXG4jbGlicmFyeShEVClcblxudWkgPC0gZGFzaGJvYXJkUGFnZShcbiAgZGFzaGJvYXJkSGVhZGVyKHRpdGxlID0gXCJDb3ZpZC0xOVwiKSxcbiAgZGFzaGJvYXJkU2lkZWJhcigpLFxuICBkYXNoYm9hcmRCb2R5KFxuICAgIGJveChwbG90T3V0cHV0KFwiY29ycmVsYXRpb25fcGxvdFwiKSx3aWR0aCA9IDgpLFxuICAgIGJveChzZWxlY3RJbnB1dChcImZlYXR1cmVzXCIsXCJGZWF0dXJlczpcIixjKFwiU2VwYWwuV2lkdGhcIixcIlBldGFsLkxlbmd0aFwiLFwiUGV0YWwuV2lkdGhcIikpLHdpZHRoID0gNClcbiAgKVxuKVxuXG5zZXJ2ZXIgPC0gZnVuY3Rpb24oaW5wdXQsb3V0cHV0KXtcbiAgb3V0cHV0JGNvcnJlbGF0aW9uX3Bsb3QgPC0gcmVuZGVyUGxvdCh7XG4gICAgcGxvdChpcmlzJFNlcGFsLkxlbmd0aCxpcmlzW1tpbnB1dCRmZWF0dXJlc11dLFxuICAgICAgICAgeGxhYiA9IFwiU2VwYWwgbGVuZ3RoXCIseWxhYiA9IFwiRmVhdHVyZVwiKVxuICB9KVxufVxuXG5zaGlueUFwcCh1aSxzZXJ2ZXIpXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2luc3RhbGwucGFja2FnZXMoXCJzaGlueWRhc2hib2FyZFwiKVxubGlicmFyeShzaGlueSlcbmBgYCJ9 -->
 <pre class="r"><code>#install.packages(&quot;shinydashboard&quot;)
-library(shiny)
-library(shinydashboard)
-#library(DT)
+library(shiny)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoicGFja2FnZSDjpLzjuLFzaGlueeOkvOO4siB3YXMgYnVpbHQgdW5kZXIgUiB2ZXJzaW9uIDQuMC4zXG4ifQ== -->
+<pre><code>package 㤼㸱shiny㤼㸲 was built under R version 4.0.3</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShzaGlueWRhc2hib2FyZClcbmBgYCJ9 -->
+<pre class="r"><code>library(shinydashboard)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoicGFja2FnZSDjpLzjuLFzaGlueWRhc2hib2FyZOOkvOO4siB3YXMgYnVpbHQgdW5kZXIgUiB2ZXJzaW9uIDQuMC4zXG5BdHRhY2hpbmcgcGFja2FnZTog46S847ixc2hpbnlkYXNoYm9hcmTjpLzjuLJcblxuVGhlIGZvbGxvd2luZyBvYmplY3QgaXMgbWFza2VkIGZyb20g46S847ixcGFja2FnZTpncmFwaGljc+OkvOO4sjpcblxuICAgIGJveFxuIn0= -->
+<pre><code>package 㤼㸱shinydashboard㤼㸲 was built under R version 4.0.3
+Attaching package: 㤼㸱shinydashboard㤼㸲
+
+The following object is masked from 㤼㸱package:graphics㤼㸲:
+
+    box</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2xpYnJhcnkoRFQpXG5cbnVpIDwtIGRhc2hib2FyZFBhZ2UoXG4gIGRhc2hib2FyZEhlYWRlcih0aXRsZSA9IFwiQ292aWQtMTlcIiksXG4gIGRhc2hib2FyZFNpZGViYXIoKSxcbiAgZGFzaGJvYXJkQm9keSgpXG4pXG5cbnNlcnZlciA8LSBmdW5jdGlvbihpbnB1dCxvdXRwdXQpe1xuICBvdXRwdXQkY29ycmVsYXRpb25fcGxvdCA8LSByZW5kZXJQbG90KHtcbiAgICBwbG90KGlyaXMkU2VwYWwuTGVuZ3RoLGlyaXNbW2lucHV0JGZlYXR1cmVzXV0sXG4gICAgICAgICB4bGFiID0gXCJTZXBhbCBsZW5ndGhcIix5bGFiID0gXCJGZWF0dXJlXCIpXG4gIH0pXG59XG5cbnNoaW55QXBwKHVpLHNlcnZlcilcbmBgYCJ9 -->
+<pre class="r"><code>#library(DT)
 
 ui &lt;- dashboardPage(
   dashboardHeader(title = &quot;Covid-19&quot;),
   dashboardSidebar(),
-  dashboardBody(
-    box(plotOutput(&quot;correlation_plot&quot;),width = 8),
-    box(selectInput(&quot;features&quot;,&quot;Features:&quot;,c(&quot;Sepal.Width&quot;,&quot;Petal.Length&quot;,&quot;Petal.Width&quot;)),width = 4)
-  )
+  dashboardBody()
 )
 
 server &lt;- function(input,output){
@@ -1790,15 +1802,15 @@ server &lt;- function(input,output){
 
 shinyApp(ui,server)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG5MaXN0ZW5pbmcgb24gaHR0cDovLzEyNy4wLjAuMTo3ODUwXG4ifQ== -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5MaXN0ZW5pbmcgb24gaHR0cDovLzEyNy4wLjAuMTo3MzIyXG4ifQ== -->
 <pre><code>
-Listening on http://127.0.0.1:7850</code></pre>
+Listening on http://127.0.0.1:7322</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2siDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQpUaGlzIGlzIGFuIFtSIE1hcmtkb3duXShodHRwOi8vcm1hcmtkb3duLnJzdHVkaW8uY29tKSBOb3RlYm9vay4gV2hlbiB5b3UgZXhlY3V0ZSBjb2RlIHdpdGhpbiB0aGUgbm90ZWJvb2ssIHRoZSByZXN1bHRzIGFwcGVhciBiZW5lYXRoIHRoZSBjb2RlLiANCg0KVHJ5IGV4ZWN1dGluZyB0aGlzIGNodW5rIGJ5IGNsaWNraW5nIHRoZSAqUnVuKiBidXR0b24gd2l0aGluIHRoZSBjaHVuayBvciBieSBwbGFjaW5nIHlvdXIgY3Vyc29yIGluc2lkZSBpdCBhbmQgcHJlc3NpbmcgKkN0cmwrU2hpZnQrRW50ZXIqLiANCg0KYGBge3J9DQojaW5zdGFsbC5wYWNrYWdlcygic2hpbnlkYXNoYm9hcmQiKQ0KbGlicmFyeShzaGlueSkNCmxpYnJhcnkoc2hpbnlkYXNoYm9hcmQpDQojbGlicmFyeShEVCkNCg0KdWkgPC0gZGFzaGJvYXJkUGFnZSgNCiAgZGFzaGJvYXJkSGVhZGVyKHRpdGxlID0gIkNvdmlkLTE5IiksDQogIGRhc2hib2FyZFNpZGViYXIoKSwNCiAgZGFzaGJvYXJkQm9keSgNCiAgICBib3gocGxvdE91dHB1dCgiY29ycmVsYXRpb25fcGxvdCIpLHdpZHRoID0gOCksDQogICAgYm94KHNlbGVjdElucHV0KCJmZWF0dXJlcyIsIkZlYXR1cmVzOiIsYygiU2VwYWwuV2lkdGgiLCJQZXRhbC5MZW5ndGgiLCJQZXRhbC5XaWR0aCIpKSx3aWR0aCA9IDQpDQogICkNCikNCg0Kc2VydmVyIDwtIGZ1bmN0aW9uKGlucHV0LG91dHB1dCl7DQogIG91dHB1dCRjb3JyZWxhdGlvbl9wbG90IDwtIHJlbmRlclBsb3Qoew0KICAgIHBsb3QoaXJpcyRTZXBhbC5MZW5ndGgsaXJpc1tbaW5wdXQkZmVhdHVyZXNdXSwNCiAgICAgICAgIHhsYWIgPSAiU2VwYWwgbGVuZ3RoIix5bGFiID0gIkZlYXR1cmUiKQ0KICB9KQ0KfQ0KDQpzaGlueUFwcCh1aSxzZXJ2ZXIpDQoNCmBgYA0KDQo=</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2siDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQpUaGlzIGlzIGFuIFtSIE1hcmtkb3duXShodHRwOi8vcm1hcmtkb3duLnJzdHVkaW8uY29tKSBOb3RlYm9vay4gV2hlbiB5b3UgZXhlY3V0ZSBjb2RlIHdpdGhpbiB0aGUgbm90ZWJvb2ssIHRoZSByZXN1bHRzIGFwcGVhciBiZW5lYXRoIHRoZSBjb2RlLiANCg0KVHJ5IGV4ZWN1dGluZyB0aGlzIGNodW5rIGJ5IGNsaWNraW5nIHRoZSAqUnVuKiBidXR0b24gd2l0aGluIHRoZSBjaHVuayBvciBieSBwbGFjaW5nIHlvdXIgY3Vyc29yIGluc2lkZSBpdCBhbmQgcHJlc3NpbmcgKkN0cmwrU2hpZnQrRW50ZXIqLiANCg0KYGBge3J9DQojaW5zdGFsbC5wYWNrYWdlcygic2hpbnlkYXNoYm9hcmQiKQ0KbGlicmFyeShzaGlueSkNCmxpYnJhcnkoc2hpbnlkYXNoYm9hcmQpDQojbGlicmFyeShEVCkNCg0KdWkgPC0gZGFzaGJvYXJkUGFnZSgNCiAgZGFzaGJvYXJkSGVhZGVyKHRpdGxlID0gIkNvdmlkLTE5IiksDQogIGRhc2hib2FyZFNpZGViYXIoKSwNCiAgZGFzaGJvYXJkQm9keSgpDQopDQoNCnNlcnZlciA8LSBmdW5jdGlvbihpbnB1dCxvdXRwdXQpew0KICBvdXRwdXQkY29ycmVsYXRpb25fcGxvdCA8LSByZW5kZXJQbG90KHsNCiAgICBwbG90KGlyaXMkU2VwYWwuTGVuZ3RoLGlyaXNbW2lucHV0JGZlYXR1cmVzXV0sDQogICAgICAgICB4bGFiID0gIlNlcGFsIGxlbmd0aCIseWxhYiA9ICJGZWF0dXJlIikNCiAgfSkNCn0NCg0Kc2hpbnlBcHAodWksc2VydmVyKQ0KYGBgDQoNCg==</div>
 
 
 

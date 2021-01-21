@@ -16,10 +16,7 @@ library(shinydashboard)
 ui <- dashboardPage(
   dashboardHeader(title = "Covid-19"),
   dashboardSidebar(),
-  dashboardBody(
-    box(plotOutput("correlation_plot"),width = 8),
-    box(selectInput("features","Features:",c("Sepal.Width","Petal.Length","Petal.Width")),width = 4)
-  )
+  dashboardBody()
 )
 
 server <- function(input,output){
@@ -30,6 +27,5 @@ server <- function(input,output){
 }
 
 shinyApp(ui,server)
-
 ```
 
