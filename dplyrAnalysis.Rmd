@@ -31,7 +31,7 @@ library(normalr)
 library(ggcorrplot)
 
 library(leaflet)
-#library(plotly)
+library(plotly)
 library(RColorBrewer)
 library(readr)
 #library(MLRMPA)
@@ -131,7 +131,7 @@ data.long %<>% mutate(type=recode_factor(type, confirmed='Total Confirmed',
                                          current.confirmed='Current Confirmed',
                                          recovered='Recovered',
                                          deaths='Deaths'))
-#View(data.long)
+View(data.long)
 ```
 ```{r}
 ##Number of case World
@@ -569,7 +569,7 @@ g
 #Covid_Thailand
 df_thai <- tbl(my_db, sql("select * from covid_Thailand"))
 df_thai <- as.data.frame(df_thai)
-df_thai
+View(df_thai)
 ```
 
 ```{r}
@@ -716,16 +716,183 @@ ggplot(data.thai.age,aes(x=age,y=count,fill=sex))+geom_bar(stat = "identity")+
 
 ```{r}
 # Confirmed cases divided by nationality
+
 data.thai.nationality <- df_thai %>%
   group_by(nationality) %>%
   summarise(count = n()) %>%
-  filter(count > 13)%>%
+  filter(count > 11)%>%
   arrange(desc(count))
-#data.thai.nationality$nationality[nationality$nationality == "????????"] <- "Unknown"
+data.thai.nationality$nationality[data.thai.nationality$nationality == "????????"] <- "Unknown"
+data.thai.nationality$nationality[data.thai.nationality$nationality == ""] <- "Unknown"
 data.thai.nationality
 ggplot(data.thai.nationality,aes(x=nationality,y=count))+geom_bar(stat = "identity")+
   labs(title='Nationality of Thai Confirmed Cases')+coord_flip()
 ```
+```{r}
+#Covid_US
+df_us <- tbl(my_db, sql("select * from covidUs"))
+df_us <- as.data.frame(df_us)
+df_us
+```
+```{r}
+#clean Covid_US
+dates.us <- df_us[,2]%>% mdy()
+range(dates.us)
+min.date.us <- min(dates.us)
+max.date.us <- max(dates.us)
+min.date.txt.us <- min.date.us %>% format('%d %b %Y')
+max.date.txt.us <- max.date.us %>% format('%d %b %Y')
+```
+
+```{r}
+df_us$date <- mdy(df_us$date)
+df_us
+```
+
+
+```{r}
+df_us <- df_us %>% select(!MyUnknownColumn) %>% select(!fips) %>% 
+  group_by(date)
+df_us
+```
+
+
+```{r}
+## convert from wide to long format
+data.long.us <- df_us %>%
+  select(c(date, state, cases, deaths)) %>%
+  gather(key=type, value=count, -c(date, state))
+## set factor levels to show them in a desirable order
+data.long.us %<>% mutate(type=recode_factor(type, cases='Confirmed',
+                                         deaths='Deaths'))
+
+View(data.long.us)
+```
+
+
+```{r}
+ggplot(data.long.us,aes(x=date,y=count))+
+  geom_line(aes(color=type))
+
+```
+```{r}
+#gender in us
+df_gender_us <- tbl(my_db, sql("select * from data_gender"))
+df_gender_us <- as.data.frame(df_gender_us)
+df_gender_us <- select(df_gender_us,c("State","Male","Female"))
+df_gender_us <- rename(df_gender_us,"state"="State")
+df_gender_us
+```
+```{r}
+#population in us
+df_pop_us <- tbl(my_db, sql("select * from data_population"))
+df_pop_us <- as.data.frame(df_pop_us)
+df_pop_us <- select(df_pop_us,c("State","Population"))
+df_pop_us <- rename(df_pop_us,"state"="State")
+df_pop_us
+```
+```{r}
+#lockdown in us
+df_lockdown_us <- tbl(my_db, sql("select * from data_lockdown"))
+df_lockdown_us <- as.data.frame(df_lockdown_us)
+df_lockdown_us <- select(df_lockdown_us,c("State","Day lockdown"))
+df_lockdown_us <- rename(df_lockdown_us,"state"="State")
+df_lockdown_us
+```
+```{r}
+#merge
+mergcountry = function(data1,data2){
+  data <- merge(x = data1, y = data2, by = "state", all.x = TRUE) 
+  return(data)
+}
+
+df_Allus <- merge(x = df_us, y = df_gender_us, by = "state", all.x = TRUE) 
+
+df_Allus <- merge(x = df_Allus, y = df_pop_us, by = "state", all.x = TRUE) 
+
+df_Allus <- merge(x = df_Allus, y = df_lockdown_us, by = "state", all.x = TRUE) 
+
+View(df_Allus)
+
+```
+
+
+
+
+```{r}
+index <- is.na(df_Allus)
+df_Allus[index] <- 0
+
+normalize = function(data){
+  #return ((data - min(data,na.rm = TRUE))/(max(data,na.rm = TRUE) - min(data,na.rm = TRUE)))
+  z <- scale(data);
+  tanh(z/2)
+}
+Allus = as.data.frame(apply(df_Allus[,3:8],2,normalize))
+corr_dataUS <- Allus 
+
+View(Allus)
+
+```
+
+```{r}
+Allus$state <- c(df_Allus$state)
+View(Allus)
+```
+
+
+```{r}
+
+
+Allus_plot <- select(Allus,"state","cases","deaths","Male","Female","Population","Day lockdown")
+Allus_plot %<>% gather(key=type, value=count, -c(state))
+level_order <- factor(Allus_plot$type, 
+                      level = c("cases","deaths","Male","Female","Population","Day lockdown"))
+ggplot(data = Allus_plot, aes(x=state, y=level_order, fill=count)) + 
+  geom_tile() +
+  scale_fill_gradient(low = "pink", high = "blue") +
+  xlab("") +
+  ylab("") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90,vjust = 1))+
+  theme(
+    axis.line = element_blank(),
+    axis.ticks = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    #legend.position = "none"
+  )
+
+
+
+```
+```{r}
+corr_dataUS <- rename(corr_dataUS,"Daylockdown"="Day lockdown")
+```
+
+
+```{r}
+#correlation
+corr_dataUS %<>% select(c(cases,deaths,Male,Female,Population,Daylockdown))
+head(corr_dataUS)
+cor(corr_dataUS)
+ggcorrplot(cor(corr_dataUS),hc.order = TRUE,
+           outline.color = "white",
+           colors = c("#6D9EC1","white","#E46726"),
+           lab = TRUE)
+```
+
+
+
+
+
+
+
+
+
+
 
 
 
