@@ -772,7 +772,7 @@ View(data.long.us)
 
 ```{r}
 ggplot(data.long.us,aes(x=date,y=count))+
-  geom_line(aes(color=type))
+  geom_line(aes(color=type))+ labs(title='US Confirmed Cases (Jan 2020 - Dec 2020)')
 
 ```
 ```{r}
@@ -799,6 +799,25 @@ df_lockdown_us <- select(df_lockdown_us,c("State","Day lockdown"))
 df_lockdown_us <- rename(df_lockdown_us,"state"="State")
 df_lockdown_us
 ```
+
+```{r}
+#GDP in us
+df_gdp_us <- tbl(my_db, sql("select * from gdp_us"))
+df_gdp_us <- as.data.frame(df_gdp_us)
+df_gdp_us <- select(df_gdp_us,c("State","GDPs"))
+df_gdp_us <- rename(df_gdp_us,"state"="State")
+df_gdp_us
+```
+```{r}
+#homeless in us
+df_homeless_us <- tbl(my_db, sql("select * from us_homeless"))
+df_homeless_us <- as.data.frame(df_homeless_us)
+df_homeless_us <- select(df_homeless_us,c("State","Homeless"))
+df_homeless_us <- rename(df_homeless_us,"state"="State")
+df_homeless_us
+```
+
+
 ```{r}
 #merge
 mergcountry = function(data1,data2){
@@ -811,6 +830,10 @@ df_Allus <- merge(x = df_us, y = df_gender_us, by = "state", all.x = TRUE)
 df_Allus <- merge(x = df_Allus, y = df_pop_us, by = "state", all.x = TRUE) 
 
 df_Allus <- merge(x = df_Allus, y = df_lockdown_us, by = "state", all.x = TRUE) 
+
+df_Allus <- merge(x = df_Allus, y = df_gdp_us, by = "state", all.x = TRUE)
+
+df_Allus <- merge(x = df_Allus, y = df_homeless_us, by = "state", all.x = TRUE)
 
 View(df_Allus)
 
@@ -828,7 +851,7 @@ normalize = function(data){
   z <- scale(data);
   tanh(z/2)
 }
-Allus = as.data.frame(apply(df_Allus[,3:8],2,normalize))
+Allus = as.data.frame(apply(df_Allus[,3:10],2,normalize))
 corr_dataUS <- Allus 
 
 View(Allus)
@@ -844,10 +867,10 @@ View(Allus)
 ```{r}
 
 
-Allus_plot <- select(Allus,"state","cases","deaths","Male","Female","Population","Day lockdown")
+Allus_plot <- select(Allus,"state","cases","deaths","Male","Female","Population","Day lockdown","GDPs","Homeless")
 Allus_plot %<>% gather(key=type, value=count, -c(state))
 level_order <- factor(Allus_plot$type, 
-                      level = c("cases","deaths","Male","Female","Population","Day lockdown"))
+                      level = c("cases","deaths","Male","Female","Population","Day lockdown","GDPs","Homeless"))
 ggplot(data = Allus_plot, aes(x=state, y=level_order, fill=count)) + 
   geom_tile() +
   scale_fill_gradient(low = "pink", high = "blue") +
@@ -875,7 +898,7 @@ corr_dataUS <- rename(corr_dataUS,"Daylockdown"="Day lockdown")
 
 ```{r}
 #correlation
-corr_dataUS %<>% select(c(cases,deaths,Male,Female,Population,Daylockdown))
+corr_dataUS %<>% select(c(cases,deaths,Male,Female,Population,Daylockdown,GDPs,Homeless))
 head(corr_dataUS)
 cor(corr_dataUS)
 ggcorrplot(cor(corr_dataUS),hc.order = TRUE,
