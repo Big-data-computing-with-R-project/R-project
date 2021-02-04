@@ -118,6 +118,39 @@ plot2 <- world %>%
   scale_y_continuous(trans='log10')
 ## show two plots side by side
 grid.arrange(plot1, plot2, ncol=2)
+## Current Confirmed Cases
+data.world <- data %>% filter(country=='World')
+n <- nrow(data.world)
+plot1 <- ggplot(data.world, aes(x=date, y=current.confirmed)) +
+  geom_point() + geom_smooth() +
+  xlab('') + ylab('Count') + labs(title='Current Confirmed Cases') +
+  theme(axis.text.x=element_text(angle=45, hjust=1))
+plot2 <- ggplot(data.world, aes(x=date, y=new.confirmed)) +
+  geom_point() + geom_smooth() +
+  xlab('') + ylab('Count') + labs(title='Daily New Confirmed Cases') +
+  theme(axis.text.x=element_text(angle=45, hjust=1))
+## show two plots side by side
+grid.arrange(plot1, plot2, ncol=2)
+View(data.world)
+## a scatter plot with a smoothed line and vertical x-axis labels
+plot1 <- ggplot(data.world, aes(x=date, y=deaths)) +
+  geom_point() + geom_smooth() +
+  xlab('') + ylab('Count') + labs(title='Accumulative Deaths') +
+  theme(axis.text.x=element_text(angle=45, hjust=1))
+plot2 <- ggplot(data.world, aes(x=date, y=recovered)) +
+  geom_point() + geom_smooth() +
+  xlab('') + ylab('Count') + labs(title='Accumulative Recovered Cases') +
+  theme(axis.text.x=element_text(angle=45, hjust=1))
+plot3 <- ggplot(data.world, aes(x=date, y=new.deaths)) +
+  geom_point() + geom_smooth() +
+  xlab('') + ylab('Count') + labs(title='New Deaths') +
+  theme(axis.text.x=element_text(angle=45, hjust=1))
+plot4 <- ggplot(data.world, aes(x=date, y=new.recovered)) +
+  geom_point() + geom_smooth() +
+  xlab('') + ylab('Count') + labs(title='New Recovered Cases') +
+  theme(axis.text.x=element_text(angle=45, hjust=1))
+## show four plots together, with 2 plots in each row
+grid.arrange(plot1, plot2, plot3, plot4, nrow=2)
 
 # ------------------------ Define UI -------------------
 ui <- fluidPage(
