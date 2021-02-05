@@ -88,7 +88,6 @@ data
 ## countries/regions with confirmed cases, excl. cruise ships
 countries <- data %>% pull(country) %>% setdiff('Cruise Ship')
 data
-
 data.world <- data %>% group_by(date) %>%
   summarise(country='World',
             confirmed = sum(confirmed, na.rm=T),
@@ -98,7 +97,6 @@ data %<>% rbind(data.world)
 data
 data %<>% mutate(current.confirmed = confirmed - deaths - recovered)
 View(data)
-
 ```
 ```{r}
 x <- raw.confirmed
@@ -171,6 +169,7 @@ View(data.long)
 ```{r}
 ##Number of case World
 world <- filter(data.long,country == 'World')
+world
 plot1 <- world %>% filter(type != 'Total Confirmed') %>%
   ggplot(aes(x=date, y=count)) +
   geom_area(aes(fill=type), alpha=0.5) +
@@ -309,7 +308,7 @@ top_pop <- filter(df_pop, df_pop$country %in% top.countries & df_pop$country != 
 top_pop <- sum(top_pop$`Population (2020)` %>% as.numeric())
 others_pop <- (world_pop - top_pop) 
 df_pop[nrow(df_pop) + 1,] = c("Others", others_pop)
-#View(df_pop)
+View(df_pop)
 
 data.latest <- merge(x = data.latest, y = df_pop, by = "country", all.x = TRUE) 
 data.latest
@@ -678,9 +677,9 @@ data.sars %<>% mutate(current.confirmed = confirmed - deaths - recovered)
 data.sars %<>% arrange(country, date)
 n <- nrow(data.sars)
 day1.sars <- min(data.sars$date)
-data.sars %<>% mutate(new.confirmed = ifelse(date == day1, NA, confirmed - lag(confirmed, n=1)),
-                 new.deaths = ifelse(date == day1, NA, deaths - lag(deaths, n=1)),
-                 new.recovered = ifelse(date == day1, NA, recovered - lag(recovered, n=1)))
+data.sars %<>% mutate(new.confirmed = ifelse(date == day1.sars, NA, confirmed - lag(confirmed, n=1)),
+                 new.deaths = ifelse(date == day1.sars, NA, deaths - lag(deaths, n=1)),
+                 new.recovered = ifelse(date == day1.sars, NA, recovered - lag(recovered, n=1)))
 data.sars %<>% mutate(new.confirmed = ifelse(new.confirmed < 0, 0, new.confirmed),
                  new.deaths = ifelse(new.deaths < 0, 0, new.deaths),
                  new.recovered = ifelse(new.recovered < 0, 0, new.recovered))
@@ -725,8 +724,11 @@ g
 
 gly.g <- ggplotly(g)
 gly.g
-
+ f
 gly.plot2
+```
+```{r}
+
 ```
 
 
@@ -856,6 +858,240 @@ data.thai.nationality <- df_thai %>%
   summarise(count = n()) %>%
   arrange(desc(count))
 data.thai.nationality
+```
+
+```{r}
+# Data in US
+df_us <- tbl(my_db, sql("select * from covidus"))
+df_us <- as.data.frame(df_us)
+
+df_us_pop <- tbl(my_db, sql("select * from data_population")) 
+df_us_pop <- as.data.frame(df_us_pop)
+
+df_us_gender <- tbl(my_db, sql("select * from data_gender")) 
+df_us_gender <- as.data.frame(df_us_gender)
+
+df_us_ethnic <- tbl(my_db, sql("select * from data_ethnic")) 
+df_us_ethnic <- as.data.frame(df_us_ethnic)
+
+df_us_lockdown <- tbl(my_db, sql("select * from data_lockdown")) 
+df_us_lockdown <- as.data.frame(df_us_lockdown)
+
+df_us_health <- tbl(my_db, sql("select * from data_health")) 
+df_us_health <- as.data.frame(df_us_health)
+
+df_us_testing <- tbl(my_db, sql("select * from data_testing")) 
+df_us_testing <- as.data.frame(df_us_testing)
+
+df_us_latlong <- tbl(my_db, sql("select * from us_latlong"))
+df_us_latlong <- as.data.frame(df_us_latlong)
+
+#View(df_us_latlong)
+
+data.us <- df_us %>% select(date, state, cases, deaths) %>%
+  mutate(date = date %>% mdy()) %>%
+  rename("confirmed" = "cases")
+
+data.us
+
+dates.us <- data.us[,1]
+range(dates.us)
+min.date.us <- min(dates.us)
+max.date.us <- max(dates.us)
+min.date.txt.us <- min.date.us %>% format('%d %b %Y')
+max.date.txt.us <- max.date.us %>% format('%d %b %Y')
+
+
+data.us.total <- data.us %>% group_by(date) %>%
+  summarise(state='US',
+            confirmed = sum(confirmed, na.rm=T),
+            deaths = sum(deaths, na.rm=T))
+#View(data.us.total)
+data.us %<>% rbind(data.us.total)
+View(data.us)
+
+data.us.long <- data.us %>% 
+  gather(key = type, value = count, -c(date, state)) 
+data.us.long
+
+us.total <- data.us.long %>% filter(state == "US") 
+us.total
+
+
+g1 <- us.total %>%
+  ggplot(aes(x = date, y = count, color = type)) + 
+  geom_line() + 
+  labs(title = paste0("Numbers of Cases in US :", min.date.txt.us, '-', max.date.txt.us, "(Log Scale)")) +
+  scale_y_continuous(trans='log10')
+
+g2 <- us.total %>% ggplot(aes(x = date, y = count)) +
+  geom_area(aes(fill=type), alpha=0.5) +
+  labs(title = paste0("Numbers of Cases in US :", min.date.txt.us, '-', max.date.txt.us, "(Log Scale)"))  +
+  scale_y_continuous(trans='log10')+
+  scale_fill_manual(values=c('red', 'black'))
+
+#gly.us1 <- ggplotly(g1)
+gly.us2 <- ggplotly(g2)
+
+#gly.us1
+gly.us2
+
+```
+
+
+```{r}
+day1.us <- min(data.us$date)
+data.us %<>% mutate(new.confirmed = ifelse(date == day1, NA, confirmed - lag(confirmed, n=1)),
+                 new.deaths = ifelse(date == day1, NA, deaths - lag(deaths, n=1)))
+data.us %<>% mutate(new.confirmed = ifelse(new.confirmed < 0, 0, new.confirmed),
+                 new.deaths = ifelse(new.deaths < 0, 0, new.deaths))
+#View(data.us)
+
+data.us.pop <- df_us_pop %>% select(State, Population) %>%
+  rename("state" = "State") 
+#data.us.pop
+
+data.us.gender <- df_us_gender %>% select(State, Male, Female) %>%
+  rename("state" = "State") 
+data.us.gender
+
+data.us.latest <- data.us %>%
+  filter(date == max.date.us) %>% 
+  merge(data.us.pop, by = "state", all.x = T) %>%
+  merge(data.us.gender, by = "state", all.x = T)
+#View(data.us.latest)
+
+data.us.latest$Population[data.us.latest$state == "US"] <- sum(data.us.pop$Population)
+data.us.latest %<>% mutate(ranking = dense_rank(desc(confirmed)),
+                           confirmed.rate = (100 * confirmed / Population) %>% round(2),
+                           death.rate = (100 * deaths / confirmed) %>% round(2),
+                           Male.confirmed = (Male * confirmed) %>% round(0),
+                           Female.confirmed = Female * confirmed %>% round(0),
+                           Male.deaths = Male * deaths,
+                           Female.deaths = Female * deaths) %>%
+  arrange(ranking) 
+
+top.us <- data.us.latest[,1]
+top.us
+
+
+data.us.latest
+
+
+```
+
+```{r}
+# List of top 20 state
+k <- 20
+data.us.top <- data.us.latest %>%
+  filter(ranking <= k+1) %>% 
+  arrange(ranking) 
+
+us.state.top <- data.us.top %>% pull(state) %>% as.character()
+us.state.top  %>% setdiff('US') %>% print()
+
+# confirmed rate & death rate of top 20 state
+g.rate <- data.us.latest %>% filter(state %in% us.state.top & state != "US") %>%
+  select(state, confirmed.rate, death.rate, ranking) %>%
+  gather(key = Type, value = Percent, -c(state, ranking)) %>%
+  ggplot(aes(x=reorder(state, -desc(ranking)), y=Percent, fill = Percent)) +
+  geom_bar(stat='identity') +
+  scale_fill_gradient(low = "#ebbc62", high = "#b42006") +
+  geom_text(aes(label=Percent, y=Percent), size=3, vjust=0) +
+  xlab('') + ylab('') +
+  labs(title=paste0('Confirmed Rate & Death Rate of Top 20 State in US')) +
+  #scale_fill_continuous(name='State', labels=aes(Percent)) +
+  theme(legend.title=element_blank(),
+        legend.position='none',
+        plot.title=element_text(size=13),
+        axis.text=element_text(size=8),
+        axis.text.x=element_text(angle=45, hjust=1)) +
+  facet_wrap(~Type, ncol=1, scales='free_y') 
+
+g.rate
+```
+
+
+```{r}
+
+g.us.top1 <- data.us.top %>%
+  filter(state != "US") %>%
+  select(state, confirmed, deaths, ranking) %>%
+  gather(key = Type, value = count, -c(state, ranking)) %>%
+  
+  ggplot(aes(fill = Type, y = count, x = reorder(state, -desc(ranking)))) + 
+  geom_bar(position = "dodge", stat = "identity") +
+  labs(title = "20 state in US with most confirmed cases") +
+  xlab("") + 
+  ylab("Confirmed Cases") +
+  theme(axis.text.x = element_text(angle = 90,vjust = 1))+
+  theme(
+    axis.line = element_blank(),
+    axis.ticks = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    #legend.position = "none"
+  )
+
+g.us.top3 <- data.us.top %>%
+  filter(state != "US") %>%
+  select(state, Male.confirmed, Female.confirmed, Male.deaths, Female.deaths, ranking) %>%
+  gather(key = Type, value = count, -c(state, ranking)) %>%
+  
+  ggplot(aes(fill = Type, y = count, x = reorder(state, -desc(ranking)))) + 
+  geom_bar(position = "stack", stat = "identity") +
+  labs(title = "20 most confirmed cases's state in US (Divided by gender)") +
+  xlab("") + 
+  ylab("Cases") +
+  theme(axis.text.x = element_text(angle = 90,vjust = 1)) +
+  theme(
+    axis.line = element_blank(),
+    axis.ticks = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    #legend.position = "none"
+  )
+
+g.us.top3
+
+gly.us.top1 <- ggplotly(g.us.top1)
+gly.us.top1
+
+gly.us.top2 <- ggplotly(g.us.top2)
+gly.us.top2
+
+gly.us.top3 <- ggplotly(g.us.top3)
+gly.us.top3
+
+```
+
+```{r}
+data.us.latlong <- df_us_latlong %>%
+  rename("lat" = "latitude", "long" = "longitude")
+
+#label_world <- lat.long 
+#label_world$avg_temp <- as.numeric(label_world[, names(label_world) %in% c("avg_temp")])
+#label_world <- label_world %>%  
+#  mutate(txt=paste0('<b>',ranking, '</b>',
+#                    '<br/>','<b>',country, '</b>',
+#                    '<br/>', "Temperature:  ",avg_temp, ' °C',
+#                    '<br/>', "Confirmed:  ", confirmed, 
+#                    '<br/>', "Deaths: ", deaths,
+#                    '<br/>', "Recovered: ", recovered
+#                    )) 
+
+#label_world$txt <- label_world$txt %>% lapply(htmltools::HTML)
+#label_world
+
+map.us <- data.us.latest %>%
+  select(state, confirmed, confirmed.rate, deaths, death.rate, ranking) %>%
+  merge(data.us.latlong) %>%
+  mutate()
+map.us
 ```
 
 
