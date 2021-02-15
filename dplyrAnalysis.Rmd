@@ -38,9 +38,7 @@ library(readr)
 #??src_mysql
 my_db <- src_mysql(
   dbname = "coronavirus",
-  host = "localhost",
-  user = "root",
-  password = "1234"
+  host = "localhost"
 )
 my_db
 
