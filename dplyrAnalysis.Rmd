@@ -27,7 +27,7 @@ library(magrittr)
 library(ggplot2)
 library(tidyr)
 library(knitr)
-library(normalr)
+#library(normalr)
 library(ggcorrplot)
 
 library(leaflet)
@@ -43,13 +43,13 @@ my_db <- src_mysql(
 my_db
 
 ##import data
-df_conf <- tbl(my_db, sql("select * from covid19_confirmed "))
+df_conf <- tbl(my_db, sql("select * from time_series_covid19_confirmed_global "))
 df_conf <- as.data.frame(df_conf)
 df_conf
-df_deaths <- tbl(my_db, sql("select * from covid19_deaths "))
+df_deaths <- tbl(my_db, sql("select * from time_series_covid19_deaths_global "))
 df_deaths <- as.data.frame(df_deaths)
 df_deaths
-df_recover <- tbl(my_db, sql("select * from covid19_recovered "))
+df_recover <- tbl(my_db, sql("select * from time_series_covid19_recovered_global "))
 df_recover <- as.data.frame(df_recover)
 df_recover
 ```
@@ -165,10 +165,6 @@ plot2 <- world %>%
 grid.arrange(plot1, plot2, ncol=2)
 ```
 
-
-```{r}
-plot2
-```
 ```{r}
 ## Current Confirmed Cases
 data.world <- data %>% filter(country=='World')
