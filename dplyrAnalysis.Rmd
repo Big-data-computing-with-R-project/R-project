@@ -5,7 +5,7 @@ output: html_notebook
 ```{r}
 #install.packages("knitr")
 #install.packages("grid")
-install.packages("plotly")
+#install.packages("plotly")
 #install.packages("dprep")
 #install.packages("normalr")
 #install.packages("ggcorrplot")
