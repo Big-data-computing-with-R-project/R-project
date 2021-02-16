@@ -11,6 +11,7 @@ output: html_notebook
 #install.packages("kableExtra") #complex tables
 #install.packages("leaflet") #map
 
+
 library(magrittr)
 library(lubridate)
 library(tidyverse)
@@ -133,12 +134,7 @@ grid.arrange(plot1, plot2, ncol=2)
 test_totalcase <- aggregate(total_cases~location,raw.data.full_data,mean)
 test_totalcase
 barplot(test_totalcase$total_cases,names.arg = test_totalcase$location)
-```
-```{r}
-raw.data.full_data %>% group_by(date(date)) %>%
-  summarize(avg_totalcase = total_cases) %>%
-  ggplot(aes(avg_totalcase))+geom_histogram()
-```
+
 
 
 
