@@ -198,10 +198,12 @@ plot2 <- world %>%
         axis.text.x=element_text(angle=45, hjust=1)) +
   scale_y_continuous(trans='log10')
 ## show two plots side by side
-grid.arrange(plot1, plot2, ncol=2)
+#grid.arrange(plot1, plot2, ncol=2)
 
-gly.plot2 <- ggplotly(plot2)
-gly.plot2
+plot1
+
+#gly.plot2 <- ggplotly(plot2)
+#gly.plot2
 ```
 
 ```{r}
@@ -256,6 +258,7 @@ rates.long %<>% mutate(type=recode_factor(type, rate.daily='Daily',
 g <- rates.long %>% filter(country == "World") %>% 
   ggplot(aes(x = date, y = count, color = type)) + 
   geom_line() +
+  labs(title = "World Death Rate (%)") +
   xlab("") + ylab("Death Rate (%)")
 
 g
@@ -629,7 +632,8 @@ g <- ggplot(gdp.top20, aes(x = GDP, y = reorder(country, -ranking))) +
   labs(title=paste0("GDP  of Top 20 Countries in 2019 (millions of US dollars)")) +
   geom_text(aes(label=GDP, x = GDP), size=3.5, hjust=-0.2) +
   xlab("GDP (millions of US dollars)") +
-  ylab("") 
+  ylab("") +
+  theme(legend.title=element_blank())
 g
 
 gly.top.gdp <- ggplotly(g)
@@ -717,14 +721,13 @@ View(world.sars.long)
 
 g <- ggplot(world.sars.long, aes(date, count, color = type)) +
   geom_line()+
-  labs("Number of Cases Worldwide: SARs")+
+  labs(title = "Number of Cases Worldwide: SARs")+
   xlab("")+
   ylab("")
 g
 
 gly.g <- ggplotly(g)
 gly.g
- f
 gly.plot2
 ```
 ```{r}
@@ -891,8 +894,7 @@ df_us_latlong <- as.data.frame(df_us_latlong)
 data.us <- df_us %>% select(date, state, cases, deaths) %>%
   mutate(date = date %>% mdy()) %>%
   rename("confirmed" = "cases")
-
-data.us
+#data.us
 
 dates.us <- data.us[,1]
 range(dates.us)
@@ -900,7 +902,7 @@ min.date.us <- min(dates.us)
 max.date.us <- max(dates.us)
 min.date.txt.us <- min.date.us %>% format('%d %b %Y')
 max.date.txt.us <- max.date.us %>% format('%d %b %Y')
-
+day1.us <- min(data.us$date)
 
 data.us.total <- data.us %>% group_by(date) %>%
   summarise(state='US',
@@ -912,40 +914,75 @@ View(data.us)
 
 data.us.long <- data.us %>% 
   gather(key = type, value = count, -c(date, state)) 
-data.us.long
+#data.us.long
 
-us.total <- data.us.long %>% filter(state == "US") 
+us.total <- data.us.total %>%
+  mutate(new.confirmed = ifelse(date == day1, 0, confirmed - lag(confirmed, n=1)),
+                new.deaths = ifelse(date == day1, 0, deaths - lag(deaths, n=1)))
+
+us.total %<>% mutate(new.confirmed = ifelse(new.confirmed < 0, 0, new.confirmed),
+                 new.deaths = ifelse(new.deaths < 0, 0, new.deaths))
 us.total
 
+us.total.long <- us.total %>% 
+  gather(key = type, value = count, -c(date, state))
 
-g1 <- us.total %>%
-  ggplot(aes(x = date, y = count, color = type)) + 
-  geom_line() + 
-  labs(title = paste0("Numbers of Cases in US :", min.date.txt.us, '-', max.date.txt.us, "(Log Scale)")) +
-  scale_y_continuous(trans='log10')
+View(us.total.long)
 
-g2 <- us.total %>% ggplot(aes(x = date, y = count)) +
-  geom_area(aes(fill=type), alpha=0.5) +
-  labs(title = paste0("Numbers of Cases in US :", min.date.txt.us, '-', max.date.txt.us, "(Log Scale)"))  +
-  scale_y_continuous(trans='log10')+
-  scale_fill_manual(values=c('red', 'black'))
-
-#gly.us1 <- ggplotly(g1)
-gly.us2 <- ggplotly(g2)
-
-#gly.us1
-gly.us2
 
 ```
 
+```{r}
+View(us.total.long)
+
+g1 <- data.us.long %>% filter(state == "US") %>%
+  ggplot(aes(x = date, y = count, color = type)) + 
+  geom_line() + 
+  labs(title = paste0("Cumulative cases in US : ", min.date.txt.us, '-', max.date.txt.us, " (Log Scale)")) +
+  scale_y_continuous(trans='log10')
+
+g2 <- data.us.long %>% filter(state == "US") %>%
+  ggplot(aes(x = date, y = count)) +
+  geom_area(aes(fill=type), alpha=0.5) +
+  labs(title = paste0("Cumulative cases in US : ", min.date.txt.us, '-', max.date.txt.us, " (Log Scale)"))  +
+  scale_y_continuous(trans='log10')+
+  scale_fill_manual(values=c('red', 'black'))+
+  ylab("")
+
+g3 <- us.total.long %>%
+  filter(type %in% c("new.confirmed")) %>%
+  ggplot(aes(x = date, y = count, color = type)) + 
+  geom_line() + 
+  labs(title = paste0("Daily confirmed cases in US : ", min.date.txt.us, '-', max.date.txt.us)) +
+  xlab("Date") +
+  ylab("Confirmed cases")
+
+#g1
+#g2
+#g3
+
+#gly.us1 <- ggplotly(g1)
+gly.us2 <- ggplotly(g2)
+gly.us3 <- ggplotly(g3)
+
+#gly.us1
+gly.us2
+gly.us3
+```
+
+
 
 ```{r}
-day1.us <- min(data.us$date)
+
 data.us %<>% mutate(new.confirmed = ifelse(date == day1, NA, confirmed - lag(confirmed, n=1)),
                  new.deaths = ifelse(date == day1, NA, deaths - lag(deaths, n=1)))
+
 data.us %<>% mutate(new.confirmed = ifelse(new.confirmed < 0, 0, new.confirmed),
                  new.deaths = ifelse(new.deaths < 0, 0, new.deaths))
-#View(data.us)
+View(data.us)
+
+#data.us.daily <- data.us %>% filter(state == "US")
+#View(data.us.daily)
 
 data.us.pop <- df_us_pop %>% select(State, Population) %>%
   rename("state" = "State") 
@@ -1013,18 +1050,25 @@ g.rate
 
 
 ```{r}
+us.confirmed.num <- data.us.top$confirmed[data.us.top$state == "US"] %>% as.numeric()
+us.confirmed.num
+
+data.us.top %<>% mutate(confirmed.per.us = (confirmed * 100 / us.confirmed.num) %>% round(1))
+data.us.top
 
 g.us.top1 <- data.us.top %>%
   filter(state != "US") %>%
-  select(state, confirmed, deaths, ranking) %>%
-  gather(key = Type, value = count, -c(state, ranking)) %>%
+  select(state, confirmed, confirmed.per.us, ranking) %>%
+  gather(key = Type, value = count, -c(state, ranking, confirmed.per.us)) %>%
   
-  ggplot(aes(fill = Type, y = count, x = reorder(state, -desc(ranking)))) + 
+  ggplot(aes(fill = count, y = count, x = reorder(state, -desc(ranking)))) + 
   geom_bar(position = "dodge", stat = "identity") +
   labs(title = "20 state in US with most confirmed cases") +
+  scale_fill_gradient(low = "#ebbc62", high = "#b42006") +
   xlab("") + 
   ylab("Confirmed Cases") +
-  theme(axis.text.x = element_text(angle = 90,vjust = 1))+
+  geom_text(aes(label=paste0(confirmed.per.us, "%")), size=3, vjust=-0.5) +
+  theme(axis.text.x = element_text(angle = 90,vjust = 0.5))+
   theme(
     axis.line = element_blank(),
     axis.ticks = element_blank(),
@@ -1035,7 +1079,7 @@ g.us.top1 <- data.us.top %>%
     #legend.position = "none"
   )
 
-g.us.top3 <- data.us.top %>%
+g.us.top2 <- data.us.top %>%
   filter(state != "US") %>%
   select(state, Male.confirmed, Female.confirmed, Male.deaths, Female.deaths, ranking) %>%
   gather(key = Type, value = count, -c(state, ranking)) %>%
@@ -1045,7 +1089,7 @@ g.us.top3 <- data.us.top %>%
   labs(title = "20 most confirmed cases's state in US (Divided by gender)") +
   xlab("") + 
   ylab("Cases") +
-  theme(axis.text.x = element_text(angle = 90,vjust = 1)) +
+  theme(axis.text.x = element_text(angle = 45,vjust = 1)) +
   theme(
     axis.line = element_blank(),
     axis.ticks = element_blank(),
@@ -1056,7 +1100,18 @@ g.us.top3 <- data.us.top %>%
     #legend.position = "none"
   )
 
-g.us.top3
+g.us.top3 <-  data.us.top %>%
+  filter(state != "US") %>%
+  select(state, confirmed.per.us, ranking) %>%
+  gather(key = Type, value = count, -c(state, ranking)) %>%
+  ggplot(aes(x = "", y = confirmed.per.us, fill = confirmed.per.us)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y") +
+  theme_void() +
+  geom_text(aes(label = paste0(percent, "%")), color = "white", size = 5, position = position_stack(vjust = 0.5)) +
+  guides(fill = guide_legend(reverse = TRUE))
+
+g.us.top1
 
 gly.us.top1 <- ggplotly(g.us.top1)
 gly.us.top1
@@ -1064,8 +1119,8 @@ gly.us.top1
 gly.us.top2 <- ggplotly(g.us.top2)
 gly.us.top2
 
-gly.us.top3 <- ggplotly(g.us.top3)
-gly.us.top3
+#gly.us.top3 <- ggplotly(g.us.top3)
+#gly.us.top3
 
 ```
 
