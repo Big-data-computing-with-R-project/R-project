@@ -287,11 +287,11 @@ data.latest.long %<>% mutate(type=recode_factor(type,
 data.one.dem <- filter(data.latest.long,type=='Total Confirmed'
                        | type=='Total Deaths'
                        | type=='Current Confirmed')
-data.two.dem <- filter(data.latest.long,type=='Death Rate (%)'
-                       | type=='New Confirmed (compared with one day before)'
-                       | type=='New Deaths (compared with one day before)'
-                       | type=='Recover Rate(%)'
-                       | type=='Confirmed Rate(%)')
+data.two.dem <- filter(data.latest.long,type=='Confirmed Rate(%)'
+                       #| type=='New Confirmed (compared with one day before)'
+                       #| type=='New Deaths (compared with one day before)'
+                       | type=='Death Rate (%)'
+                       | type=='Recover Rate(%)')
 data.two.dem
 ```
 
@@ -312,8 +312,9 @@ data.one.dem %>% ggplot(aes(x=country, y=count, fill=country, group=country)) +
 
 ```
 ```{r}
-
-data.two.dem %>% ggplot(aes(x=country, y=count, fill=country, group=country)) +
+data.two.dem$facet <- factor(data.two.dem$type, levels = c('Confirmed Rate(%)', 'Recover Rate(%)','Death Rate (%)'))
+data.two.dem %>% 
+  ggplot(aes(x=country, y=count, fill=country, group=country)) +
   geom_bar(stat='identity') +
   geom_text(aes(label=count, y=count), size=2, vjust=0) +
   xlab('') + ylab('') +
@@ -322,9 +323,9 @@ data.two.dem %>% ggplot(aes(x=country, y=count, fill=country, group=country)) +
   theme(legend.title=element_blank(),
         legend.position='none',
         plot.title=element_text(size=11),
-        axis.text=element_text(size=7),
-        axis.text.x=element_text(angle=45, hjust=1)) +
-  facet_wrap(~type, ncol=1, scales='free_y')
+        axis.text=element_text(size=9),
+        axis.text.x=element_text(size=6,angle=45, hjust=1)) +
+  facet_wrap(~facet, ncol=1, scales='free_y')
 ```
 
 ```{r}
