@@ -158,7 +158,17 @@ rates.long <- data %>%
 # set factor levels to show them in a desirable order
 rates.long %<>% mutate(type=recode_factor(type, rate.daily='Daily',
                                           rate.upper='Upper bound'))
-
+## ranking by confirmed cases
+data.latest.all <- data %>% filter(date == max(date)) %>%
+  select(country, date,confirmed, new.confirmed, current.confirmed,
+         recovered, deaths, new.deaths, death.rate=rate.lower) %>%
+  mutate(ranking = dense_rank(desc(confirmed)))
+#View(data.latest.all)
+k <- 20
+## top 20 countries: 21 incl. 'World'
+top.countries <- data.latest.all %>% filter(ranking <= k + 1) %>%
+  arrange(ranking) %>% pull(country) %>% as.character()
+top.countries %>% setdiff('World') %>% print()
 # ------------------------ Define UI -------------------
 ui <- fluidPage(
   navbarPage("COVID-19!",
