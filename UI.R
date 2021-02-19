@@ -151,6 +151,13 @@ plot4 <- ggplot(data.world, aes(x=date, y=new.recovered)) +
   theme(axis.text.x=element_text(angle=45, hjust=1))
 ## show four plots together, with 2 plots in each row
 grid.arrange(plot1, plot2, plot3, plot4, nrow=2)
+#--------------rate------------------------------
+rates.long <- data %>%
+  select(c(country, date, rate.upper, rate.lower, rate.daily)) %>%
+  gather(key=type, value=count, -c(country, date))
+# set factor levels to show them in a desirable order
+rates.long %<>% mutate(type=recode_factor(type, rate.daily='Daily',
+                                          rate.upper='Upper bound'))
 
 # ------------------------ Define UI -------------------
 ui <- fluidPage(
