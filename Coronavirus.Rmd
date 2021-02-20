@@ -1369,9 +1369,6 @@ ggplot(data.thai.nationality)+
    scale_y_continuous(trans='log10')+coord_flip()+scale_fill_gradient(low="blue",high = "red")
 ```
 
-```{r}
-
-```
 
 
 
