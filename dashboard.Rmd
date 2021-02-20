@@ -1,0 +1,57 @@
+---
+title: "covid-19"
+output:
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    social: menu
+    source_code: embed
+---
+
+
+```{r}
+#install.packages("shinydashboard")
+#install.packages("wbstats")
+#install.packages("plotly")
+#install.packages("htmlwidgets")
+library(shiny)
+library(shinydashboard)
+library(DT)
+library(fs)
+library(wbstats)
+library(leaflet)
+library(plotly)
+library(tidyverse)
+
+
+```
+```{r}
+ui <- dashboardPage(
+  dashboardHeader(title = "Covid-19"),
+  dashboardSidebar(),
+  dashboardBody(
+    box(plotOutput("correlation_plot"),width = 8),
+    box(selectInput("features","Features:",c("Sepal.Width","Petal.Length","Petal.Width")),width = 4)),
+)
+
+server <- function(input,output){
+  output$correlation_plot <- renderPlot({
+    plot(iris$Sepal.Length,iris[[input$features]],
+         xlab = "Sepal length",ylab = "Feature")
+  })
+}
+
+shinyApp(ui,server)
+```
+```{r}
+ui <- fluidPage(
+  title = "COVID-19",
+  tags$head(),
+  tags$style(type = "text/css", ".container-fluid {padding-left: 0px}"),
+  navbarPage(
+    title = div("COVID")
+  )
+)
+```
+
+
+
