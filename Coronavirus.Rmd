@@ -37,7 +37,7 @@ library(readr)
 #??src_mysql
 my_db <- src_mysql(
   dbname = "covid",
-  host = "localhost",
+  host = "127.0.0.1",
   user = "root",
   password = "1234"
 )
@@ -105,32 +105,32 @@ View(data)
 
 ```{r}
 # World confirmed cases map
-x <- df_conf
-View(x)
-x$confirmed <- x[, ncol(x)]
-x %<>% select(c(Country.Region, Province.State, Lat, Long, confirmed)) %>%
-mutate(txt=paste0(Country.Region, ' - ', Province.State, ': ', confirmed))
-m <- leaflet(width=1200, height=800) %>% addTiles()
+world.location <- df_conf
+#View(world.location )
+world.location$confirmed <- world.location [, ncol(world.location )]
+world.location  %<>% select(c(Country.Region, Province.State, Lat, Long, confirmed)) %>%
+  mutate(txt=paste0(Country.Region, ' - ', Province.State, ': ', confirmed))
+map.confirmed <- leaflet(width=1200, height=800) %>% addTiles()
 # circle marker (units in pixels)
-m %<>% addCircleMarkers(x$Long, x$Lat,
+map.confirmed %<>% addCircleMarkers(x$Long, x$Lat,
                         # radius=2+log2(x$confirmed),
-                        radius=0.03*sqrt(x$confirmed),
+                        radius=0.02*sqrt(x$confirmed),
                         stroke=F,
                         color='red', fillOpacity=0.3,
                         label=x$txt)
 # world
-m
+map.confirmed
 ```
 
 ```{r}
 ## China
-m %>% setView(95, 35, zoom=4)
+map.confirmed %>% setView(95, 35, zoom=4)
 ## Australia and New Zealand
-m %>% setView(135, -27, zoom=4)
+map.confirmed %>% setView(135, -27, zoom=4)
 ## US and Canada
-m %>% setView(-105, 40, zoom=4)
+map.confirmed %>% setView(-105, 40, zoom=4)
 ## Europe
-m %>% setView(10, 50, zoom=4)
+map.confirmed %>% setView(10, 50, zoom=4)
 ```
 
 ```{r}
@@ -176,7 +176,7 @@ View(data.long)
 ##Number of case World
 world <- filter(data.long,country == 'World')
 world
-plot1 <- world %>% filter(type != 'Total Confirmed') %>%
+plot_world.area <- world %>% filter(type != 'Total Confirmed') %>%
   ggplot(aes(x=date, y=count)) +
   geom_area(aes(fill=type), alpha=0.5) +
   labs(title=paste0('Numbers of Cases Worldwide - ', max.date.txt)) +
@@ -189,7 +189,7 @@ plot1 <- world %>% filter(type != 'Total Confirmed') %>%
         legend.text=element_text(size=6),
         axis.text=element_text(size=7),
         axis.text.x=element_text(angle=45, hjust=1))
-plot2 <- world %>%
+plot_world.line <- world %>%
   ggplot(aes(x=date, y=count)) +
   geom_line(aes(color=type)) +
   labs(title=paste0('Numbers of Cases Worldwide (log scale) - ', max.date.txt)) +
@@ -206,33 +206,34 @@ plot2 <- world %>%
 ## show two plots side by side
 grid.arrange(plot1, plot2, ncol=2)
 
-gly.plot1 <- ggplotly(plot1)
-gly.plot1
+gly.plot_world.area <- ggplotly(plot_world.area)
+gly.plot_world.area
 
-gly.plot2 <- ggplotly(plot2)
-gly.plot2
+gly.plot_world.line <- ggplotly(plot_world.line)
+gly.plot_world.line
 ```
 
 ```{r}
+data.world.all <- data %>% filter(country == "World")
 ## a scatter plot with a smoothed line and vertical x-axis labels
-plot1 <- ggplot(data.world, aes(x=date, y=deaths)) +
+plot_acc.deaths <- ggplot(data.world.all, aes(x=date, y=deaths)) +
   geom_point() + geom_smooth() +
   xlab('') + ylab('Count') + labs(title='Accumulative Deaths') +
   theme(axis.text.x=element_text(angle=45, hjust=1))
-plot2 <- ggplot(data.world, aes(x=date, y=recovered)) +
+plot_recovered <- ggplot(data.world.all, aes(x=date, y=recovered)) +
   geom_point() + geom_smooth() +
   xlab('') + ylab('Count') + labs(title='Accumulative Recovered Cases') +
   theme(axis.text.x=element_text(angle=45, hjust=1))
-plot3 <- ggplot(data.world, aes(x=date, y=new.deaths)) +
+plot_new.deaths <- ggplot(data.world.all, aes(x=date, y=new.deaths)) +
   geom_point() + geom_smooth() +
   xlab('') + ylab('Count') + labs(title='New Deaths') +
   theme(axis.text.x=element_text(angle=45, hjust=1))
-plot4 <- ggplot(data.world, aes(x=date, y=new.recovered)) +
+plot_new.recovered <- ggplot(data.world.all, aes(x=date, y=new.recovered)) +
   geom_point() + geom_smooth() +
   xlab('') + ylab('Count') + labs(title='New Recovered Cases') +
   theme(axis.text.x=element_text(angle=45, hjust=1))
 ## show four plots together, with 2 plots in each row
-grid.arrange(plot1, plot2, plot3, plot4, nrow=2)
+grid.arrange(plot_acc.deaths, plot_recovered, plot_new.deaths, plot_new.recovered, nrow=2)
 
 ```
 
@@ -247,16 +248,16 @@ rates.long %<>% mutate(type=recode_factor(type, rate.daily='Daily',
                              rate.lower = 'Lower bound')) 
 #View(rates.long) 
 
-g <- rates.long %>% filter(country == "World") %>% 
+plot_rates <- rates.long %>% filter(country == "World") %>% 
   ggplot(aes(x = date, y = count, color = type)) + 
   geom_line() +
   labs(title = "World Death Rate (%)") +
   xlab("") + ylab("Death Rate (%)")
 
-g
+plot_rates
 
-gly.death <- ggplotly(g)
-gly.death
+gly.rates <- ggplotly(plot_rates)
+gly.rates
 ```
 
 ```{r}
@@ -387,7 +388,7 @@ df_gdp2019
 ```
 
 ```{r}
-#healthranking
+#healthranking data
 df_healt <- tbl(my_db, sql("select * from healthranking"))
 df_healt <- as.data.frame(df_healt)
 df_healt <- select(df_healt,c("country","healthCareIndex"))
@@ -395,14 +396,14 @@ View(df_healt)
 ```
 
 ```{r}
-#Top20Pornhub
+#Top20Pornhub data
 df_pornhub <- tbl(my_db, sql("select * from Pornhub"))
 df_pornhub <- as.data.frame(df_pornhub)
 df_pornhub
 ```
 
 ```{r}
-#temp
+# temp data
 df_temp <- tbl(my_db, sql("select * from world_temp"))
 df_temp <- as.data.frame(df_temp) 
 df_temp$Country[df_temp$Country == "United States"] <- "US"
@@ -413,6 +414,7 @@ df_city <- select(df_temp,c("Country","City")) %>%
 
 numofcity <- aggregate(city ~ country, data = df_city, length)
 
+#clean data
 df_temp <- select(df_temp,c("Country","Avg_Year")) %>%
   rename(country=Country)
 View(df_temp)
@@ -424,14 +426,13 @@ df_temp
 
 ```{r}
 ##temp bar
-#display.brewer.all()
 df_temp.all <- df_temp %>% merge(data.latest.all)
 View(df_temp.all)
 df_temp_top.all <- df_temp.all %>% filter(country %in% top.countries) %>%
   mutate(ranking = ranking - 1) %>%
   arrange(ranking)
-View(df_temp_top)
-g_temp_top <- df_temp_top %>%
+View(df_temp_top.all)
+g_temp_top <- df_temp_top.all %>%
   ggplot(aes(x = reorder(country, ranking), y = avg_temp, fill = avg_temp)) +
   labs(title=paste0("Temperature in Top  20 countries"), subtitle = "Average Temperature in Top 20 countries with most confirmed cases (°C) (2020)") +
   scale_color_gradient(low = "#93DBFF", high = "#FF7771") +
@@ -454,7 +455,6 @@ g_temp_top
 ```
 
 ```{r}
-#df_conf
 #data.latest.all
 lat.long <- rename(df_conf, "country" = "Country.Region", "city" = "Province.State") %>% 
   select("country", "Lat", "Long") %>% 
@@ -578,7 +578,7 @@ df_pornhub
 # Sars
 df_sars <- tbl(my_db, sql("select * from sars_2003"))
 df_sars <- as.data.frame(df_sars)
-View(df_sars)
+#View(df_sars)
 
 dates.s <- df_sars[,1]%>% mdy()
 range(dates.s)
@@ -586,8 +586,30 @@ min.date.s <- min(dates.s)
 max.date.s <- max(dates.s)
 min.date.txt.s <- min.date.s %>% format('%d %b %Y')
 max.date.txt.s <- max.date.s %>% format('%d %b %Y')
-
+day1.sars <- min.date.s
 ```
+
+```{r}
+# clean data Sars 
+data.sars <- df_sars %>% rename(c("date" = "Date", "confirmed" = "Cumulative_number"  ,"deaths" = "Number_deaths", "recovered" = "Number_recovered")) %>%
+  mutate(date = date %>% mdy()) %>%
+  group_by(country, date) %>% as.data.frame() 
+View(data.sars)
+
+
+# Add World's Sars cases 
+world.sars <- data.sars %>% group_by(date) %>% 
+  summarise(country='World',
+            confirmed = sum(confirmed, na.rm=T),
+            deaths = sum(deaths, na.rm=T),
+            recovered = sum(recovered, na.rm=T))
+
+data.sars %<>% rbind(world.sars)
+data.sars %<>% mutate(current.confirmed = confirmed - deaths - recovered)
+#View(world.sars) 
+#View(data.sars)
+```
+
 
 ```{r}
 #rate
@@ -658,73 +680,52 @@ data.sars.world <- data.sars %>% filter(country=='World')
 #View(data.sars.world)
 n <- nrow(data.sars.world)
 View(data.sars.world)
-plot1 <- ggplot(data.sars.world, aes(x=date, y=current.confirmed)) +
+plot_sars.currconf <- ggplot(data.sars.world, aes(x=date, y=current.confirmed)) +
   geom_point() + geom_smooth() +
   xlab('') + ylab('Count') + labs(title='Current Confirmed Cases') +
   theme(axis.text.x=element_text(angle=45, hjust=1))
-plot2 <- ggplot(data.world, aes(x=date, y=new.confirmed)) +
+plot_sars.newconf <- ggplot(data.sars.world, aes(x=date, y=new.confirmed)) +
   geom_point() + geom_smooth() +
   xlab('') + ylab('Count') + labs(title='Daily New Confirmed Cases') +
   theme(axis.text.x=element_text(angle=45, hjust=1))
 ## show two plots side by side
-grid.arrange(plot1, plot2, ncol=2)
+grid.arrange(plot_sars.currconf, plot_sars.newconf, ncol=2)
 ```
 
 ```{r}
 ## a scatter plot with a smoothed line and vertical x-axis labels
-plot1 <- ggplot(data.sars.world, aes(x=date, y=deaths)) +
+plot_sars.accdeaths <- ggplot(data.sars.world, aes(x=date, y=deaths)) +
   geom_point() + geom_smooth() +
   xlab('') + ylab('Count') + labs(title='Accumulative Deaths') +
   theme(axis.text.x=element_text(angle=45, hjust=1))
-plot2 <- ggplot(data.sars.world, aes(x=date, y=recovered)) +
+plot_sars.accrecov <- ggplot(data.sars.world, aes(x=date, y=recovered)) +
   geom_point() + geom_smooth() +
   xlab('') + ylab('Count') + labs(title='Accumulative Recovered Cases') +
   theme(axis.text.x=element_text(angle=45, hjust=1))
-plot3 <- ggplot(data.sars.world, aes(x=date, y=new.deaths)) +
+plot_sars.newdeaths <- ggplot(data.sars.world, aes(x=date, y=new.deaths)) +
   geom_point() + geom_smooth() +
   xlab('') + ylab('Count') + labs(title='New Deaths') +
   theme(axis.text.x=element_text(angle=45, hjust=1))
-plot4 <- ggplot(data.sars.world, aes(x=date, y=new.recovered)) +
+plot_sars.newrecov <- ggplot(data.sars.world, aes(x=date, y=new.recovered)) +
   geom_point() + geom_smooth() +
   xlab('') + ylab('Count') + labs(title='New Recovered Cases') +
   theme(axis.text.x=element_text(angle=45, hjust=1))
 ## show four plots together, with 2 plots in each row
-grid.arrange(plot1, plot2, plot3, plot4, nrow=2)
+grid.arrange(plot_sars.accdeaths, plot_sars.accrecov, plot_sars.newdeaths, plot_sars.newrecov, nrow=2)
 ```
 
-```{r}
-## a scatter plot with a smoothed line and vertical x-axis labels
-plot1 <- ggplot(data.sars.world, aes(x=date, y=deaths)) +
-  geom_point() + geom_smooth() +
-  xlab('') + ylab('Count') + labs(title='Accumulative Deaths') +
-  theme(axis.text.x=element_text(angle=45, hjust=1))
-plot2 <- ggplot(data.sars.world, aes(x=date, y=recovered)) +
-  geom_point() + geom_smooth() +
-  xlab('') + ylab('Count') + labs(title='Accumulative Recovered Cases') +
-  theme(axis.text.x=element_text(angle=45, hjust=1))
-plot3 <- ggplot(data.sars.world, aes(x=date, y=new.deaths)) +
-  geom_point() + geom_smooth() +
-  xlab('') + ylab('Count') + labs(title='New Deaths') +
-  theme(axis.text.x=element_text(angle=45, hjust=1))
-plot4 <- ggplot(data.sars.world, aes(x=date, y=new.recovered)) +
-  geom_point() + geom_smooth() +
-  xlab('') + ylab('Count') + labs(title='New Recovered Cases') +
-  theme(axis.text.x=element_text(angle=45, hjust=1))
-## show four plots together, with 2 plots in each row
-grid.arrange(plot1, plot2, plot3, plot4, nrow=2)
-```
 
 ```{r}
 #Top 20 with gdp
 data.longGDP <- df_gdp %>% gather(key=year, value=GDP, -c(country))
 data.top <- data.latest %>% filter(!country %in% c('World', 'Others'))
 data.top <- head(data.top,20)
-View(data.latest)
+#View(data.latest)
 data.gdp <- filter(data.longGDP,year=='2020')
 df_sars_lastdate_confirmed <- df_sars_lastdate %>%
   select("country", "confirmed") %>%
   rename(sars = "confirmed")
-View(df_sars_lastdate_confirmed)
+#View(df_sars_lastdate_confirmed)
 #merge
 mergcountry = function(data1,data2){
   data <- merge(x = data1, y = data2, by = "country", all.x = TRUE) 
@@ -748,7 +749,7 @@ data.top.world <- mergcountry(data.top.world, df_temp)
 index <- is.na(data.top.world)
 data.top.world[index] <- 0
 data.top.world
-View(data.top.world)
+#View(data.top.world)
 
 
 normalize = function(data){
@@ -820,10 +821,6 @@ df_us_health <- as.data.frame(df_us_health)
 df_us_testing <- tbl(my_db, sql("select * from data_testing")) 
 df_us_testing <- as.data.frame(df_us_testing)
 
-df_us_latlong <- tbl(my_db, sql("select * from us_latlong"))
-df_us_latlong <- as.data.frame(df_us_latlong)
-
-#View(df_us_latlong)
 ```
 
 ```{r}
@@ -838,7 +835,7 @@ min.date.us <- min(dates.us)
 max.date.us <- max(dates.us)
 min.date.txt.us <- min.date.us %>% format('%d %b %Y')
 max.date.txt.us <- max.date.us %>% format('%d %b %Y')
-day1.us <- min(data.us$date)
+day1.us <- min(df_us$date)
 
 data.us.total <- df_us %>% group_by(date) %>%
   summarise(state='US',
@@ -870,7 +867,7 @@ View(us.total.long)
 
 
 ```{r}
-g1 <- data.us.long %>% filter(state == "US") %>%
+plot_us.cases <- data.us.long %>% filter(state == "US") %>%
   ggplot(aes(x = date, y = count)) +
   geom_area(aes(fill=type), alpha=0.5) +
   labs(title = paste0("Cumulative cases in US : ", min.date.txt.us, '-', max.date.txt.us, " (Log Scale)"))  +
@@ -878,7 +875,7 @@ g1 <- data.us.long %>% filter(state == "US") %>%
   scale_fill_manual(values=c('red', 'black'))+
   ylab("")
 
-g2 <- us.total.long %>%
+plot_us.newconf <- us.total.long %>%
   filter(type %in% c("new.confirmed")) %>%
   ggplot(aes(x = date, y = count, color = type)) + 
   geom_line() + 
@@ -886,16 +883,15 @@ g2 <- us.total.long %>%
   xlab("Date") +
   ylab("Confirmed cases")
 
-gly.us1 <- ggplotly(g1)
-gly.us2 <- ggplotly(g2)
+gly.plot_us.cases <- ggplotly(plot_us.cases)
+gly.plot_us.newconf <- ggplotly(plot_us.newconf)
 
-gly.us1
-gly.us2
+gly.plot_us.cases
+gly.plot_us.newconf
 
 ```
 
 ```{r}
-
 data.us %<>% mutate(new.confirmed = ifelse(date == day1, NA, confirmed - lag(confirmed, n=1)),
                  new.deaths = ifelse(date == day1, NA, deaths - lag(deaths, n=1)))
 
@@ -934,7 +930,6 @@ top.us <- data.us.latest[,1]
 top.us
 
 View(top.us)
-
 
 data.us.latest
 
@@ -1015,7 +1010,7 @@ View(data.us.latest.corr)
 
 data.us.latest.corr %<>% mutate(ranking = dense_rank(desc(confirmed))) %>% arrange(ranking)
 top.us <- data.us.latest.corr[,2]
-top.us
+#top.us
 ```
 ```{r}
 # List of top 20 state
@@ -1026,7 +1021,7 @@ data.us.latest.top <- data.us.latest.corr %>%
 View(data.us.latest.top)
 us.state.top <- data.us.latest.top %>% pull(state) %>% as.character()
 us.state.top  %>% setdiff('US') %>% print()
-View(us.state.top)
+#View(us.state.top)
 ```
 
 
@@ -1072,7 +1067,6 @@ df_us_homeless
 
 ```
 ```{r}
-
 #merge
 mergcountry = function(data1,data2){
   data <- merge(x = data1, y = data2, by = "state", all.x = TRUE) 
@@ -1093,12 +1087,13 @@ df_Allus <- mergcountry(df_Allus, df_us_gdp)
 
 df_Allus <- mergcountry(df_Allus, df_us_homeless)
 
-View(df_Allus)
+#View(df_Allus)
 ```
 
 ```{r}
 index <- is.na(df_Allus)
 df_Allus[index] <- 0
+View(df_Allus)
 
 normalize = function(data){
   #return ((data - min(data,na.rm = TRUE))/(max(data,na.rm = TRUE) - min(data,na.rm = TRUE)))
@@ -1186,9 +1181,10 @@ df_thai
 # Total confirmed cases in Thailand
 data.thai.count <- df_thai %>%
   select(announce_date) %>%
-  summarise(comfirmed = n())  %>% as.data.frame()
+  summarise(comfirmed = n()) %>% as.data.frame()
+View(data.thai.count)
 data.thai.count$cumulative_confirmed <- cumsum(data.thai.count[, 2])
-data.thai.count
+View(data.thai.count)
 ```
 
 ```{r}
@@ -1340,6 +1336,7 @@ data.thai.age
 ```
 
 ```{r}
+data.thai.age <- data.thai.age# %>% filter(sex != "Unknown")
 ggplot(data.thai.age,aes(x=age,y=count,fill=sex))+geom_bar(stat = "identity")+
       labs(title='Age of Thai Confirmed Cases (Stack)')+guides(fill=guide_legend(reverse = T))
 ```
