@@ -101,9 +101,12 @@ data %<>% mutate(current.confirmed = confirmed - deaths - recovered)
 View(data)
 ```
 
+
+
 ```{r}
 # World confirmed cases map
-x <- raw.confirmed
+x <- df_conf
+View(x)
 x$confirmed <- x[, ncol(x)]
 x %<>% select(c(Country.Region, Province.State, Lat, Long, confirmed)) %>%
 mutate(txt=paste0(Country.Region, ' - ', Province.State, ': ', confirmed))
@@ -821,13 +824,15 @@ df_us_latlong <- tbl(my_db, sql("select * from us_latlong"))
 df_us_latlong <- as.data.frame(df_us_latlong)
 
 #View(df_us_latlong)
+```
 
-data.us <- df_us  %>%
+```{r}
+df_us <- df_us  %>%
   mutate(date = date %>% mdy()) %>%
   rename("confirmed" = "cases")
 #data.us
 
-dates.us <- data.us[,1]
+dates.us <- df_us[,1]
 range(dates.us)
 min.date.us <- min(dates.us)
 max.date.us <- max(dates.us)
@@ -835,11 +840,13 @@ min.date.txt.us <- min.date.us %>% format('%d %b %Y')
 max.date.txt.us <- max.date.us %>% format('%d %b %Y')
 day1.us <- min(data.us$date)
 
-data.us.total <- data.us %>% group_by(date) %>%
+data.us.total <- df_us %>% group_by(date) %>%
   summarise(state='US',
             confirmed = sum(confirmed, na.rm=T),
             deaths = sum(deaths, na.rm=T))
 #View(data.us.total)
+
+data.us <- df_us
 data.us %<>% rbind(data.us.total)
 View(data.us)
 
@@ -860,6 +867,7 @@ us.total.long <- us.total %>%
 
 View(us.total.long)
 ```
+
 
 ```{r}
 g1 <- data.us.long %>% filter(state == "US") %>%
@@ -1002,8 +1010,28 @@ gly.us.top1
 ```
 
 ```{r}
-df_us_all <- df_us
+data.us.latest.corr <- df_us %>%filter(date==max.date.us)
+View(data.us.latest.corr)
 
+data.us.latest.corr %<>% mutate(ranking = dense_rank(desc(confirmed))) %>% arrange(ranking)
+top.us <- data.us.latest.corr[,2]
+top.us
+```
+```{r}
+# List of top 20 state
+k <- 19
+data.us.latest.top <- data.us.latest.corr %>%
+    filter(ranking <= k+1) %>% 
+    arrange(ranking) 
+View(data.us.latest.top)
+us.state.top <- data.us.latest.top %>% pull(state) %>% as.character()
+us.state.top  %>% setdiff('US') %>% print()
+View(us.state.top)
+```
+
+
+
+```{r}
 #gender in us
 df_us_gender <- tbl(my_db, sql("select * from data_gender"))
 df_us_gender <- as.data.frame(df_us_gender)
@@ -1051,11 +1079,11 @@ mergcountry = function(data1,data2){
   return(data)
 }
 
-data.top.state <- data.us.top %>% filter(state != "US") %>%
+data.top.state <- data.us.latest.top %>% filter(state != "US") %>%
   select(state, confirmed, deaths)
 #View(data.top.state)
 
-df_Allus <- mergcountry(df_us, df_us_gender)
+df_Allus <- mergcountry(data.top.state, df_us_gender)
 
 df_Allus <- mergcountry(df_Allus, df_us_pop) 
 
@@ -1091,8 +1119,32 @@ corr_dataUS <- rename(corr_dataUS ,"Daylockdown" = "Day lockdown")
 ```
 
 ```{r}
+Allus_plot <- select(Allus,"state","confirmed","deaths","Male","Female","Population","Day lockdown","GDPs","Homeless")
+Allus_plot %<>% gather(key=type, value=count, -c(state))
+level_order <- factor(Allus_plot$type, 
+                      level = c("confirmed","deaths","Male","Female","Population","Day lockdown","GDPs","Homeless"))
+ggplot(data = Allus_plot, aes(x=state, y=level_order, fill=count)) + 
+  geom_tile() +
+  scale_fill_gradient(low = "pink", high = "blue") +
+  xlab("") +
+  ylab("") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90,vjust = 1))+
+  theme(
+    axis.line = element_blank(),
+    axis.ticks = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    #legend.position = "none"
+  ) +labs(title='The heatmap of COVID-19 infections in US')
+```
+
+
+```{r}
 #correlation
-corr_dataUS %<>% select(c(cases,deaths,Male,Female,Population,Daylockdown,GDPs,Homeless))
+corr_dataUS %<>% select(c(confirmed,deaths,Male,Female,Population,Daylockdown,GDPs,Homeless))
 head(corr_dataUS)
 cor(corr_dataUS)
 ggcorrplot(cor(corr_dataUS),hc.order = TRUE,
@@ -1100,6 +1152,227 @@ ggcorrplot(cor(corr_dataUS),hc.order = TRUE,
            colors = c("#6D9EC1","white","#E46726"),
            lab = TRUE)
 ```
+
+```{r}
+#Covid_Thailand
+df_thai <- tbl(my_db, sql("select * from covid19_Thailand"))
+df_thai <- as.data.frame(df_thai)
+View(df_thai)
+```
+
+```{r}
+#clean Covid_Thailand
+dates.th <- df_thai[,2]%>% mdy()
+range(dates.th)
+min.date.th <- min(dates.th)
+max.date.th <- max(dates.th)
+min.date.txt.th <- min.date.th %>% format('%d %b %Y')
+max.date.txt.th <- max.date.th %>% format('%d %b %Y')
+```
+
+```{r}
+df_thai$announce_date <- mdy(df_thai$announce_date)
+df_thai$notification_date <- mdy(df_thai$notification_date)
+df_thai
+```
+
+```{r}
+df_thai <- df_thai %>% select(!No.) %>% select(!notification_date) %>% 
+  group_by(announce_date)
+df_thai
+```
+
+```{r}
+# Total confirmed cases in Thailand
+data.thai.count <- df_thai %>%
+  select(announce_date) %>%
+  summarise(comfirmed = n())  %>% as.data.frame()
+data.thai.count$cumulative_confirmed <- cumsum(data.thai.count[, 2])
+data.thai.count
+```
+
+```{r}
+## Thai Confirmed Cases (Jan 2020 - Jan 2021
+plot1 <- ggplot(data.thai.count, aes(x=announce_date, y=cumulative_confirmed)) +
+  geom_point() + geom_smooth() +
+  xlab(" ") + ylab("Count") + labs(title='Thai Cumulative Confirmed Cases (Jan 2020 - Jan 2021)') +
+  theme(axis.text.x=element_text(angle=45, hjust=1))
+plot2 <- ggplot(data.thai.count, aes(x=announce_date, y=comfirmed)) +
+  geom_point() + geom_smooth() +
+    xlab(" ") + ylab("Count")+ labs(title='Thai Confirmed Cases (Jan 2020 - Jan 2021 log scale)') +
+   theme(axis.text.x=element_text(angle=45, hjust=1))+scale_y_continuous(trans='log10')
+## show two plots side by side
+grid.arrange(plot1, plot2, ncol=1)
+```
+
+```{r}
+# Confirmed cases divided by sex (gender)
+df_thai$sex[df_thai$sex == ""] <- "Unknown"
+data.thai.gender <- df_thai %>%
+  group_by(sex) %>%
+  summarise(count = n()) %>%
+  mutate(percent = (count / sum(count) * 100) %>% round(2)) %>%
+  filter(percent>1)%>%
+  #mutate(pos = cumsum(percent) - 0.5*percent) %>%
+  arrange(desc(percent))
+
+data.thai.gender
+```
+
+```{r}
+data.thai.gender$sex <- factor(data.thai.gender$sex, levels = as.character(data.thai.gender$sex))
+data.thai.gender$sex
+g.th.gender <- data.thai.gender %>% 
+  ggplot(aes(x = "", y = percent, fill = sex)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y") +
+  theme_void() +
+  labs(title='Gender of Thai Confirmed Cases (Jan 2020 - Jan 2021)')+
+  geom_text(aes(label = paste0(percent, "%")), color = "white", size = 5, position = position_stack(vjust = 0.5)) +
+  guides(fill = guide_legend(reverse = TRUE)) 
+g.th.gender
+```
+
+```{r}
+# Confirmed cases divided by province_of_onset
+data.thai.onset <- df_thai %>%
+    group_by(province_of_onset) %>%
+    summarise(count = n()) %>%
+    arrange(desc(count))%>%
+    rename(onset="count")%>%
+    rename(province="province_of_onset")
+data.thai.onset$province[data.thai.onset$province == ""] <- "Unknown"
+data.thai.onset
+```
+
+```{r}
+# Confirmed cases divided by province_of_isolation 
+data.thai.isolation <- df_thai %>%
+    group_by(province_of_isolation) %>%
+    summarise(count = n()) %>%
+    arrange(desc(count))%>%
+    rename(isolation ="count")%>%
+    rename(province="province_of_isolation")
+
+data.thai.isolation$province[data.thai.isolation$province == ""] <- "Unknown"
+data.thai.isolation
+```
+
+```{r}
+data.province <- merge(x = data.thai.onset, y = data.thai.isolation, by = "province", all.x = TRUE) 
+data.province <- data.province%>%filter(onset>125)
+data.province
+```
+
+```{r}
+data.province.long <- data.province %>%
+    gather(key=type, value=count, -c(province))
+data.province.long
+```
+
+```{r}
+ggplot(data.province.long,aes(x=province,y=count))+
+    geom_bar(stat = "identity",position = "dodge",aes(fill=type))+
+    labs(title = "Province of onset and Province of isolation in Thailand")+
+    theme(legend.title=element_blank(),
+                  #legend.position='none',
+                  plot.title=element_text(size=12),
+                  axis.text=element_text(size=10),
+                  axis.text.x=element_text(angle=45, hjust=1))+ xlab('') + ylab('Count')
+```
+
+```{r}
+# Confirmed cases divided by risk
+data.thai.risk <- df_thai %>%
+  group_by(risk) %>%
+  summarise(count = n()) %>%
+  arrange(desc(count))
+data.thai.risk
+```
+
+```{r}
+# Confirmed cases divided by risk
+data.thai.risk <- df_thai %>%
+  group_by(risk) %>%
+  summarise(count = n()) %>%
+  mutate(percent = (count / sum(count) * 100) %>% round(2)) %>%
+  filter(percent>0.76) %>%
+  arrange(desc(percent)) 
+data.thai.risk
+```
+
+```{r}
+data.thai.risk$risk[data.thai.risk$risk == "C"] <- "Close contact with the patient"
+data.thai.risk$risk[data.thai.risk$risk == "CGustDr Samut SaGGAF"] <- "Cluster Samut Sakhon"
+data.thai.risk$risk[data.thai.risk$risk == "F"] <- "State Quarantine"
+data.thai.risk$risk[data.thai.risk$risk == "G"] <- "Go to a crowded place"
+data.thai.risk$risk[data.thai.risk$risk == "A"] <- "People travelling from abroad"
+data.thai.risk$risk[data.thai.risk$risk == "UFGFAwF"] <- "Unknown"
+data.thai.risk$risk[data.thai.risk$risk == "D"] <- "Career at risk"
+data.thai.risk$risk[data.thai.risk$risk == "CGustDr RayAFg"] <- "Cluster Rayong"
+data.thai.risk$risk[data.thai.risk$risk == "CGustDr Pattaya CasCFA"] <- "Cluster Pattaya Casino"
+data.thai.risk$risk[data.thai.risk$risk == "CGustDr AFg TGAFg"] <- "Cluster Ang Thong"
+data.thai.risk
+```
+
+```{r}
+data.thai.risk$risk <- factor(data.thai.risk$risk, levels = as.character(data.thai.risk$risk))
+data.thai.risk$risk
+g.th.risk <- data.thai.risk %>% 
+  ggplot(aes(x = "", y = percent, fill = risk)) +
+  geom_bar(stat = "identity", width = 0.5) +
+  coord_polar("y") +
+  theme_void() +
+  labs(title='Risk of Thai Confirmed Cases(Jan 2020 - Jan 2021)')+
+  geom_text(aes(label = paste0(percent, "%")), color = "Black", size = 3, position = position_stack(vjust = 0.5)) +
+  guides(fill = guide_legend(reverse = TRUE)) 
+g.th.risk
+```
+
+```{r}
+# Confirmed cases divided by age
+data.thai.age <- df_thai %>%
+  group_by(age,sex) %>% 
+  filter(age != 0)%>%
+  summarise(count = n()) %>%
+  arrange(desc(count))
+data.thai.age
+```
+
+```{r}
+ggplot(data.thai.age,aes(x=age,y=count,fill=sex))+geom_bar(stat = "identity")+
+      labs(title='Age of Thai Confirmed Cases (Stack)')+guides(fill=guide_legend(reverse = T))
+```
+
+```{r}
+# Confirmed cases divided by nationality
+data.thai.nationality <- df_thai %>%
+  group_by(nationality) %>%
+  summarise(count = n()) %>%
+  filter(count > 11)%>%
+  arrange(desc(count))
+data.thai.nationality$nationality[data.thai.nationality$nationality == "????????"] <- "Unknown"
+data.thai.nationality$nationality[data.thai.nationality$nationality == ""] <- "Unknown"
+data.thai.nationality$nationality[data.thai.nationality$nationality == "Burma"] <- "Myanmar"
+data.thai.nationality
+```
+
+```{r}
+ggplot(data.thai.nationality)+ 
+  geom_bar(aes(x=nationality,y=count,fill = count),stat = "identity",show.legend = F)+
+    ggtitle('Nationality of Thai Confirmed Cases (log scale)')+
+    theme(plot.title = element_text(hjust = 0.5))+
+    theme(axis.text = element_text(size = 10),
+            axis.title = element_text(size = 10),
+            plot.title = element_text(size = 10))+
+    xlab("")+ylab("Number of Nationality")+
+   scale_y_continuous(trans='log10')+coord_flip()+scale_fill_gradient(low="blue",high = "red")
+```
+
+```{r}
+
+```
+
 
 
 
