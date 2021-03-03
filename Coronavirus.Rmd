@@ -17,6 +17,7 @@ output: html_notebook
 #install.packages("readr")
 Sys.setlocale("LC_ALL", "English")
 Sys.setenv("LANGUAGE"="En")
+
 ```
 
 ```{r}
@@ -98,7 +99,7 @@ data.world <- data %>% group_by(date) %>%
 data %<>% rbind(data.world)
 data
 data %<>% mutate(current.confirmed = confirmed - deaths - recovered)
-View(data)
+#View(data)
 ```
 
 
@@ -112,12 +113,12 @@ world.location  %<>% select(c(Country.Region, Province.State, Lat, Long, confirm
   mutate(txt=paste0(Country.Region, ' - ', Province.State, ': ', confirmed))
 map.confirmed <- leaflet(width=1200, height=800) %>% addTiles()
 # circle marker (units in pixels)
-map.confirmed %<>% addCircleMarkers(x$Long, x$Lat,
+map.confirmed %<>% addCircleMarkers(world.location$Long, world.location$Lat,
                         # radius=2+log2(x$confirmed),
-                        radius=0.02*sqrt(x$confirmed),
+                        radius=0.02*sqrt(world.location$confirmed),
                         stroke=F,
                         color='red', fillOpacity=0.3,
-                        label=x$txt)
+                        label=world.location$txt)
 # world
 map.confirmed
 ```
@@ -156,7 +157,7 @@ data %<>% mutate(rate.lower = (100 * deaths / confirmed) %>% round(1),
 data %<>% mutate(rate.daily = (100 * new.deaths / (new.deaths + new.recovered)) %>% round(1),
                  rate.daily = ifelse(is.nan(rate.daily), 0, rate.daily))
 
-View(data)
+#View(data)
 ```
 
 ```{r}
@@ -169,8 +170,34 @@ data.long %<>% mutate(type=recode_factor(type, confirmed='Total Confirmed',
                                          current.confirmed='Current Confirmed',
                                          recovered='Recovered',
                                          deaths='Deaths'))
-View(data.long)
+#View(data.long)
 ```
+
+```{r}
+df <- data.long %>% filter(country %in% top.countries) %>%
+  mutate(country=country %>% factor(levels=c(top.countries))) %>% 
+  filter(country != 'World' & type != 'Total Confirmed') %>%
+  ggplot(aes(x=date, y=count, color=type)) +
+  geom_line()+
+  #geom_area(alpha=0.5) +
+# xlab('') + ylab('') +
+  labs(title=paste0('Numbers of COVID-19 Cases in Top 20 Countries - ',
+                    max.date.txt)) +
+  scale_color_manual(values=c('red', 'green', 'black')) +
+  theme(legend.title=element_blank(), legend.position='bottom',
+        plot.title = element_text(size=12),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank(),
+        legend.key.size=unit(0.4, 'cm'),
+        legend.text=element_text(size=12),
+        strip.text.x=element_text(size=12),
+        axis.text=element_text(size=12),
+        axis.text.x=element_text(angle=45, hjust=1)) +
+  facet_wrap(~country, ncol=4, scales='free_y') +
+  scale_y_continuous(trans='log10')
+df
+```
+
 
 ```{r}
 ##Number of case World
@@ -204,7 +231,7 @@ plot_world.line <- world %>%
         axis.text.x=element_text(angle=45, hjust=1)) +
   scale_y_continuous(trans='log10')
 ## show two plots side by side
-grid.arrange(plot1, plot2, ncol=2)
+grid.arrange(plot_world.area, plot_world.line, ncol=2)
 
 gly.plot_world.area <- ggplotly(plot_world.area)
 gly.plot_world.area
@@ -267,7 +294,7 @@ data.latest.all <- data %>% filter(date == max(date)) %>%
          recovered, deaths, new.deaths, death.rate=rate.lower) %>%
   mutate(ranking = dense_rank(desc(confirmed))) %>%
   arrange(ranking)
-View(data.latest.all)
+#View(data.latest.all)
 
 k <- 20
 ## top 20 countries: 21 incl. 'World'
@@ -304,7 +331,7 @@ top_pop <- filter(df_pop, df_pop$country %in% top.countries & df_pop$country != 
 top_pop <- sum(top_pop$`Population (2020)` %>% as.numeric())
 others_pop <- (world_pop - top_pop) 
 df_pop[nrow(df_pop) + 1,] = c("Others", others_pop)
-View(df_pop)
+#View(df_pop)
 
 data.latest <- merge(x = data.latest, y = df_pop, by = "country", all.x = TRUE) 
 data.latest
@@ -392,7 +419,7 @@ df_gdp2019
 df_healt <- tbl(my_db, sql("select * from healthranking"))
 df_healt <- as.data.frame(df_healt)
 df_healt <- select(df_healt,c("country","healthCareIndex"))
-View(df_healt)
+#View(df_healt)
 ```
 
 ```{r}
@@ -417,7 +444,7 @@ numofcity <- aggregate(city ~ country, data = df_city, length)
 #clean data
 df_temp <- select(df_temp,c("Country","Avg_Year")) %>%
   rename(country=Country)
-View(df_temp)
+#View(df_temp)
 
 #df_temp <- data.frame(country=df_temp[,1],avg=rowMeans(df_temp[,-1]))
 df_temp <- df_temp %<>% group_by(country) %>% summarise(avg_temp = mean(Avg_Year,na.rm = TRUE)%>% round(1))
@@ -427,11 +454,11 @@ df_temp
 ```{r}
 ##temp bar
 df_temp.all <- df_temp %>% merge(data.latest.all)
-View(df_temp.all)
+#View(df_temp.all)
 df_temp_top.all <- df_temp.all %>% filter(country %in% top.countries) %>%
   mutate(ranking = ranking - 1) %>%
   arrange(ranking)
-View(df_temp_top.all)
+#View(df_temp_top.all)
 g_temp_top <- df_temp_top.all %>%
   ggplot(aes(x = reorder(country, ranking), y = avg_temp, fill = avg_temp)) +
   labs(title=paste0("Temperature in Top  20 countries"), subtitle = "Average Temperature in Top 20 countries with most confirmed cases (°C) (2020)") +
@@ -462,7 +489,7 @@ lat.long <- rename(df_conf, "country" = "Country.Region", "city" = "Province.Sta
   distinct(country, .keep_all = TRUE) %>%
   mutate(ranking = ranking - 1) %>%
   arrange(ranking)
-View(lat.long)
+#View(lat.long)
 ```
 
 ```{r}
@@ -594,8 +621,6 @@ day1.sars <- min.date.s
 data.sars <- df_sars %>% rename(c("date" = "Date", "confirmed" = "Cumulative_number"  ,"deaths" = "Number_deaths", "recovered" = "Number_recovered")) %>%
   mutate(date = date %>% mdy()) %>%
   group_by(country, date) %>% as.data.frame() 
-View(data.sars)
-
 
 # Add World's Sars cases 
 world.sars <- data.sars %>% group_by(date) %>% 
@@ -607,7 +632,7 @@ world.sars <- data.sars %>% group_by(date) %>%
 data.sars %<>% rbind(world.sars)
 data.sars %<>% mutate(current.confirmed = confirmed - deaths - recovered)
 #View(world.sars) 
-#View(data.sars)
+data.sars
 ```
 
 
@@ -634,7 +659,7 @@ data.sars %<>% mutate(rate.lower = (100 * deaths / confirmed) %>% round(1),
 data.sars %<>% mutate(rate.daily = (100 * new.deaths / (new.deaths + new.recovered)) %>% round(1),
                  rate.daily = ifelse(is.nan(rate.daily), 0, rate.daily))
 
-View(data.sars)
+#View(data.sars)
 ```
 
 ```{r}
@@ -647,12 +672,12 @@ data.sars.long %<>% mutate(type=recode_factor(type, confirmed='Total Confirmed',
                                          current.confirmed='Current Confirmed',
                                          recovered='Recovered',
                                          deaths='Deaths'))
-View(data.sars.long)
+#View(data.sars.long)
 
 # World sars' long data 
 world.sars.long <- data.sars.long %>%
   filter(country == "World")
-View(world.sars.long)
+#View(world.sars.long)
 
 g <- ggplot(world.sars.long, aes(date, count, color = type)) +
   geom_line()+
@@ -663,7 +688,7 @@ g
 
 gly.g <- ggplotly(g)
 gly.g
-gly.plot2
+gly.plot_world.line
 ```
 
 ```{r}
@@ -679,7 +704,7 @@ df_sars_lastdate
 data.sars.world <- data.sars %>% filter(country=='World')
 #View(data.sars.world)
 n <- nrow(data.sars.world)
-View(data.sars.world)
+#View(data.sars.world)
 plot_sars.currconf <- ggplot(data.sars.world, aes(x=date, y=current.confirmed)) +
   geom_point() + geom_smooth() +
   xlab('') + ylab('Count') + labs(title='Current Confirmed Cases') +
@@ -717,7 +742,7 @@ grid.arrange(plot_sars.accdeaths, plot_sars.accrecov, plot_sars.newdeaths, plot_
 
 ```{r}
 #Top 20 with gdp
-data.longGDP <- df_gdp %>% gather(key=year, value=GDP, -c(country))
+data.longGDP <- df_gdp2019 %>% gather(key=year, value=GDP, -c(country))
 data.top <- data.latest %>% filter(!country %in% c('World', 'Others'))
 data.top <- head(data.top,20)
 #View(data.latest)
@@ -845,7 +870,7 @@ data.us.total <- df_us %>% group_by(date) %>%
 
 data.us <- df_us
 data.us %<>% rbind(data.us.total)
-View(data.us)
+#View(data.us)
 
 data.us.long <- data.us %>% 
   gather(key = type, value = count, -c(date, state)) 
@@ -862,7 +887,7 @@ us.total
 us.total.long <- us.total %>% 
   gather(key = type, value = count, -c(date, state))
 
-View(us.total.long)
+#View(us.total.long)
 ```
 
 
@@ -870,7 +895,7 @@ View(us.total.long)
 plot_us.cases <- data.us.long %>% filter(state == "US") %>%
   ggplot(aes(x = date, y = count)) +
   geom_area(aes(fill=type), alpha=0.5) +
-  labs(title = paste0("Cumulative cases in US : ", min.date.txt.us, '-', max.date.txt.us, " (Log Scale)"))  +
+  labs(title = paste0("Cumulative cases in US : ", min.date.txt.us, '-', max.date.txt.us, " (Stack, Log Scale)"))  +
   scale_y_continuous(trans='log10')+
   scale_fill_manual(values=c('red', 'black'))+
   ylab("")
@@ -941,7 +966,7 @@ k <- 20
 data.us.top <- data.us.latest %>%
   filter(ranking <= k+1) %>% 
   arrange(ranking) 
-View(data.us.top)
+#View(data.us.top)
 
 us.state.top <- data.us.top %>% pull(state) %>% as.character()
 us.state.top  %>% setdiff('US') %>% print()
@@ -1006,19 +1031,18 @@ gly.us.top1
 
 ```{r}
 data.us.latest.corr <- df_us %>%filter(date==max.date.us)
-View(data.us.latest.corr)
+#View(data.us.latest.corr)
 
 data.us.latest.corr %<>% mutate(ranking = dense_rank(desc(confirmed))) %>% arrange(ranking)
 top.us <- data.us.latest.corr[,2]
 #top.us
-```
-```{r}
+
 # List of top 20 state
 k <- 19
 data.us.latest.top <- data.us.latest.corr %>%
     filter(ranking <= k+1) %>% 
     arrange(ranking) 
-View(data.us.latest.top)
+#View(data.us.latest.top)
 us.state.top <- data.us.latest.top %>% pull(state) %>% as.character()
 us.state.top  %>% setdiff('US') %>% print()
 #View(us.state.top)
@@ -1093,7 +1117,7 @@ df_Allus <- mergcountry(df_Allus, df_us_homeless)
 ```{r}
 index <- is.na(df_Allus)
 df_Allus[index] <- 0
-View(df_Allus)
+#View(df_Allus)
 
 normalize = function(data){
   #return ((data - min(data,na.rm = TRUE))/(max(data,na.rm = TRUE) - min(data,na.rm = TRUE)))
@@ -1103,12 +1127,12 @@ normalize = function(data){
 Allus = as.data.frame(apply(df_Allus[,2:9],2,normalize))
 corr_dataUS <- Allus 
 
-View(corr_dataUS)
+#View(corr_dataUS)
 ```
 
 ```{r}
 Allus$state <- c(df_Allus$state)
-View(Allus)
+#View(Allus)
 
 corr_dataUS <- rename(corr_dataUS ,"Daylockdown" = "Day lockdown")
 ```
