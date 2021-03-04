@@ -42,22 +42,30 @@ seir_model = function (current_timepoint, state_values, parameters)
 
 ```{r}
 #Parameters
-contact_rate = 10                     # number of contacts per day
-transmission_probability = 0.07       # transmission probability
-infectious_period = 5                 # infectious period
-latent_period = 2                     # latent period
+#contact_rate = 10834/366                     # number of contacts per day
+#transmission_probability =        # transmission probability
+infectious_period = 5.2                 # infectious period
+latent_period = 14                     # latent period
 ```
 
 ```{r}
+Ro = 2.006
+```
+
+
+```{r}
 #Compute values of beta (tranmission rate) and gamma (recovery rate).
-beta_value = contact_rate * transmission_probability
+#beta_value = contact_rate * transmission_probability
+beta_value = Ro * (1 / infectious_period)
 gamma_value = 1 / infectious_period
 delta_value = 1 / latent_period
 ```
 
 ```{r}
 #Compute Ro - Reproductive number.
-Ro = beta_value / gamma_value
+#Ro = beta_value / gamma_value
+#Ro
+#Ro = 2.006
 ```
 
 ```{r}
@@ -67,10 +75,10 @@ parameter_list = c (beta = beta_value, gamma = gamma_value, delta = delta_value)
 
 ```{r}
 #Initial values for sub-populations.
-W = 9990        # susceptible hosts
+W = 67000000        # susceptible hosts
 X = 1           # infectious hosts
 Y = 0           # recovered hosts
-Z = 9           # exposed hosts
+Z = 100           # exposed hosts
 ```
 
 ```{r}
@@ -85,7 +93,7 @@ initial_values = c (S = W/N, E = X/N, I = Y/N, R = Z/N)
 
 ```{r}
 #Output timepoints.
-timepoints = seq (0, 50, by=1)
+timepoints = seq (0, 732, by=1)
 ```
 
 ```{r}
