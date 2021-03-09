@@ -7,8 +7,10 @@ output: html_notebook
 
 ```{r}
 #Load add-on packages - deSolve - contains lsoda function - differential equation solver.
-#install.packages("deSolve")
+#install.packages("tidyverse")
 library (deSolve) 
+library(ggplot2)
+library(tidyverse)
 ```
 
 ```{r}
@@ -42,8 +44,8 @@ seir_modelThai = function (current_timepoint, state_values, parameters)
 #Parameters
 #contact_rate = 10834/366                     # number of contacts per day
 #transmission_probability =        # transmission probability
-infectious_period = 5.2                 # infectious period
-latent_period = 14                     # latent period
+infectious_period = 2.3                 # infectious period
+latent_period = 5.2                     # latent period
 ```
 
 ```{r}
@@ -74,14 +76,15 @@ parameter_list = c (beta = beta_value, gamma = gamma_value, delta = delta_value)
 ```{r}
 #Initial values for sub-populations.
 W = 69630000        # susceptible hosts
-X = 2           # infectious hosts
+X = 1           # infectious hosts
 Y = 0           # recovered hosts
-Z = 185           # exposed hosts
+Z = 0           # exposed hosts
 ```
 
 ```{r}
 #Compute total population.
 N = W + X + Y + Z
+
 ```
 
 ```{r}
@@ -140,6 +143,24 @@ par (new = TRUE)
 plot (R ~ time, data = output, type='b', ylim = c(0,1), col = 'green', ylab = '', axes = FALSE)
 ```
 ```{r}
+df <- as.data.frame(output)
+p <- ggplot()
+p <- p + geom_line(df,mapping = aes(x=time,y=S),col="blue")
+p <- p + geom_line(df,mapping = aes(x=time,y=E),col="black")
+p <- p + geom_line(df,mapping = aes(x=time,y=I),col="red")
+p <- p + geom_line(df,mapping = aes(x=time,y=R),col="green")
+p <- p + scale_color_manual(labels = c("Sensitive","Exposed","Infected","Remove"),
+                            values = c("black","red","blue","green"))
+p <- p + scale_fill_discrete(name = "Legend",
+                             breaks =c("out$S","out$E","out$I","out$R"),
+                             labels = c("Sensitive","Exposed","Infected","Remove"))
+p <- p + labs(title = " SEIR model for Covid-19 in Thailand",x = "Days from 12 January 2020",y="Estimated number in Thailand")
+p + theme(legend.position = "top")
+
+
+```
+
+```{r}
 #Function to compute derivatives of the differential equations.
 seir_modelUS = function (current_timepoint, state_values, parameters)
 {
@@ -170,19 +191,22 @@ seir_modelUS = function (current_timepoint, state_values, parameters)
 ```{r}
 
 #Parameters
-#contact_rate = 10834/366          # number of contacts per day
-#transmission_probability =        # transmission probability
-infectious_period = 15            # infectious period 10-20
-latent_period = 5.2                 # latent period
+#contact_rate = 66781              # number of contacts per day
+#transmission_probability = 0.152  # transmission probability
+infectious_period = 10            # infectious period 10-20
+latent_period = 5.2               # latent period
 
 
-Ro = 2.6 #1.9-3.3 
+Ro = 1.9 #1.9-3.3 
 
 #Compute values of beta (tranmission rate) and gamma (recovery rate).
 #beta_value = contact_rate * transmission_probability
 beta_value = Ro * (1 / infectious_period)
 gamma_value = 1 / infectious_period
 delta_value = 1 / latent_period
+
+#Compute Ro - Reproductive number.
+Ro = beta_value / gamma_value
 
 #Disease dynamics parameters.
 parameter_list = c (beta = beta_value, gamma = gamma_value, delta = delta_value)
@@ -191,7 +215,7 @@ parameter_list = c (beta = beta_value, gamma = gamma_value, delta = delta_value)
 W = 328200000        # susceptible hosts
 X = 1           # infectious hosts
 Y = 0           # recovered hosts
-Z = 300           # exposed hosts
+Z = 0           # exposed hosts
 
 #Compute total population.
 N = W + X + Y + Z
@@ -203,7 +227,7 @@ initial_values = c (S = W/N, E = X/N, I = Y/N, R = Z/N)
 timepoints = seq (0, 500, by=1)
 
 #Simulate the SEIR epidemic.
-output = lsoda (initial_values, timepoints, seir_modelUS, parameter_list)
+output = lsoda(initial_values, timepoints, seir_modelUS, parameter_list)
 ```
 
 ```{r}
@@ -244,6 +268,84 @@ par (new = TRUE)
 # recovered hosts over time
 plot (R ~ time, data = output, type='b', ylim = c(0,1), col = 'green', ylab = '', axes = FALSE)
 ```
+```{r}
+df <- as.data.frame(output)
+p <- ggplot()
+p <- p + geom_line(df,mapping = aes(x=time,y=S),col="blue")
+p <- p + geom_line(df,mapping = aes(x=time,y=E),col="black")
+p <- p + geom_line(df,mapping = aes(x=time,y=I),col="red")
+p <- p + geom_line(df,mapping = aes(x=time,y=R),col="green")
+p <- p + scale_color_manual(labels = c("Sensitive","Exposed","Infected","Remove"),
+                            values = c("black","red","blue","green"))
+p <- p + scale_fill_discrete(name = "Legend",
+                             breaks =c("out$S","out$E","out$I","out$R"),
+                             labels = c("Sensitive","Exposed","Infected","Remove"))
+p <- p + labs(title = " SEIR model for Covid-19 in US",x = "Days from 21 January 2020",y="Estimated number in US")
+p + theme(legend.position = "top")
+```
+
+
+
+
+```{r}
+Infected <- c(1,2,4,5,6,8,14,19,25,32)
+N <- 69630000
+SEIR <- function(time,state,parameters){
+  par <- as.list(c(state,parameters))
+  with(par,{
+      dS = (-beta * S * I)/N
+      dE = (beta * S * I)/N - (delta * E)
+      dI = (delta * E) - (gamma * I)
+      dR = (gamma * I)
+      list(c(dS, dE, dI, dR))
+  })
+}
+times <- seq(0,500,1)
+parms <- c(beta = 0.6458206 ,gamma = 0.24919 ,delta = 1.85908113)
+
+xstart <- c(S=N,E=0,I=Infected[1],R=0)
+```
+
+```{r}
+model <- function(t,x,parms){
+  S <- x[1]
+  E <- x[2]
+  I <- x[3]
+  R <- x[4]
+  
+  with(as.list(parms),{
+    dS = (-beta * S * I)/N
+    dE = (beta * S * I)/N - (delta * E)
+    dI = (delta * E) - (gamma * I)
+    dR = (gamma * I)
+    list(c(dS, dE, dI, dR))
+  })
+}
+
+out <- as.data.frame(lsoda(xstart,times,model,parms))
+```
+
+```{r}
+p <- ggplot()
+p <- p + geom_line(out,mapping = aes(x=times,y=out$S),col="black")
+p <- p + geom_line(out,mapping = aes(x=times,y=out$E),col="blue")
+p <- p + geom_line(out,mapping = aes(x=times,y=out$I),col="red")
+p <- p + geom_line(out,mapping = aes(x=times,y=out$R),col="green")
+p <- p + scale_color_manual(labels = c("Sensitive","Exposed","Infected","Remove"),
+                            values = c("black","red","blue","green"))
+p <- p + scale_fill_discrete(name = "Legend",
+                             breaks =c("out$S","out$E","out$I","out$R"),
+                             labels = c("Sensitive","Exposed","Infected","Remove"))
+p <- p + labs(title = "Evolution of Infected cases(red) and Exposed (blue)",x = "Days from 12 January 2020",y="Estimated number in Thailand")
+p + theme(legend.position = "top")
+```
+
+
+
+
+
+
+
 
 
 
