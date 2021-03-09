@@ -7,17 +7,16 @@ library(lubridate)
 library(magrittr)
 library(ggplot2)
 library(tidyr)
-#library(knitr)
 library(normalr)
 library(ggcorrplot)
 library(flexdashboard)
 #library(MLRMPA)
 #??src_mysql
 my_db <- src_mysql(
-  dbname = "covid",
-  host = "127.0.0.1",
-  user = "root",
-  password = "1234"
+  dbname = "covid19",
+  host = "cvd-database.cmxpnyylhkiw.us-east-2.rds.amazonaws.com",
+  user = "admin",
+  password = "RprojectCovid19"
 )
 my_db
 # ------------------------ Define UI -------------------
