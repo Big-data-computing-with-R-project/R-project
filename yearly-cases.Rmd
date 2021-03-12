@@ -759,9 +759,6 @@ gly.g <- ggplotly(g)
 gly.g
 gly.plot2
 ```
-```{r}
-
-```
 
 
 ```{r}

@@ -37,10 +37,10 @@ library(readr)
 
 #??src_mysql
 my_db <- src_mysql(
-  dbname = "covid",
-  host = "127.0.0.1",
-  user = "root",
-  password = "1234"
+  dbname = "covid19",
+  host = "cvd-database.cmxpnyylhkiw.us-east-2.rds.amazonaws.com",
+  user = "admin",
+  password = "RprojectCovid19"
 )
 my_db
 
@@ -174,32 +174,6 @@ data.long %<>% mutate(type=recode_factor(type, confirmed='Total Confirmed',
 ```
 
 ```{r}
-df <- data.long %>% filter(country %in% top.countries) %>%
-  mutate(country=country %>% factor(levels=c(top.countries))) %>% 
-  filter(country != 'World' & type != 'Total Confirmed') %>%
-  ggplot(aes(x=date, y=count, color=type)) +
-  geom_line()+
-  #geom_area(alpha=0.5) +
-# xlab('') + ylab('') +
-  labs(title=paste0('Numbers of COVID-19 Cases in Top 20 Countries - ',
-                    max.date.txt)) +
-  scale_color_manual(values=c('red', 'green', 'black')) +
-  theme(legend.title=element_blank(), legend.position='bottom',
-        plot.title = element_text(size=12),
-        axis.title.x=element_blank(),
-        axis.title.y=element_blank(),
-        legend.key.size=unit(0.4, 'cm'),
-        legend.text=element_text(size=12),
-        strip.text.x=element_text(size=12),
-        axis.text=element_text(size=12),
-        axis.text.x=element_text(angle=45, hjust=1)) +
-  facet_wrap(~country, ncol=4, scales='free_y') +
-  scale_y_continuous(trans='log10')
-df
-```
-
-
-```{r}
 ##Number of case World
 world <- filter(data.long,country == 'World')
 world
@@ -301,6 +275,32 @@ k <- 20
 top.countries <- data.latest.all %>% filter(ranking <= k + 1) %>%
   arrange(ranking) %>% pull(country) %>% as.character()
 top.countries %>% setdiff('World') %>% print()
+```
+
+
+```{r}
+df <- data.long %>% filter(country %in% top.countries) %>%
+  mutate(country=country %>% factor(levels=c(top.countries))) %>% 
+  filter(country != 'World' & type != 'Total Confirmed') %>%
+  ggplot(aes(x=date, y=count, color=type)) +
+  geom_line()+
+  #geom_area(alpha=0.5) +
+# xlab('') + ylab('') +
+  labs(title=paste0('Numbers of COVID-19 Cases in Top 20 Countries - ',
+                    max.date.txt)) +
+  scale_color_manual(values=c('red', 'green', 'black')) +
+  theme(legend.title=element_blank(), legend.position='bottom',
+        plot.title = element_text(size=12),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank(),
+        legend.key.size=unit(0.4, 'cm'),
+        legend.text=element_text(size=12),
+        strip.text.x=element_text(size=12),
+        axis.text=element_text(size=12),
+        axis.text.x=element_text(angle=45, hjust=1)) +
+  facet_wrap(~country, ncol=4, scales='free_y') +
+  scale_y_continuous(trans='log10')
+df
 ```
 
 ```{r}
