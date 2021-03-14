@@ -59,9 +59,9 @@ latent_period = 14                    # latent period
 
 ```{r}
 #Compute values of beta (tranmission rate) and gamma (recovery rate).
-lambda = 0.8
-#beta_value =  contact_rate * transmission_probability
-beta_value = lambda * contact_rate * transmission_probability
+#lambda = 0.8
+beta_value =  contact_rate * transmission_probability
+#beta_value = lambda * contact_rate * transmission_probability
 #beta_value = lambda * Ro * (1 / infectious_period)
 #beta_value = Ro * (1 / infectious_period)
 gamma_value = 1 / infectious_period
@@ -114,60 +114,6 @@ dfAll
 
 
 
-
-```{r}
-#Plot dynamics of Susceptibles sub-population.
-#plot (S ~ time, data = output, type='b', col = 'blue')   
-df <- as.data.frame(output)
-p <- ggplot()
-p <- p + geom_line(df,mapping = aes(x=time,y=S),col="blue")
-p <- p + geom_line(df,mapping = aes(x=time,y=E),col="black")
-p <- p + geom_line(df,mapping = aes(x=time,y=I),col="red")
-p <- p + geom_line(df,mapping = aes(x=time,y=R),col="green")
-p <- p + scale_color_manual(labels = c("Sensitive","Exposed","Infected","Remove"),
-                            values = c("black","red","blue","green"))
-p <- p + scale_fill_discrete(name = "Legend",
-                             breaks =c("out$S","out$E","out$I","out$R"),
-                             labels = c("Sensitive","Exposed","Infected","Remove"))
-p <- p + labs(title = " SEIR model for Covid-19 in Thailand (Without Protective)",x = "Days from 12 January 2020",y="Percentage number in Thailand")
-p + theme(legend.position = "top")#+scale_y_continuous(trans='log10')
-```
-```{r}
-#population
-plot (E ~ time, data = output, type='b', col = 'pink')  
-```
-
-```{r}
-#Plot dynamics of Infectious sub-population.
-plot (I ~ time, data = output, type='b', col = 'red') 
-```
-```{r}
-#Plot dynamics of Recovered sub-population.
-plot (R ~ time, data = output, type='b', col = 'green')  
-```
-```{r}
-#Plot dynamics of Susceptibles, Exposed, Infectious and Recovered sub-populations in the same plot.
-# susceptible hosts over time
-plot (S ~ time, data = output, type='b', ylim = c(0,1), col = 'blue', ylab = 'S, E, I, R', main = 'SEIR model for Covid-19 in Thailand (Without Protective)') 
-
-# remain on same frame
-par (new = TRUE)    
-
-# exposed hosts over time
-plot (E ~ time, data = output, type='b', ylim = c(0,1), col = 'pink', ylab = '', axes = FALSE)
-
-# remain on same frame
-par (new = TRUE) 
-
-# infectious hosts over time
-plot (I ~ time, data = output, type='b', ylim = c(0,1), col = 'red', ylab = '', axes = FALSE) 
-
-# remain on same frame
-par (new = TRUE)  
-
-# recovered hosts over time
-plot (R ~ time, data = output, type='b', ylim = c(0,1), col = 'green', ylab = '', axes = FALSE)
-```
 ```{r}
 dfAll <- as.data.frame(dfAll)
 dfAll
@@ -175,22 +121,22 @@ dfAll
 plot1 <- 
 ggplot(dfAll, aes(x=time,y=S)) + 
   geom_line(color = 'red') + geom_line(mapping = aes(y= SP),color = 'blue')+
-  xlab('') + ylab('Percentage') + labs(title='Susceptible blue(With Protective)') +
+  xlab('') + ylab('Proportions') + labs(title='Susceptible blue(With Protective)') +
   theme(axis.text.x=element_text(angle=45, hjust=1),
         plot.title = element_text(size=11))
 plot2 <- ggplot(dfAll, aes(x=time, y=E)) +
   geom_line(color = 'red') + geom_line(mapping = aes(y= EP),color = 'blue')+
-  xlab('') + ylab('Percentage') + labs(title='Exposed blue(With Protective)') +
+  xlab('') + ylab('Proportions') + labs(title='Exposed blue(With Protective)') +
   theme(axis.text.x=element_text(angle=45, hjust=1),
         plot.title = element_text(size=11))
 plot3 <- ggplot(dfAll, aes(x=time, y=I)) +
   geom_line(color = 'red') + geom_line(mapping = aes(y= IP),color = 'blue')+
-  xlab('') + ylab('Percentage') + labs(title='Infectious blue(With Protective)') +
+  xlab('') + ylab('Proportions') + labs(title='Infectious blue(With Protective)') +
   theme(axis.text.x=element_text(angle=45, hjust=1),
         plot.title = element_text(size=11))
 plot4 <- ggplot(dfAll, aes(x=time, y=R)) +
   geom_line(color = 'red') + geom_line(mapping = aes(y= RP),color = 'blue')+
-  xlab('') + ylab('Percentage') + labs(title='Recovered blue(With Protective)') +
+  xlab('') + ylab('Proportions') + labs(title='Recovered blue(With Protective)') +
   theme(axis.text.x=element_text(angle=45, hjust=1),
         plot.title = element_text(size=11))
 
@@ -210,7 +156,7 @@ ggplot(df1, aes(x = time)) +
     geom_line(aes(y = R, color = "Remove"), size = 1.5) +
     labs(title = " SEIR model for Covid-19 in Thailand (Without Protective)",
          x = "Days from 12 January 2020",
-         y = "Percentage number in Thailand",
+         y = "Proportions number in Thailand",
          color = "Legend") +
     scale_color_manual(values = colors)
 
@@ -225,7 +171,7 @@ ggplot(df2, aes(x = time)) +
     geom_line(aes(y = RP, color = "Remove"), size = 1.5) +
     labs(title = " SEIR model for Covid-19 in Thailand (With Protective)",
          x = "Days from 12 January 2020",
-         y = "Percentage number in Thailand",
+         y = "Proportions number in Thailand",
          color = "Legend") +
     scale_color_manual(values = colors)
 ```
@@ -249,8 +195,8 @@ seir_modelUS = function (current_timepoint, state_values, parameters)
            dS = (-beta * S * I)
            dE = (beta * S * I) - (delta * E)
            dI = (delta * E) - (gamma * I)
-           dR = (gamma * I) - (sigma * R)
-           dD = (sigma * R)
+           dR = (gamma * I) * (1-sigma)
+           dD = (gamma * I * sigma)
            
            # combine results
            results = c (dS, dE, dI, dR, dD)
@@ -264,10 +210,10 @@ seir_modelUS = function (current_timepoint, state_values, parameters)
 ```{r}
 
 #Parameters
-#contact_rate = 24441852/366              # number of contacts per day
-#transmission_probability = 24441852/328200000  # transmission probability
+#contact_rate = 10                # number of contacts per day
+#transmission_probability = 0.07 #24441852/328200000  # transmission probability
 infectious_period = 14         # infectious period 10-20
-latent_period = 5.2            # latent period
+latent_period = 5.2              # latent period
 deaths_period = 406196/24441852
 
 
@@ -275,6 +221,9 @@ Ro = 2.5 #1.9-3.3
 
 #Compute values of beta (tranmission rate) and gamma (recovery rate).
 #beta_value = contact_rate * transmission_probability
+#lambda = 0.8
+#beta_value = lambda * contact_rate * transmission_probability
+#beta_value = lambda * Ro * (1 / infectious_period)
 beta_value = Ro * (1 / infectious_period)
 gamma_value = 1 / infectious_period
 delta_value = 1 / latent_period
@@ -282,7 +231,7 @@ sigma_value = deaths_period
 
 #Compute Ro - Reproductive number.
 #Ro = beta_value / gamma_value
-Ro 
+Ro
 
 #Disease dynamics parameters.
 parameter_list = c (beta = beta_value, gamma = gamma_value, delta = delta_value,sigma = sigma_value)
@@ -303,85 +252,102 @@ initial_values = c (S = W/N, E = X/N, I = Y/N, R = Z/N, D = A/N)
 #Output timepoints.
 timepoints = seq (0, 500, by=1)
 
+
+```
+
+```{r}
 #Simulate the SEIR epidemic.
-output = lsoda(initial_values, timepoints, seir_modelUS, parameter_list)
-```
-
-
-
-```{r}
-#Plot dynamics of Susceptibles sub-population.
-plot (S ~ time, data = output, type='b', col = 'blue')
+output3 = lsoda(initial_values, timepoints, seir_modelUS, parameter_list)
+df3 <- as.data.frame(output3)
+df3
 ```
 
 ```{r}
-#population
-plot (E ~ time, data = output, type='b', col = 'pink')  
+#Simulate the SEIR epidemic.
+output4 = lsoda(initial_values, timepoints, seir_modelUS, parameter_list)
+df4 <- as.data.frame(output4)
+df4
+```
+```{r}
+df4 <- as.data.frame(output4) %>% rename(SP="S",EP="E","IP"=I,"RP"=R,"DP"=D)
+df3 <- as.data.frame(output3)
 ```
 
 ```{r}
-#Plot dynamics of Infectious sub-population.
-plot (I ~ time, data = output, type='b', col = 'red') 
+dfAll2  <- merge(x = df3, y = df4, by = "time", all.x = TRUE) 
+dfAll2
 ```
 ```{r}
-#Plot dynamics of Infectious sub-population.
-plot (D ~ time, data = output, type='b', col = 'purple')
+dfAll2 <- as.data.frame(dfAll2)
+dfAll2
+## a scatter plot with a smoothed line and vertical x-axis labels
+plot1 <- 
+ggplot(dfAll2, aes(x=time,y=S)) + 
+  geom_line(color = 'red') + geom_line(mapping = aes(y= SP),color = 'blue')+
+  xlab('') + ylab('Proportions') + labs(title='Susceptible blue(With Protective)') +
+  theme(axis.text.x=element_text(angle=45, hjust=1),
+        plot.title = element_text(size=11))
+plot2 <- ggplot(dfAll2, aes(x=time, y=E)) +
+  geom_line(color = 'red') + geom_line(mapping = aes(y= EP),color = 'blue')+
+  xlab('') + ylab('Proportions') + labs(title='Exposed blue(With Protective)') +
+  theme(axis.text.x=element_text(angle=45, hjust=1),
+        plot.title = element_text(size=11))
+plot3 <- ggplot(dfAll2, aes(x=time, y=I)) +
+  geom_line(color = 'red') + geom_line(mapping = aes(y= IP),color = 'blue')+
+  xlab('') + ylab('Proportions') + labs(title='Infectious blue(With Protective)') +
+  theme(axis.text.x=element_text(angle=45, hjust=1),
+        plot.title = element_text(size=11))
+plot4 <- ggplot(dfAll2, aes(x=time, y=R)) +
+  geom_line(color = 'red') + geom_line(mapping = aes(y= RP),color = 'blue')+
+  xlab('') + ylab('Proportions') + labs(title='Recovered blue(With Protective)') +
+  theme(axis.text.x=element_text(angle=45, hjust=1),
+        plot.title = element_text(size=11))
+plot5 <- ggplot(dfAll2, aes(x=time, y=R)) +
+  geom_line(color = 'red') + geom_line(mapping = aes(y= DP),color = 'blue')+
+  xlab('') + ylab('Proportions') + labs(title='Deaths blue(With Protective)') +
+  theme(axis.text.x=element_text(angle=45, hjust=1),
+        plot.title = element_text(size=11))
+
+
+## show four plots together, with 2 plots in each row
+grid.arrange(plot1, plot2, plot3, plot4,plot5,nrow=3)
 ```
 
 
 ```{r}
-#Plot dynamics of Susceptibles, Exposed, Infectious and Recovered sub-populations in the same plot.
-# susceptible hosts over time
-plot (S ~ time, data = output, type='b', ylim = c(0,1), col = 'blue', ylab = 'S, E, I, R', main = 'SEIR US') 
 
-# remain on same frame
-par (new = TRUE)    
+colors <- c("Sensitive" = "blue", "Exposed" = "black", "Infected" = "red", "Remove" = "green","Deaths" = "purple")
 
-# exposed hosts over time
-plot (E ~ time, data = output, type='b', ylim = c(0,1), col = 'pink', ylab = '', axes = FALSE)
+ggplot(df3, aes(x = time)) +
+    geom_line(aes(y = S, color = "Sensitive"), size = 1.5) +
+    geom_line(aes(y = E, color = "Exposed"), size = 1.5) +
+    geom_line(aes(y = I, color = "Infected"), size = 1.5) +
+    geom_line(aes(y = R, color = "Remove"), size = 1.5) +
+    geom_line(aes(y = D, color = "Deaths"), size = 1.5) +
+    labs(title = " SEIRD model for Covid-19 in US (Without Protective)",
+         x = "Days from 21 January 2020",
+         y = "Proportions number in US",
+         color = "Legend") +
+    scale_color_manual(values = colors)
 
-# remain on same frame
-par (new = TRUE) 
 
-# infectious hosts over time
-plot (I ~ time, data = output, type='b', ylim = c(0,1), col = 'red', ylab = '', axes = FALSE) 
-
-# remain on same frame
-par (new = TRUE)  
-
-# recovered hosts over time
-plot (R ~ time, data = output, type='b', ylim = c(0,1), col = 'green', ylab = '', axes = FALSE)
 ```
 ```{r}
-df <- as.data.frame(output)
-p <- ggplot()
-p <- p + geom_line(df,mapping = aes(x=time,y=S),col="blue")
-p <- p + geom_line(df,mapping = aes(x=time,y=E),col="black")
-p <- p + geom_line(df,mapping = aes(x=time,y=I),col="red")
-p <- p + geom_line(df,mapping = aes(x=time,y=R),col="green")
-p <- p + scale_color_manual(labels = c("Sensitive","Exposed","Infected","Remove"),
-                            values = c("black","red","blue","green"))
-p <- p + scale_fill_discrete(name = "Legend",
-                             breaks =c("out$S","out$E","out$I","out$R"),
-                             labels = c("Sensitive","Exposed","Infected","Remove"))
-p <- p + labs(title = " SEIR model for Covid-19 in US (Without Protective)",x = "Days from 21 January 2020",y="Estimated number in US")
-p + theme(legend.position = "top")
+colors <- c("Sensitive" = "blue", "Exposed" = "black", "Infected" = "red", "Remove" = "green","Deaths" = "purple")
+
+ggplot(df4, aes(x = time)) +
+    geom_line(aes(y = SP, color = "Sensitive"), size = 1.5) +
+    geom_line(aes(y = EP, color = "Exposed"), size = 1.5) +
+    geom_line(aes(y = IP, color = "Infected"), size = 1.5) +
+    geom_line(aes(y = RP, color = "Remove"), size = 1.5) +
+    geom_line(aes(y = DP, color = "Deaths"), size = 1.5) +
+    labs(title = " SEIRD model for Covid-19 in US (With Protective)",
+         x = "Days from 21 January 2020",
+         y = "Proportions number in US",
+         color = "Legend") +
+    scale_color_manual(values = colors)
 ```
-```{r}
-df <- as.data.frame(output)
-p <- ggplot()
-p <- p + geom_line(df,mapping = aes(x=time,y=S),col="blue")
-p <- p + geom_line(df,mapping = aes(x=time,y=E),col="black")
-p <- p + geom_line(df,mapping = aes(x=time,y=I),col="red")
-p <- p + geom_line(df,mapping = aes(x=time,y=R),col="green")
-p <- p + scale_color_manual(labels = c("Sensitive","Exposed","Infected","Remove"),
-                            values = c("black","red","blue","green"))
-p <- p + scale_fill_discrete(name = "Legend",
-                             breaks =c("out$S","out$E","out$I","out$R"),
-                             labels = c("Sensitive","Exposed","Infected","Remove"))
-p <- p + labs(title = " SEIR model for Covid-19 in US (With Protective)",x = "Days from 21 January 2020",y="Estimated number in US")
-p + theme(legend.position = "top")
-```
+
 
 
 
