@@ -275,8 +275,9 @@ df3 <- as.data.frame(output3)
 
 ```{r}
 dfAll2  <- merge(x = df3, y = df4, by = "time", all.x = TRUE) 
-dfAll2
+View(dfAll2)
 ```
+
 ```{r}
 dfAll2 <- as.data.frame(dfAll2)
 dfAll2
@@ -302,7 +303,7 @@ plot4 <- ggplot(dfAll2, aes(x=time, y=R)) +
   xlab('') + ylab('Proportions') + labs(title='Recovered blue(With Protective)') +
   theme(axis.text.x=element_text(angle=45, hjust=1),
         plot.title = element_text(size=11))
-plot5 <- ggplot(dfAll2, aes(x=time, y=R)) +
+plot5 <- ggplot(dfAll2, aes(x=time, y=D)) +
   geom_line(color = 'red') + geom_line(mapping = aes(y= DP),color = 'blue')+
   xlab('') + ylab('Proportions') + labs(title='Deaths blue(With Protective)') +
   theme(axis.text.x=element_text(angle=45, hjust=1),
