@@ -1,18 +1,21 @@
 ```{r}
+#install.packages("tidyr")
+#install.packages("profvis")
+#install.packages("RMySQL")
+```
+
+
+```{r}
 ## Comparing Profiling "small data and bigger data" 
 
 # Library 
-library(RODBC) #connect mysql
 library(lubridate) #date operation
 library(magrittr) #pipe operation
 library(reshape2)
 library(ggplot2)
-library(plyr)
-library(sqldf)
 library(gridExtra)
 library(dplyr)
 library(tidyr)
-
 library(profvis)
 ```
 
@@ -43,7 +46,7 @@ datafrommysql.big <-function(){
 
 # small data with server 
 datafromserver <- function(){
-  serverdb3 <- src_mysql(dbname = "covid19", host = "cvd-database.cmxpnyylhkiw.us-east-2.rds.amazonaws.com", user = "admin", password = "RprojectCovid19")
+  serverdb1 <- src_mysql(dbname = "covid19", host = "cvd-database.cmxpnyylhkiw.us-east-2.rds.amazonaws.com", user = "admin", password = "RprojectCovid19")
   df_conf3 <- tbl(serverdb1, sql("select * from covid19_confirmed_global"))
   df_conf3 <- as.data.frame(df_conf3)
   df_deaths3 <- tbl(serverdb1, sql("select * from covid19_deaths_global"))
@@ -54,7 +57,7 @@ datafromserver <- function(){
 
 # big data with server
 datafromserver.big <-function(){
-  serverdb4 <- src_mysql(dbname = "covid19", host = "cvd-database.cmxpnyylhkiw.us-east-2.rds.amazonaws.com", user = "admin", password = "RprojectCovid19")
+  serverdb2 <- src_mysql(dbname = "covid19", host = "cvd-database.cmxpnyylhkiw.us-east-2.rds.amazonaws.com", user = "admin", password = "RprojectCovid19")
   df_conf4 <- tbl(serverdb2, sql("select * from covid19_confirmed"))
   df_conf4 <- as.data.frame(df_conf4)
   df_deaths4 <- tbl(serverdb2, sql("select * from covid19_deaths"))
@@ -64,13 +67,16 @@ datafromserver.big <-function(){
 } 
 ```
 
+
+
+
 ```{r}
-## profiling function of connecting data
 profvis({
-  datafrommysql()  
-  datafromserver()
-  datafrommysql.big()
-  datafromserver.big()
+## 1. profiling function of connecting data
+  datafrommysql() # small / local 
+  datafromserver() # small / server
+  datafrommysql.big() # big / local
+  datafromserver.big() # big / server
 })
 ```
 
@@ -132,32 +138,24 @@ Cleandata <- function(data) {
   return(data)
 }
 
-# 2.1 function cleandata with different size of data in "Local database"
-
-# small data
 profvis({
+## 2. Function clean data
+  # small / local 
   small_confirmed <- df_conf1 %>% Cleandata() %>% rename(confirmed = count)
   small_deaths <- df_deaths1 %>% Cleandata() %>% rename(deaths = count)
   small_recover <- df_recover1 %>% Cleandata() %>% rename(recovered = count)
 
-# big data
+  # big / local
   big_confirmed <- df_conf2 %>% Cleandata() %>% rename(confirmed = count)
   big_deaths <- df_deaths2 %>% Cleandata() %>% rename(deaths = count)
   big_recover <- df_recover2 %>% Cleandata() %>% rename(recovered = count)
-})
-
-```
-
-```{r}
-# 2.2 function cleandata with different size of data in "Server"
-
-# small data
-profvis({
+  
+  # small / server
   small_confirmed.server <- df_conf3 %>% Cleandata() %>% rename(confirmed = count)
   small_deaths.server <- df_deaths3 %>% Cleandata() %>% rename(deaths = count)
   small_recover.server <- df_recover3 %>% Cleandata() %>% rename(recovered = count)
 
-#big data
+  #big / server
   big_confirmed.server <- df_conf4 %>% Cleandata() %>% rename(confirmed = count)
   big_deaths.server <- df_deaths4 %>% Cleandata() %>% rename(deaths = count)
   big_recover.server <- df_recover4 %>% Cleandata() %>% rename(recovered = count)
@@ -181,17 +179,12 @@ profvis({
   return(data)
   }
 
-# Local 
 profvis({
-  small_merge <- MergeData(small_confirmed, small_deaths, small_recover)
-  big_merge <- MergeData(big_confirmed, big_deaths, big_recover)
-
-})
-
-# Server
-profvis({
-  small_merge.server <- MergeData(small_confirmed.server, small_deaths.server, small_recover.server)
-  big_merge.server <- MergeData(big_confirmed.server, big_deaths.server, big_recover.server)
+# 3. Merge Data 
+  small_merge <- MergeData(small_confirmed, small_deaths, small_recover) # small / local
+  big_merge <- MergeData(big_confirmed, big_deaths, big_recover) # big /local
+  small_merge.server <- MergeData(small_confirmed.server, small_deaths.server, small_recover.server) # small /server
+  big_merge.server <- MergeData(big_confirmed.server, big_deaths.server, big_recover.server) # big / server
 })
 ```
 
@@ -221,9 +214,6 @@ daily <- function(data){
 profvis({
   small_daily <- small_merge %>% daily()
   big_daily <- big_merge %>% daily()
-})
-
-profvis({
   small_daily.server <- small_merge.server %>% daily()
   big_daily.server <- big_merge.server %>% daily()
 })
@@ -245,13 +235,13 @@ ChangeDataFormat <- function(data){
 }
 
 profvis({
-  # Local
-  small_dataFormat <- small_merge %>% ChangeDataFormat()
-  big_dataFormat <- big_merge %>% ChangeDataFormat()
+# 4. Change data format
+  small_dataFormat <- small_merge %>% ChangeDataFormat() # small / local
+  big_dataFormat <- big_merge %>% ChangeDataFormat() # big / local
   
   # Server
-  small_dataFormat.server <- small_merge.server %>% ChangeDataFormat()
-  big_dataFormat.server <- big_merge.server %>% ChangeDataFormat()
+  small_dataFormat.server <- small_merge.server %>% ChangeDataFormat() # small / server
+  big_dataFormat.server <- big_merge.server %>% ChangeDataFormat() # big / server
 })
 ```
 
@@ -283,9 +273,8 @@ small_daily
 small_calcRate
 ```
 
-
 ```{r}
-# Find top 20 countries 
+# 5. Find top 20 countries 
 
 CalcTop20 <- function(data){
   data.latest.all <- data %>% filter(date == max(date)) %>%
@@ -313,11 +302,12 @@ CalcTop20 <- function(data){
 }
 
 profvis({
-  small_top20 <- small_daily %>% CalcTop20()
-  big_top20 <- big_daily %>% CalcTop20()
+# 5. Find top 20 countries 
+  small_top20 <- small_daily %>% CalcTop20() # small / local
+  big_top20 <- big_daily %>% CalcTop20() # big / local
   
-  small_top20.server <- small_daily.server %>% CalcTop20()
-  big_top20.server <- big_daily.server %>% CalcTop20()
+  small_top20.server <- small_daily.server %>% CalcTop20() # small / server
+  big_top20.server <- big_daily.server %>% CalcTop20() #big /server
 })
 ```
 
