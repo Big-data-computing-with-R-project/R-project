@@ -171,8 +171,7 @@ data.latest %<>% group_by(country) %>%
 data.latest %<>% select(c(country, confirmed, deaths, death.rate,
                           new.confirmed, new.deaths, current.confirmed,recovered)) %>%
   mutate(recover.rate=(100 * recovered/confirmed) %>% round(1))
+#------------------- value Box -------------------------
 mostconfirm <- data.latest %>% select(c(country,confirmed)) %>% filter(country=="World")
 mostrecover <- data.latest %>% select(c(country,recovered)) %>% filter(country=="World")
 mostdeath <- data.latest %>% select(c(country,deaths)) %>% filter(country=="World")
-View(mostrecover)
-View(mostdeath)

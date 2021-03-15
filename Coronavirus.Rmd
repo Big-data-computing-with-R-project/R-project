@@ -424,9 +424,9 @@ df_healt <- select(df_healt,c("country","healthCareIndex"))
 
 ```{r}
 #Top20Pornhub data
-df_pornhub <- tbl(my_db, sql("select * from Pornhub"))
-df_pornhub <- as.data.frame(df_pornhub)
-df_pornhub
+#df_pornhub <- tbl(my_db, sql("select * from Pornhub"))
+#df_pornhub <- as.data.frame(df_pornhub)
+#df_pornhub
 ```
 
 ```{r}
@@ -774,7 +774,7 @@ data.top.world <- mergcountry(data.top.world, df_temp)
 index <- is.na(data.top.world)
 data.top.world[index] <- 0
 data.top.world
-#View(data.top.world)
+View(data.top.world)
 
 
 normalize = function(data){
@@ -782,16 +782,27 @@ normalize = function(data){
   z <- scale(data);
   tanh(z/2)
 }
+
 norm_data = as.data.frame(apply(data.top.world[,2:13],2,normalize))
 corr_data <- norm_data
 norm_data$country <- c("Argentina","Bangladesh","Brazil","Chile","Colombia","France","Germany","India","Iran","Italy","Mexico","Pakistan","Peru","Russia","saudi Arabia","South Africa","Spain","Turkey","United Kingdom","US")
-#View(norm_data)
+norm_data <- norm_data[,c(ncol(norm_data),1:(ncol(norm_data)-1))]
+rownames(norm_data) <- norm_data[,1]
+norm_data[,1] <- NULL
 
+#heatmap(as.matrix(norm_data[, -1]),scale="column",col= colorRampPalette(brewer.pal(8, "Blues"))(25))
+#legend(x="bottomright", legend=c("-1", "0", "1"), 
+#     fill=colorRampPalette(brewer.pal(8, "Blues"))(3))
 
-norm_data_plot <- select(norm_data,"country","confirm.rate","death.rate","recover.rate","healthcare","Pornhub","GDP","avg_temp", "sars")
-norm_data_plot %<>% gather(key=type, value=count, -c(country))
-level_order <- factor(norm_data_plot$type, 
-                      level = c("sars","Pornhub","GDP","avg_temp","healthcare","recover.rate","death.rate","confirm.rate"))
+# install.packages("gplots")
+library("gplots")
+heatmap.2(as.matrix(norm_data[, -1],col=my_palette,scale="row", trace="none"))
+
+#norm_data_plot <- select(norm_data,"country","confirm.rate","death.rate","recover.rate","healthcare","Pornhub","GDP","avg_temp", "sars")
+#norm_data_plot %<>% gather(key=type, value=count, -c(country))
+#level_order <- factor(norm_data_plot$type, 
+                      level = #c("sars","Pornhub","GDP","avg_temp","healthcare","recover.rate","death.rate","confirm.rate"))
+View(level_order)
 ggplot(data = norm_data_plot, aes(x=country, y=level_order, fill=count)) + 
   geom_tile() +
   scale_fill_gradient(low = "pink", high = "blue") +
@@ -808,6 +819,9 @@ ggplot(data = norm_data_plot, aes(x=country, y=level_order, fill=count)) +
     panel.background = element_blank(),
     #legend.position = "none"
   )
+
+
+
 ```
 
 ```{r}
@@ -815,10 +829,12 @@ ggplot(data = norm_data_plot, aes(x=country, y=level_order, fill=count)) +
 corr_data %<>% select(c(GDP,confirm.rate,death.rate,recover.rate,healthcare,avg_temp,Pornhub, sars))
 head(corr_data)
 cor(corr_data)
-ggcorrplot(cor(corr_data),hc.order = TRUE,
+plotcorr <- ggcorrplot(cor(corr_data),hc.order = TRUE,
            outline.color = "white",
            colors = c("#6D9EC1","white","#E46726"),
            lab = TRUE)
+
+plotcorr
 ```
 
 ```{r}
@@ -853,7 +869,6 @@ df_us <- df_us  %>%
   mutate(date = date %>% mdy()) %>%
   rename("confirmed" = "cases")
 #data.us
-
 dates.us <- df_us[,1]
 range(dates.us)
 min.date.us <- min(dates.us)
@@ -870,11 +885,11 @@ data.us.total <- df_us %>% group_by(date) %>%
 
 data.us <- df_us
 data.us %<>% rbind(data.us.total)
-#View(data.us)
+View(data.us)
 
 data.us.long <- data.us %>% 
   gather(key = type, value = count, -c(date, state)) 
-#data.us.long
+View(data.us.long)
 
 us.total <- data.us.total %>%
   mutate(new.confirmed = ifelse(date == day1, 0, confirmed - lag(confirmed, n=1)),
@@ -895,23 +910,29 @@ us.total.long <- us.total %>%
 plot_us.cases <- data.us.long %>% filter(state == "US") %>%
   ggplot(aes(x = date, y = count)) +
   geom_area(aes(fill=type), alpha=0.5) +
-  labs(title = paste0("Cumulative cases in US : ", min.date.txt.us, '-', max.date.txt.us, " (Stack, Log Scale)"))  +
-  scale_y_continuous(trans='log10')+
+#  labs(title = paste0("Cumulative cases in US : ", min.date.txt.us, '-', max.date.txt.us, " (Stack, Log Scale)")) +
+  scale_y_continuous(trans='log10') +
   scale_fill_manual(values=c('red', 'black'))+
-  ylab("")
-
+  ylab("") +
+  theme(axis.title = element_text(size=8))
+#View(us.total.long )
 plot_us.newconf <- us.total.long %>%
-  filter(type %in% c("new.confirmed")) %>%
+  filter(type %in% c("new.confirmed","new.deaths")) %>%
   ggplot(aes(x = date, y = count, color = type)) + 
   geom_line() + 
-  labs(title = paste0("Daily confirmed cases in US : ", min.date.txt.us, '-', max.date.txt.us)) +
+  #labs(title = paste0("Daily confirmed cases in US : ", min.date.txt.us, '-', max.date.txt.us)) +
   xlab("Date") +
   ylab("Confirmed cases")
 
 gly.plot_us.cases <- ggplotly(plot_us.cases)
-gly.plot_us.newconf <- ggplotly(plot_us.newconf)
+gly.plot_us.cases <- gly.plot_us.cases %>% 
+  layout(title = paste0("<b>Cumulative cases in US : ", min.date.txt.us, '-', max.date.txt.us, " (Stack, Log Scale)"), 
+         font=list(size = 10))
+gly.plot_us.newconf <- ggplotly(plot_us.newconf) %>% 
+  layout(title = paste0("<b>Daily confirmed cases in US : ", min.date.txt.us, '-', max.date.txt.us), 
+         font=list(size = 10))
 
-gly.plot_us.cases
+gly.plot_us.cases  
 gly.plot_us.newconf
 
 ```
@@ -954,10 +975,10 @@ data.us.latest %<>% mutate(ranking = dense_rank(desc(confirmed)),
 top.us <- data.us.latest[,1]
 top.us
 
-View(top.us)
+#View(top.us)
 
-data.us.latest
-
+data.us.latest.show <- data.us.latest %>% select(state,date,confirmed,deaths, confirmed.rate, death.rate)
+#View(data.us.latest.show)
 ```
 
 ```{r}
@@ -1142,6 +1163,12 @@ Allus_plot <- select(Allus,"state","confirmed","deaths","Male","Female","Populat
 Allus_plot %<>% gather(key=type, value=count, -c(state))
 level_order <- factor(Allus_plot$type, 
                       level = c("confirmed","deaths","Male","Female","Population","Day lockdown","GDPs","Homeless"))
+
+Allus_Heat <- Allus[,c(ncol(Allus),1:(ncol(Allus)-1))]
+rownames(Allus_Heat) <- Allus_Heat[,1]
+Allus_Heat[,1] <- NULL
+heatmap.2(as.matrix(norm_data[, -1],col=my_palette,scale="row", trace="none"))
+
 ggplot(data = Allus_plot, aes(x=state, y=level_order, fill=count)) + 
   geom_tile() +
   scale_fill_gradient(low = "pink", high = "blue") +
@@ -1170,6 +1197,9 @@ ggcorrplot(cor(corr_dataUS),hc.order = TRUE,
            outline.color = "white",
            colors = c("#6D9EC1","white","#E46726"),
            lab = TRUE)
+
+
+
 ```
 
 ```{r}

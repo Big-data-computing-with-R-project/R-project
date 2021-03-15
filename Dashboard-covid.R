@@ -46,25 +46,52 @@ ui <- fluidPage(
                       ),
                         column(12,style='padding:10px;',
                                fluidRow(
-                                 column(4,
-                                        valueBoxOutput("confirmBox")),
-                                 column(4,
-                                        valueBoxOutput("recoverBox")),
-                                 column(4,
-                                        valueBoxOutput("deathBox")),
+                                 column(
+                                   valueBoxOutput("confirmBox"),
+                                   valueBoxOutput("recoverBox"),
+                                   valueBoxOutput("deathBox"),
+                                   width = 12,
+                                   style = "margin-left: -20px"
+                               )
                                ),
                                fluidRow(
                                  column(8,
-                                        leafletOutput("plot1")
+                                        leafletOutput("plotmap")
                                  ),
-                                 column(4,"Fluid 6"
-                                 )
+                                 column(
+                                   uiOutput("summaryTables"),
+                                   class = "summary",
+                                   width = 4,
+                                   style = 'padding:0px;'
+                                 ),
                                )
                         )
                       )
              ),
-             tabPanel("US",
-                      
+             tabPanel("US",(fluidRow
+                            (fluidRow(
+                              column(6,style='padding:15px;',
+                                     plotlyOutput("plotuscaes")
+                                     ),
+                              column(6,style='padding:15px',
+                                     plotlyOutput("plotdailycaseus")
+                                    )
+                            ),
+                            fluidRow(
+                              column(6,
+                                     plotlyOutput("plotrateus")),
+                              column(6,style = "height:200px;background-color: white;",
+                                     DT::dataTableOutput("result"))
+                            ),
+                            fluidRow(
+                              column(6,
+                                     plotlyOutput("plotcorrus")
+                                     ),
+                              column(6,
+                                     )
+                            )
+                      )
+                    )    
              ),
              tabPanel("Thailand",
                       
@@ -80,10 +107,11 @@ ui <- fluidPage(
 
 # Define server logic ----
 server <- function(input, output) {
+  #--------------- over all ------
   output$dataTable = DT::renderDataTable({
     data.latest.all
   })
-  output$plot1 <- renderLeaflet({
+  output$plotmap <- renderLeaflet({
     map.confirmed 
   })
   output$confirmBox <- renderValueBox({
@@ -91,14 +119,14 @@ server <- function(input, output) {
       mostconfirm$confirmed,
       subtitle = "Confirmed",
       icon     = icon("file-medical"),
-      color    = "blue",
+      color    = "red",
     )
   })
   output$recoverBox <- renderValueBox({
     valueBox(
       mostrecover$recovered,
       subtitle = "Recover",
-      icon     = icon("file-medical"),
+      icon     = icon("heart"),
       color    = "yellow",
       width    = NULL
     )
@@ -112,7 +140,28 @@ server <- function(input, output) {
       width    = NULL
     )
   })
-  
+  #--------- US -------------
+  output$plotuscaes <- renderPlotly({
+    gly.plot_us.cases
+  })
+  output$plotdailycaseus <- renderPlotly({
+    gly.plot_us.newconf
+  })
+  output$plotrateus <- renderPlotly({
+    gly.us.top1
+  })
+  output$plotcorrus <- renderPlotly({
+    plotcorr
+  })
+  output$result <- DT::renderDataTable(
+    DT::datatable(
+      data.us.latest.show, options = list(
+        lengthMenu = FALSE,
+        lengthChange = FALSE,
+        pageLength = 5
+      )
+    )
+  )
 }
 
 # Run the app ----
