@@ -191,10 +191,10 @@ plot_world.area <- world %>% filter(type != 'Total Confirmed') %>%
         axis.text=element_text(size=7),
         axis.text.x=element_text(angle=45, hjust=1))
 plot_world.line <- world %>%
-  ggplot(aes(x=date, y=count)) +
+  ggplot(aes(x=date, y=count,color = type)) +
   geom_line(aes(color=type)) +
   labs(title=paste0('Numbers of Cases Worldwide (log scale) - ', max.date.txt)) +
-  scale_color_manual(values=c('purple', 'red', 'green', 'black')) +
+  #scale_color_manual(values=c('blue', 'red', 'green', 'black')) +
   theme(legend.title=element_blank(), legend.position='bottom',
         plot.title = element_text(size=7),
         axis.title.x=element_blank(),
@@ -213,6 +213,8 @@ gly.plot_world.area
 gly.plot_world.line <- ggplotly(plot_world.line)
 gly.plot_world.line
 ```
+
+
 
 ```{r}
 data.world.all <- data %>% filter(country == "World")
@@ -796,7 +798,12 @@ norm_data[,1] <- NULL
 
 # install.packages("gplots")
 library("gplots")
-heatmap.2(as.matrix(norm_data[, -1],col=my_palette,scale="row", trace="none"))
+norm_data_plot <- select(norm_data,"confirm.rate","death.rate","recover.rate","healthcare","Pornhub","GDP","avg_temp", "sars")
+norm_data_plot
+heatmap.2(as.matrix(norm_data_plot),
+                    scale="none", 
+                    col = colorRampPalette(c("#6D9EC1","white","#E46726"))(n = 200),
+                    margins=c(10,6),trace="column")
 
 #norm_data_plot <- select(norm_data,"country","confirm.rate","death.rate","recover.rate","healthcare","Pornhub","GDP","avg_temp", "sars")
 #norm_data_plot %<>% gather(key=type, value=count, -c(country))
@@ -819,8 +826,6 @@ ggplot(data = norm_data_plot, aes(x=country, y=level_order, fill=count)) +
     panel.background = element_blank(),
     #legend.position = "none"
   )
-
-
 
 ```
 
@@ -1024,11 +1029,12 @@ g.us.top1 <- data.us.top %>%
   filter(state != "US") %>%
   select(state, confirmed, confirmed.per.us, ranking) %>%
   gather(key = Type, value = count, -c(state, ranking, confirmed.per.us)) %>%
+  arrange(ranking) %>%
   
-  ggplot(aes(fill = count, y = count, x = reorder(state, -desc(ranking)))) + 
-  geom_bar(position = "dodge", stat = "identity") +
-  labs(title = "20 state in US with most confirmed cases") +
-  scale_fill_gradient(low = "#ebbc62", high = "#b42006") +
+  ggplot(aes(x = reorder(state, ranking), y = count, fill = count)) + 
+  geom_bar(stat = "identity") +
+  #labs(title = "20 state in US with most confirmed cases") +
+  scale_color_gradient(low = "#93DBFF", high = "#FF7771") +
   xlab("") + 
   ylab("Confirmed Cases") +
   geom_text(aes(label=paste0(confirmed.per.us, "%")), size=3, vjust=-0.5) +
@@ -1047,7 +1053,6 @@ g.us.top1
 
 gly.us.top1 <- ggplotly(g.us.top1)
 gly.us.top1
-
 ```
 
 ```{r}
@@ -1167,9 +1172,12 @@ level_order <- factor(Allus_plot$type,
 Allus_Heat <- Allus[,c(ncol(Allus),1:(ncol(Allus)-1))]
 rownames(Allus_Heat) <- Allus_Heat[,1]
 Allus_Heat[,1] <- NULL
-heatmap.2(as.matrix(norm_data[, -1],col=my_palette,scale="row", trace="none"))
+heatmap.2(as.matrix(Allus_Heat),
+                    scale="none", 
+                    col = colorRampPalette(c("#6D9EC1","white","#E46726"))(n = 200),
+                    margins=c(10,6),trace="column")
 
-ggplot(data = Allus_plot, aes(x=state, y=level_order, fill=count)) + 
+heatmapus <- ggplot(data = Allus_plot, aes(x=state, y=level_order, fill=count)) + 
   geom_tile() +
   scale_fill_gradient(low = "pink", high = "blue") +
   xlab("") +
@@ -1185,6 +1193,8 @@ ggplot(data = Allus_plot, aes(x=state, y=level_order, fill=count)) +
     panel.background = element_blank(),
     #legend.position = "none"
   ) +labs(title='The heatmap of COVID-19 infections in US')
+
+heatmapus
 ```
 
 
@@ -1204,9 +1214,9 @@ ggcorrplot(cor(corr_dataUS),hc.order = TRUE,
 
 ```{r}
 #Covid_Thailand
-df_thai <- tbl(my_db, sql("select * from covid19_Thailand"))
+df_thai <- tbl(my_db, sql("select * from covid19_thailand"))
 df_thai <- as.data.frame(df_thai)
-View(df_thai)
+#View(df_thai)
 ```
 
 ```{r}
@@ -1229,17 +1239,60 @@ df_thai
 df_thai <- df_thai %>% select(!No.) %>% select(!notification_date) %>% 
   group_by(announce_date)
 df_thai
+View(df_thai)
 ```
 
 ```{r}
 # Total confirmed cases in Thailand
 data.thai.count <- df_thai %>%
   select(announce_date) %>%
-  summarise(comfirmed = n()) %>% as.data.frame()
+  summarise(confirmed = n()) %>% as.data.frame()
 View(data.thai.count)
 data.thai.count$cumulative_confirmed <- cumsum(data.thai.count[, 2])
-View(data.thai.count)
 ```
+```{r}
+data.thai.count <- data.thai.count %>% rename(new.confirmed=confirmed) %>% rename(confirmed=cumulative_confirmed)
+thai.total.long <- data.thai.count %>% 
+  gather(key = type, value = count, -c(announce_date))
+thai.total.long
+```
+
+```{r}
+
+plot_thailand.conf <- thai.total.long %>%
+  filter(type %in% c("new.confirmed")) %>%
+  ggplot(aes(x = announce_date, y = count, color = type)) + 
+  geom_line() + 
+  xlab("Date") +
+  ylab("cases")
+
+gly.plot_thai.cases <- ggplotly(plot_thailand.conf)
+gly.plot_thai.cases <- gly.plot_thai.cases %>% 
+  layout(title = paste0("<b>Daily Thai Confirmed Cases in Thailand : Jan 2020 - Jan 2021"), 
+         font=list(size = 10))
+
+gly.plot_thai.cases
+```
+```{r}
+plot_thailand.cumulative <- thai.total.long %>% 
+  filter(type %in% c("confirmed")) %>%
+  ggplot(aes(x = announce_date, y = count)) +
+  geom_area(aes(fill=type), alpha=0.5) +
+
+  scale_y_continuous(trans='log10') +
+  scale_fill_manual(values=c('red'))+
+  ylab("") +
+  theme(axis.title = element_text(size=8))
+
+gly.plot_thai.cumulative <- ggplotly(plot_thailand.cumulative)
+gly.plot_thai.cumulative <- gly.plot_thai.cumulative %>% 
+  layout(title = paste0("<b>Cumulative Cases in Thailand : Jan 2020 - Jan 2021 (Stack,Log scale)"), 
+         font=list(size = 10))
+
+gly.plot_thai.cumulative
+```
+
+
 
 ```{r}
 ## Thai Confirmed Cases (Jan 2020 - Jan 2021
@@ -1254,6 +1307,8 @@ plot2 <- ggplot(data.thai.count, aes(x=announce_date, y=comfirmed)) +
 ## show two plots side by side
 grid.arrange(plot1, plot2, ncol=1)
 ```
+
+
 
 ```{r}
 # Confirmed cases divided by sex (gender)
@@ -1321,7 +1376,7 @@ data.province.long
 ```
 
 ```{r}
-ggplot(data.province.long,aes(x=province,y=count))+
+province.thai <- ggplot(data.province.long,aes(x=province,y=count))+
     geom_bar(stat = "identity",position = "dodge",aes(fill=type))+
     labs(title = "Province of onset and Province of isolation in Thailand")+
     theme(legend.title=element_blank(),
@@ -1329,6 +1384,8 @@ ggplot(data.province.long,aes(x=province,y=count))+
                   plot.title=element_text(size=12),
                   axis.text=element_text(size=10),
                   axis.text.x=element_text(angle=45, hjust=1))+ xlab('') + ylab('Count')
+gly.province.thai <- ggplotly(province.thai)
+gly.province.thai
 ```
 
 ```{r}
@@ -1346,7 +1403,7 @@ data.thai.risk <- df_thai %>%
   group_by(risk) %>%
   summarise(count = n()) %>%
   mutate(percent = (count / sum(count) * 100) %>% round(2)) %>%
-  filter(percent>0.76) %>%
+  filter(percent>4) %>%
   arrange(desc(percent)) 
 data.thai.risk
 ```

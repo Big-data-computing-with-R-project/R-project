@@ -93,7 +93,32 @@ ui <- fluidPage(
                       )
                     )    
              ),
-             tabPanel("Thailand",
+             tabPanel("Thailand",(fluidRow
+                                  (fluidRow(
+                                    column(6,style='padding:15px;',
+                                           plotlyOutput("plotthaicaes")
+                                    ),
+                                    column(6,style='padding:15px',
+                                           plotlyOutput("plotdailycasethai")
+                                    )
+                                  ),
+                                    fluidRow(
+                                      column(6,
+                                             plotlyOutput("plotthai")
+                                             ),
+                                      column(6,style = "height:200px;background-color: white;",
+                                             DT::dataTableOutput("resultth")
+                                             )
+                                    ),
+                                    fluidRow(
+                                      column(6,
+                                             #plotlyOutput("plotcorrus")
+                                      ),
+                                      column(6,
+                                      )
+                                    )
+                                  )
+                                )    
                       
              ),
              tabPanel("DATA summary",
@@ -151,14 +176,33 @@ server <- function(input, output) {
     gly.us.top1
   })
   output$plotcorrus <- renderPlotly({
-    plotcorr
+    heatmapus
   })
   output$result <- DT::renderDataTable(
     DT::datatable(
       data.us.latest.show, options = list(
         lengthMenu = FALSE,
         lengthChange = FALSE,
-        pageLength = 5
+        pageLength = 6
+      )
+    )
+  )
+  #-------- Thailand ----------
+  output$plotthaicaes <- renderPlotly({
+    gly.plot_thai.cumulative
+  })
+  output$plotdailycasethai <- renderPlotly({
+    gly.plot_thai.cases
+  })
+  output$plotthai <- renderPlotly({
+    gly.province.thai
+  })
+  output$resultth <- DT::renderDataTable(
+    DT::datatable(
+      data.province, options = list(
+        lengthMenu = FALSE,
+        lengthChange = FALSE,
+        pageLength = 6
       )
     )
   )
