@@ -1296,11 +1296,11 @@ gly.plot_thai.cumulative
 
 ```{r}
 ## Thai Confirmed Cases (Jan 2020 - Jan 2021
-plot1 <- ggplot(data.thai.count, aes(x=announce_date, y=cumulative_confirmed)) +
+plot1 <- ggplot(data.thai.count, aes(x=announce_date, y=confirmed)) +
   geom_point() + geom_smooth() +
   xlab(" ") + ylab("Count") + labs(title='Thai Cumulative Confirmed Cases (Jan 2020 - Jan 2021)') +
   theme(axis.text.x=element_text(angle=45, hjust=1))
-plot2 <- ggplot(data.thai.count, aes(x=announce_date, y=comfirmed)) +
+plot2 <- ggplot(data.thai.count, aes(x=announce_date, y=new.confirmed)) +
   geom_point() + geom_smooth() +
     xlab(" ") + ylab("Count")+ labs(title='Thai Confirmed Cases (Jan 2020 - Jan 2021 log scale)') +
    theme(axis.text.x=element_text(angle=45, hjust=1))+scale_y_continuous(trans='log10')
