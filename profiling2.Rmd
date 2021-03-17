@@ -1,0 +1,320 @@
+```{r}
+#install.packages("tidyr")
+#install.packages("profvis")
+#install.packages("RMySQL")
+```
+
+
+```{r}
+## Comparing Profiling "small data and bigger data" 
+
+# Library 
+library(lubridate) #date operation
+library(magrittr) #pipe operation
+library(reshape2)
+library(ggplot2)
+library(gridExtra)
+library(dplyr)
+library(tidyr)
+library(profvis)
+```
+
+```{r}
+## 1. Connecting database (Small data & Big data)
+
+# small data with local database
+datafrommysql <- function(){
+  mysqldb1 <- src_mysql(dbname = "covid", host = "127.0.0.1", user = "root", password = "1234")
+  df_conf1 <- tbl(mysqldb1, sql("select * from covid19_confirmed_global"))
+  df_conf1 <- as.data.frame(df_conf1)
+  df_deaths1 <- tbl(mysqldb1, sql("select * from covid19_deaths_global"))
+  df_deaths1 <- as.data.frame(df_deaths1)
+  df_recover1 <- tbl(mysqldb1, sql("select * from covid19_recovered_global"))
+  df_recover1 <- as.data.frame(df_recover1)
+} 
+
+# big data with local database
+datafrommysql.big <-function(){
+  mysqldb2 <- src_mysql(dbname = "covid", host = "127.0.0.1", user = "root", password = "1234")
+  df_conf2 <- tbl(mysqldb2, sql("select * from covid19_confirmed"))
+  df_conf2 <- as.data.frame(df_conf2)
+  df_deaths2 <- tbl(mysqldb2, sql("select * from covid19_deaths"))
+  df_deaths2 <- as.data.frame(df_deaths2)
+  df_recover2 <- tbl(mysqldb2, sql("select * from covid19_recovered"))
+  df_recover2 <- as.data.frame(df_recover2)
+} 
+
+# small data with server 
+datafromserver <- function(){
+  serverdb1 <- src_mysql(dbname = "covid19", host = "cvd-database.cmxpnyylhkiw.us-east-2.rds.amazonaws.com", user = "admin", password = "RprojectCovid19")
+  df_conf3 <- tbl(serverdb1, sql("select * from covid19_confirmed_global"))
+  df_conf3 <- as.data.frame(df_conf3)
+  df_deaths3 <- tbl(serverdb1, sql("select * from covid19_deaths_global"))
+  df_deaths3 <- as.data.frame(df_deaths3)
+  df_recover3 <- tbl(serverdb1, sql("select * from covid19_recovered_global"))
+  df_recover3 <- as.data.frame(df_recover3)
+}
+
+# big data with server
+datafromserver.big <-function(){
+  serverdb2 <- src_mysql(dbname = "covid19", host = "cvd-database.cmxpnyylhkiw.us-east-2.rds.amazonaws.com", user = "admin", password = "RprojectCovid19")
+  df_conf4 <- tbl(serverdb2, sql("select * from covid19_confirmed"))
+  df_conf4 <- as.data.frame(df_conf4)
+  df_deaths4 <- tbl(serverdb2, sql("select * from covid19_deaths"))
+  df_deaths4 <- as.data.frame(df_deaths4) 
+  df_recover4 <- tbl(serverdb2, sql("select * from covid19_recovered"))
+  df_recover4 <- as.data.frame(df_recover4)
+} 
+```
+
+
+
+
+```{r}
+profvis({
+## 1. profiling function of connecting data
+  small_mysql() # small / local  
+  big_mysql() # big / local
+  small_server() # small / server
+  big_server # big / server
+})
+```
+
+```{r}
+## profiling each code line้
+profvis({
+  
+  # small / local
+  mysqldb1 <- src_mysql(dbname = "covid", host = "127.0.0.1", user = "root", password = "1234")
+  df_conf1 <- tbl(mysqldb1, sql("select * from covid19_confirmed_global"))
+  df_conf1 <- as.data.frame(df_conf1)
+  df_deaths1 <- tbl(mysqldb1, sql("select * from covid19_deaths_global"))
+  df_deaths1 <- as.data.frame(df_deaths1)
+  df_recover1 <- tbl(mysqldb1, sql("select * from covid19_recovered_global"))
+  df_recover1 <- as.data.frame(df_recover1)
+  
+  # big / local
+  mysqldb2 <- src_mysql(dbname = "covid", host = "127.0.0.1", user = "root", password = "1234")
+  df_conf2 <- tbl(mysqldb2, sql("select * from covid19_confirmed"))
+  df_conf2 <- as.data.frame(df_conf2)
+  df_deaths2 <- tbl(mysqldb2, sql("select * from covid19_deaths"))
+  df_deaths2 <- as.data.frame(df_deaths2)
+  df_recover2 <- tbl(mysqldb2, sql("select * from covid19_recovered"))
+  df_recover2 <- as.data.frame(df_recover2)  
+  
+  # small / server
+  serverdb1 <- src_mysql(dbname = "covid19", host = "cvd-database.cmxpnyylhkiw.us-east-2.rds.amazonaws.com", user = "admin", password = "RprojectCovid19")
+  df_conf3 <- tbl(serverdb1, sql("select * from covid19_confirmed_global"))
+  df_conf3 <- as.data.frame(df_conf3)
+  df_deaths3 <- tbl(serverdb1, sql("select * from covid19_deaths_global"))
+  df_deaths3 <- as.data.frame(df_deaths3)
+  df_recover3 <- tbl(serverdb1, sql("select * from covid19_recovered_global"))
+  df_recover3 <- as.data.frame(df_recover3)
+  
+  # big / server
+  serverdb2 <- src_mysql(dbname = "covid19", host = "cvd-database.cmxpnyylhkiw.us-east-2.rds.amazonaws.com", user = "admin", password = "RprojectCovid19")
+  df_conf4 <- tbl(serverdb2, sql("select * from covid19_confirmed"))
+  df_conf4 <- as.data.frame(df_conf4)
+  df_deaths4 <- tbl(serverdb2, sql("select * from covid19_deaths"))
+  df_deaths4 <- as.data.frame(df_deaths4)
+  df_recover4 <- tbl(serverdb2, sql("select * from covid19_recovered"))
+  df_recover4 <- as.data.frame(df_recover4)
+})
+
+```
+
+```{r}
+## 2. Function clean data
+
+Cleandata <- function(data) {
+  ## remove some columns
+  data %<>% select(-c(Province.State, Lat, Long)) %>% rename(country = Country.Region)
+  ## convert from wide to long format
+  data %<>% gather(key=date, value=count, -country)
+  ## convert from character to date
+  data %<>% mutate(date = date %>% mdy())
+  ## aggregate by country
+  data %<>% group_by(country, date) %>% summarise(count=sum(count, na.rm=T), .groups = 'drop') %>% as.data.frame()
+  return(data)
+}
+
+profvis({
+## 2. Function clean data
+  # small / local 
+  small_confirmed <- df_conf1 %>% Cleandata() %>% rename(confirmed = count)
+  small_deaths <- df_deaths1 %>% Cleandata() %>% rename(deaths = count)
+  small_recover <- df_recover1 %>% Cleandata() %>% rename(recovered = count)
+
+  # big / local
+  big_confirmed <- df_conf2 %>% Cleandata() %>% rename(confirmed = count)
+  big_deaths <- df_deaths2 %>% Cleandata() %>% rename(deaths = count)
+  big_recover <- df_recover2 %>% Cleandata() %>% rename(recovered = count)
+  
+  # small / server
+  small_confirmed.server <- df_conf3 %>% Cleandata() %>% rename(confirmed = count)
+  small_deaths.server <- df_deaths3 %>% Cleandata() %>% rename(deaths = count)
+  small_recover.server <- df_recover3 %>% Cleandata() %>% rename(recovered = count)
+
+  #big / server
+  big_confirmed.server <- df_conf4 %>% Cleandata() %>% rename(confirmed = count)
+  big_deaths.server <- df_deaths4 %>% Cleandata() %>% rename(deaths = count)
+  big_recover.server <- df_recover4 %>% Cleandata() %>% rename(recovered = count)
+})
+
+```
+
+```{r}
+#******************************************************
+# 3. Data World (Merge and add data)
+
+  MergeData <- function(conf, deaths, recov){
+  data <- conf %>% merge(deaths, all=T) %>% merge(recov, all=T)
+  data.world <- data %>% group_by(date) %>%
+  summarise(country='World',
+            confirmed = sum(confirmed, na.rm=T),
+            deaths = sum(deaths, na.rm=T),
+            recovered = sum(recovered, na.rm=T))
+  data %<>% rbind(data.world)
+  data %<>% mutate(current.confirmed = confirmed - deaths - recovered)
+  return(data)
+  }
+
+profvis({
+# 3. Merge Data 
+  small_merge <- MergeData(small_confirmed, small_deaths, small_recover) # small / local
+  big_merge <- MergeData(big_confirmed, big_deaths, big_recover) # big /local
+  small_merge.server <- MergeData(small_confirmed.server, small_deaths.server, small_recover.server) # small /server
+  big_merge.server <- MergeData(big_confirmed.server, big_deaths.server, big_recover.server) # big / server
+})
+```
+
+```{r}
+daily <- function(data){
+  n <- nrow(data)
+  day1 <- min(data$date)
+  data %<>% mutate(new.confirmed = confirmed - c(NA,head(confirmed,-1)),
+                 new.deaths = deaths - c(NA,head(deaths,-1)) ,
+                 new.recovered = recovered - c(NA,head(recovered,-1)))
+
+  #change negative number of new case to zero
+  data %<>% mutate(new.confirmed = ifelse(new.confirmed < 0,0,new.confirmed),
+                       new.deaths = ifelse(new.deaths < 0,0,new.deaths),
+                       new.recovered = ifelse(new.recovered < 0,0,new.recovered))
+
+
+  #death rate based on total deaths and recovered cases
+  data %<>% mutate(rate.upper = (100*deaths/(deaths+recovered)) %>% round(1))
+  #lower bound: death rate based on total confirmed cases
+  data %<>% mutate(rate.lower = (100*deaths/confirmed) %>% round(1))
+  #death rate based on number of death/recovered on every single day
+  data %<>% mutate(rate.daily = (100*new.deaths/(new.deaths+new.recovered)) %>% round(1))
+}
+
+# Local
+profvis({
+  small_daily <- small_merge %>% daily()
+  big_daily <- big_merge %>% daily()
+  small_daily.server <- small_merge.server %>% daily()
+  big_daily.server <- big_merge.server %>% daily()
+})
+
+```
+
+```{r}
+# 4. Change data format 
+
+ChangeDataFormat <- function(data){
+  data.long <- data %>%
+  select(c(country, date, confirmed, current.confirmed, recovered, deaths)) %>%
+  gather(key=type, value=count, -c(country, date))
+
+  data.long %<>% mutate(type=recode_factor(type, confirmed='Total Confirmed',
+                                         current.confirmed='Current Confirmed',
+                                         recovered='Recovered',
+                                         deaths='Deaths'))
+}
+
+profvis({
+# 4. Change data format
+  small_dataFormat <- small_merge %>% ChangeDataFormat() # small / local
+  big_dataFormat <- big_merge %>% ChangeDataFormat() # big / local
+  
+  # Server
+  small_dataFormat.server <- small_merge.server %>% ChangeDataFormat() # small / server
+  big_dataFormat.server <- big_merge.server %>% ChangeDataFormat() # big / server
+})
+```
+
+```{r}
+#  Calculate rates
+CalcRate <- function(data){
+  rates.long <- data %>%
+    select(c(country, date, rate.upper, rate.lower, rate.daily)) %>%
+    gather(key=type, value=count, -c(country, date))
+  rates.long %<>% mutate(type=recode_factor(type, rate.daily='Daily',
+                             rate.upper='Upper bound'))
+}
+
+profvis({
+  # Local
+  small_calcRate <- small_daily %>% CalcRate()
+  big_calcRate <- big_daily %>% CalcRate()
+  
+  # Server
+  small_calcRate.server <- small_daily.server %>% CalcRate()
+  big_calcRate.server <- big_daily.server %>% CalcRate()
+})
+  
+```
+
+```{r}
+small_dataFormat
+small_daily
+small_calcRate
+```
+
+```{r}
+# 5. Find top 20 countries 
+
+CalcTop20 <- function(data){
+  data.latest.all <- data %>% filter(date == max(date)) %>%
+  select(country, date,confirmed, new.confirmed, current.confirmed, 
+         recovered, deaths, new.deaths, death.rate=rate.lower) %>%
+  mutate(ranking = dense_rank(desc(confirmed)))
+
+  k <- 20
+  ## top 20 countries: 21 incl. 'World'
+  top.countries <- data.latest.all %>% filter(ranking <= k + 1) %>%
+    arrange(ranking) %>% pull(country) %>% as.character()
+  #top.countries %>% setdiff('World') %>% print()
+  
+  data.latest <- data.latest.all %>% filter(!is.na(country)) %>%
+  mutate(country=ifelse(ranking <= k + 1, as.character(country), 'Others')) %>%
+  mutate(country=country %>% factor(levels=c(top.countries, 'Others')))
+  data.latest %<>% group_by(country) %>%
+  summarise(confirmed=sum(confirmed), new.confirmed=sum(new.confirmed),
+            current.confirmed=sum(current.confirmed),
+            recovered=sum(recovered), deaths=sum(deaths), new.deaths=sum(new.deaths)) %>%
+  mutate(death.rate=(100 * deaths/confirmed) %>% round(1))
+  data.latest %<>% select(c(country, confirmed, deaths, death.rate,
+                          new.confirmed, new.deaths, current.confirmed))
+  return(data.latest)
+}
+
+profvis({
+# 5. Find top 20 countries 
+  small_top20 <- small_daily %>% CalcTop20() # small / local
+  big_top20 <- big_daily %>% CalcTop20() # big / local
+  
+  small_top20.server <- small_daily.server %>% CalcTop20() # small / server
+  big_top20.server <- big_daily.server %>% CalcTop20() #big /server
+})
+```
+
+
+
+
+
+
+
+
