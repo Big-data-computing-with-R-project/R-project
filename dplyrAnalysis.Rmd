@@ -762,7 +762,7 @@ ggplot(data.thai.nationality)+
     theme(axis.text = element_text(size = 10),
             axis.title = element_text(size = 10),
             plot.title = element_text(size = 10))+
-    xlab("")+ylab("Number of Nationality")+
+    xlab("")+ylab("Number of Confirmed Cases")+
    scale_y_continuous(trans='log10')+coord_flip()+scale_fill_gradient(low="blue",high = "red")
 ```
 

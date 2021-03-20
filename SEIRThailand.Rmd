@@ -61,9 +61,9 @@ latent_period = 14                    # latent period
 
 ```{r}
 #Compute values of beta (tranmission rate) and gamma (recovery rate).
-lambda = 0.8
-#beta_value =  contact_rate * transmission_probability
-beta_value = lambda * contact_rate * transmission_probability
+#lambda = 0.8
+beta_value =  contact_rate * transmission_probability
+#beta_value = lambda * contact_rate * transmission_probability
 #beta_value = lambda * Ro * (1 / infectious_period)
 #beta_value = Ro * (1 / infectious_period)
 gamma_value = 1 / infectious_period
@@ -72,6 +72,7 @@ Ro = beta_value / gamma_value
 #Disease dynamics parameters.
 parameter_list = c (beta = beta_value, gamma = gamma_value, delta = delta_value)
 Ro
+delta_value
 ```
 
 
