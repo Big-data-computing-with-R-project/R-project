@@ -149,3 +149,4 @@ top5_countries <- data_evolution %>%
   select(`Country.Region`) %>%
   pull()
 
+
