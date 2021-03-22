@@ -47,7 +47,7 @@ ui <- fluidPage(
                         column(12,style='padding:10px;',
                                fluidRow(
                                  fluidRow(
-                                   #uiOutput("box_keyFigures")
+                                   uiOutput("box_keyFigures")
                                  ),
                                ),
                                fluidRow(
@@ -270,32 +270,7 @@ server <- function(input, output) {
   output$plotmap <- renderLeaflet({
     map.confirmed 
   })
-  output$confirmBox <- renderValueBox({
-    valueBox(
-      mostconfirm$confirmed,
-      subtitle = "Confirmed",
-      #icon     = icon("file-medical"),
-      color    = "red",
-    )
-  })
-  output$recoverBox <- renderValueBox({
-    valueBox(
-      mostrecover$recovered,
-      subtitle = "Recover",
-      icon     = icon("heart"),
-      color    = "yellow",
-      width    = NULL
-    )
-  })
-  output$deathBox <- renderValueBox({
-    valueBox(
-      mostdeath$deaths,
-      subtitle = "Death",
-      icon     = icon("file-medical"),
-      color    = "yellow",
-      width    = NULL
-    )
-  })
+  
   output$overview_map <- renderLeaflet(map)
   #---------------- summary rable -----------------------
   output$summaryTables <- renderUI({
@@ -451,7 +426,7 @@ server <- function(input, output) {
   output$valueBox_confirmed <- renderValueBox({
     valueBox(
       key_figures()$confirmed,
-      #subtitle = "Confirmed",
+      subtitle = "Confirmed",
       icon     = icon("file-medical"),
       color    = "yellow",
     )
@@ -461,7 +436,7 @@ server <- function(input, output) {
   output$valueBox_recovered <- renderValueBox({
     valueBox(
       key_figures()$recovered,
-      #subtitle = "Estimated Recoveries",
+      subtitle = "Estimated Recoveries",
       icon     = icon("heart"),
       color    = "yellow"
     )
@@ -470,7 +445,7 @@ server <- function(input, output) {
   output$valueBox_deceased <- renderValueBox({
     valueBox(
       key_figures()$deceased,
-      #subtitle = "Deceased",
+      subtitle = "Deceased",
       icon     = icon("heartbeat"),
       color    = "yellow"
     )
@@ -479,7 +454,7 @@ server <- function(input, output) {
   output$valueBox_countries <- renderValueBox({
     valueBox(
       key_figures()$countries,
-      #subtitle = "Affected Countries",
+      subtitle = "Affected Countries",
       icon     = icon("flag"),
       color    = "yellow"
     )
