@@ -27,3 +27,5 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 clear.Rmd
+test.png
+summarytable.R

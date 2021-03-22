@@ -191,10 +191,10 @@ plot_world.area <- world %>% filter(type != 'Total Confirmed') %>%
         axis.text=element_text(size=7),
         axis.text.x=element_text(angle=45, hjust=1))
 plot_world.line <- world %>%
-  ggplot(aes(x=date, y=count)) +
+  ggplot(aes(x=date, y=count,color = type)) +
   geom_line(aes(color=type)) +
   labs(title=paste0('Numbers of Cases Worldwide (log scale) - ', max.date.txt)) +
-  scale_color_manual(values=c('purple', 'red', 'green', 'black')) +
+  #scale_color_manual(values=c('blue', 'red', 'green', 'black')) +
   theme(legend.title=element_blank(), legend.position='bottom',
         plot.title = element_text(size=7),
         axis.title.x=element_blank(),
@@ -213,6 +213,8 @@ gly.plot_world.area
 gly.plot_world.line <- ggplotly(plot_world.line)
 gly.plot_world.line
 ```
+
+
 
 ```{r}
 data.world.all <- data %>% filter(country == "World")
@@ -317,6 +319,9 @@ data.latest %<>% select(c(country, confirmed, deaths, death.rate,
                           new.confirmed, new.deaths, current.confirmed,recovered)) %>%
   mutate(recover.rate=(100 * recovered/confirmed) %>% round(1))
 data.latest
+mostconfirm <- data.latest %>% select(c(country,confirmed)) %>% filter(country=="World")
+mostrecover <- data.latest %>% select(c(country,recovered)) %>% filter(country=="World")
+mostdeath <- data.latest %>% select(c(country,deaths)) %>% filter(country=="World")
 
 df_pop <- tbl(my_db, sql("select * from population "))
 df_pop <- as.data.frame(df_pop)
@@ -424,9 +429,9 @@ df_healt <- select(df_healt,c("country","healthCareIndex"))
 
 ```{r}
 #Top20Pornhub data
-df_pornhub <- tbl(my_db, sql("select * from Pornhub"))
-df_pornhub <- as.data.frame(df_pornhub)
-df_pornhub
+#df_pornhub <- tbl(my_db, sql("select * from Pornhub"))
+#df_pornhub <- as.data.frame(df_pornhub)
+#df_pornhub
 ```
 
 ```{r}
@@ -774,7 +779,7 @@ data.top.world <- mergcountry(data.top.world, df_temp)
 index <- is.na(data.top.world)
 data.top.world[index] <- 0
 data.top.world
-#View(data.top.world)
+View(data.top.world)
 
 
 normalize = function(data){
@@ -782,16 +787,35 @@ normalize = function(data){
   z <- scale(data);
   tanh(z/2)
 }
+
 norm_data = as.data.frame(apply(data.top.world[,2:13],2,normalize))
 corr_data <- norm_data
 norm_data$country <- c("Argentina","Bangladesh","Brazil","Chile","Colombia","France","Germany","India","Iran","Italy","Mexico","Pakistan","Peru","Russia","saudi Arabia","South Africa","Spain","Turkey","United Kingdom","US")
-#View(norm_data)
+norm_data <- norm_data[,c(ncol(norm_data),1:(ncol(norm_data)-1))]
+rownames(norm_data) <- norm_data[,1]
+norm_data[,1] <- NULL
 
+#heatmap(as.matrix(norm_data[, -1]),scale="column",col= colorRampPalette(brewer.pal(8, "Blues"))(25))
+#legend(x="bottomright", legend=c("-1", "0", "1"), 
+#     fill=colorRampPalette(brewer.pal(8, "Blues"))(3))
 
-norm_data_plot <- select(norm_data,"country","confirm.rate","death.rate","recover.rate","healthcare","Pornhub","GDP","avg_temp", "sars")
-norm_data_plot %<>% gather(key=type, value=count, -c(country))
-level_order <- factor(norm_data_plot$type, 
-                      level = c("sars","Pornhub","GDP","avg_temp","healthcare","recover.rate","death.rate","confirm.rate"))
+# install.packages("gplots")
+library("gplots")
+library("stringr")
+norm_data_plot <- select(norm_data,"confirm.rate","death.rate","recover.rate","healthcare","Pornhub","GDP","avg_temp", "sars")
+norm_data_plot
+world_clust <- as.matrix(norm_data_plot)
+heatmap.clust <- heatmap.2(as.matrix(norm_data_plot),
+                    scale="none", 
+                    col = colorRampPalette(c("#6D9EC1","white","#E46726"))(n = 200),
+                    margins=c(10,6),trace="column")
+#gly.heatmap2 <- plotly_build(heatmap.clust)
+
+#norm_data_plot <- select(norm_data,"country","confirm.rate","death.rate","recover.rate","healthcare","Pornhub","GDP","avg_temp", "sars")
+#norm_data_plot %<>% gather(key=type, value=count, -c(country))
+#level_order <- factor(norm_data_plot$type, 
+                      #level = #c("sars","Pornhub","GDP","avg_temp","healthcare","recover.rate","death.rate","confirm.rate"))
+#View(level_order)
 ggplot(data = norm_data_plot, aes(x=country, y=level_order, fill=count)) + 
   geom_tile() +
   scale_fill_gradient(low = "pink", high = "blue") +
@@ -808,6 +832,7 @@ ggplot(data = norm_data_plot, aes(x=country, y=level_order, fill=count)) +
     panel.background = element_blank(),
     #legend.position = "none"
   )
+
 ```
 
 ```{r}
@@ -815,10 +840,12 @@ ggplot(data = norm_data_plot, aes(x=country, y=level_order, fill=count)) +
 corr_data %<>% select(c(GDP,confirm.rate,death.rate,recover.rate,healthcare,avg_temp,Pornhub, sars))
 head(corr_data)
 cor(corr_data)
-ggcorrplot(cor(corr_data),hc.order = TRUE,
+plotcorr <- ggcorrplot(cor(corr_data),hc.order = TRUE,
            outline.color = "white",
            colors = c("#6D9EC1","white","#E46726"),
            lab = TRUE)
+
+plotcorr
 ```
 
 ```{r}
@@ -853,7 +880,6 @@ df_us <- df_us  %>%
   mutate(date = date %>% mdy()) %>%
   rename("confirmed" = "cases")
 #data.us
-
 dates.us <- df_us[,1]
 range(dates.us)
 min.date.us <- min(dates.us)
@@ -870,11 +896,11 @@ data.us.total <- df_us %>% group_by(date) %>%
 
 data.us <- df_us
 data.us %<>% rbind(data.us.total)
-#View(data.us)
+View(data.us)
 
 data.us.long <- data.us %>% 
   gather(key = type, value = count, -c(date, state)) 
-#data.us.long
+View(data.us.long)
 
 us.total <- data.us.total %>%
   mutate(new.confirmed = ifelse(date == day1, 0, confirmed - lag(confirmed, n=1)),
@@ -883,6 +909,8 @@ us.total <- data.us.total %>%
 us.total %<>% mutate(new.confirmed = ifelse(new.confirmed < 0, 0, new.confirmed),
                  new.deaths = ifelse(new.deaths < 0, 0, new.deaths))
 us.total
+
+most_us <- us.total %>% filter(date == max.date.us)
 
 us.total.long <- us.total %>% 
   gather(key = type, value = count, -c(date, state))
@@ -895,23 +923,29 @@ us.total.long <- us.total %>%
 plot_us.cases <- data.us.long %>% filter(state == "US") %>%
   ggplot(aes(x = date, y = count)) +
   geom_area(aes(fill=type), alpha=0.5) +
-  labs(title = paste0("Cumulative cases in US : ", min.date.txt.us, '-', max.date.txt.us, " (Stack, Log Scale)"))  +
-  scale_y_continuous(trans='log10')+
+#  labs(title = paste0("Cumulative cases in US : ", min.date.txt.us, '-', max.date.txt.us, " (Stack, Log Scale)")) +
+  scale_y_continuous(trans='log10') +
   scale_fill_manual(values=c('red', 'black'))+
-  ylab("")
-
+  ylab("") +
+  theme(axis.title = element_text(size=8))
+#View(us.total.long )
 plot_us.newconf <- us.total.long %>%
-  filter(type %in% c("new.confirmed")) %>%
+  filter(type %in% c("new.confirmed","new.deaths")) %>%
   ggplot(aes(x = date, y = count, color = type)) + 
   geom_line() + 
-  labs(title = paste0("Daily confirmed cases in US : ", min.date.txt.us, '-', max.date.txt.us)) +
+  #labs(title = paste0("Daily confirmed cases in US : ", min.date.txt.us, '-', max.date.txt.us)) +
   xlab("Date") +
   ylab("Confirmed cases")
 
 gly.plot_us.cases <- ggplotly(plot_us.cases)
-gly.plot_us.newconf <- ggplotly(plot_us.newconf)
+gly.plot_us.cases <- gly.plot_us.cases %>% 
+  layout(title = paste0("<b>Cumulative cases in US : ", min.date.txt.us, '-', max.date.txt.us, " (Stack, Log Scale)"), 
+         font=list(size = 10))
+gly.plot_us.newconf <- ggplotly(plot_us.newconf) %>% 
+  layout(title = paste0("<b>Daily confirmed cases in US : ", min.date.txt.us, '-', max.date.txt.us), 
+         font=list(size = 10))
 
-gly.plot_us.cases
+gly.plot_us.cases  
 gly.plot_us.newconf
 
 ```
@@ -954,10 +988,10 @@ data.us.latest %<>% mutate(ranking = dense_rank(desc(confirmed)),
 top.us <- data.us.latest[,1]
 top.us
 
-View(top.us)
+#View(top.us)
 
-data.us.latest
-
+data.us.latest.show <- data.us.latest %>% select(state,date,confirmed,deaths, confirmed.rate, death.rate)
+#View(data.us.latest.show)
 ```
 
 ```{r}
@@ -1003,11 +1037,12 @@ g.us.top1 <- data.us.top %>%
   filter(state != "US") %>%
   select(state, confirmed, confirmed.per.us, ranking) %>%
   gather(key = Type, value = count, -c(state, ranking, confirmed.per.us)) %>%
+  arrange(ranking) %>%
   
-  ggplot(aes(fill = count, y = count, x = reorder(state, -desc(ranking)))) + 
-  geom_bar(position = "dodge", stat = "identity") +
-  labs(title = "20 state in US with most confirmed cases") +
-  scale_fill_gradient(low = "#ebbc62", high = "#b42006") +
+  ggplot(aes(x = reorder(state, ranking), y = count, fill = count)) + 
+  geom_bar(stat = "identity") +
+  #labs(title = "20 state in US with most confirmed cases") +
+  scale_color_gradient(low = "#93DBFF", high = "#FF7771") +
   xlab("") + 
   ylab("Confirmed Cases") +
   geom_text(aes(label=paste0(confirmed.per.us, "%")), size=3, vjust=-0.5) +
@@ -1026,7 +1061,6 @@ g.us.top1
 
 gly.us.top1 <- ggplotly(g.us.top1)
 gly.us.top1
-
 ```
 
 ```{r}
@@ -1142,7 +1176,16 @@ Allus_plot <- select(Allus,"state","confirmed","deaths","Male","Female","Populat
 Allus_plot %<>% gather(key=type, value=count, -c(state))
 level_order <- factor(Allus_plot$type, 
                       level = c("confirmed","deaths","Male","Female","Population","Day lockdown","GDPs","Homeless"))
-ggplot(data = Allus_plot, aes(x=state, y=level_order, fill=count)) + 
+
+Allus_Heat <- Allus[,c(ncol(Allus),1:(ncol(Allus)-1))]
+rownames(Allus_Heat) <- Allus_Heat[,1]
+Allus_Heat[,1] <- NULL
+heatmap.2(as.matrix(Allus_Heat),
+                    scale="none", 
+                    col = colorRampPalette(c("#6D9EC1","white","#E46726"))(n = 200),
+                    margins=c(10,6),trace="column")
+
+heatmapus <- ggplot(data = Allus_plot, aes(x=state, y=level_order, fill=count)) + 
   geom_tile() +
   scale_fill_gradient(low = "pink", high = "blue") +
   xlab("") +
@@ -1158,6 +1201,8 @@ ggplot(data = Allus_plot, aes(x=state, y=level_order, fill=count)) +
     panel.background = element_blank(),
     #legend.position = "none"
   ) +labs(title='The heatmap of COVID-19 infections in US')
+
+heatmapus
 ```
 
 
@@ -1170,13 +1215,16 @@ ggcorrplot(cor(corr_dataUS),hc.order = TRUE,
            outline.color = "white",
            colors = c("#6D9EC1","white","#E46726"),
            lab = TRUE)
+
+
+
 ```
 
 ```{r}
 #Covid_Thailand
-df_thai <- tbl(my_db, sql("select * from covid19_Thailand"))
+df_thai <- tbl(my_db, sql("select * from covid19_thailand"))
 df_thai <- as.data.frame(df_thai)
-View(df_thai)
+#View(df_thai)
 ```
 
 ```{r}
@@ -1199,31 +1247,76 @@ df_thai
 df_thai <- df_thai %>% select(!No.) %>% select(!notification_date) %>% 
   group_by(announce_date)
 df_thai
+View(df_thai)
 ```
 
 ```{r}
 # Total confirmed cases in Thailand
 data.thai.count <- df_thai %>%
   select(announce_date) %>%
-  summarise(comfirmed = n()) %>% as.data.frame()
+  summarise(confirmed = n()) %>% as.data.frame()
 View(data.thai.count)
 data.thai.count$cumulative_confirmed <- cumsum(data.thai.count[, 2])
-View(data.thai.count)
+```
+```{r}
+data.thai.count <- data.thai.count %>% rename(new.confirmed=confirmed) %>% rename(confirmed=cumulative_confirmed)
+thai.total.long <- data.thai.count %>% 
+  gather(key = type, value = count, -c(announce_date))
+thai.total.long
 ```
 
 ```{r}
+
+plot_thailand.conf <- thai.total.long %>%
+  filter(type %in% c("new.confirmed")) %>%
+  ggplot(aes(x = announce_date, y = count, color = type)) + 
+  geom_line() + 
+  xlab("Date") +
+  ylab("cases")
+
+gly.plot_thai.cases <- ggplotly(plot_thailand.conf)
+gly.plot_thai.cases <- gly.plot_thai.cases %>% 
+  layout(title = paste0("<b>Daily Thai Confirmed Cases in Thailand : Jan 2020 - Jan 2021"), 
+         font=list(size = 10))
+
+gly.plot_thai.cases
+```
+```{r}
+plot_thailand.cumulative <- thai.total.long %>% 
+  filter(type %in% c("confirmed")) %>%
+  ggplot(aes(x = announce_date, y = count)) +
+  geom_area(aes(fill=type), alpha=0.5) +
+
+  scale_y_continuous(trans='log10') +
+  scale_fill_manual(values=c('red'))+
+  ylab("") +
+  theme(axis.title = element_text(size=8))
+
+gly.plot_thai.cumulative <- ggplotly(plot_thailand.cumulative)
+gly.plot_thai.cumulative <- gly.plot_thai.cumulative %>% 
+  layout(title = paste0("<b>Cumulative Cases in Thailand : Jan 2020 - Jan 2021 (Stack,Log scale)"), 
+         font=list(size = 10))
+
+gly.plot_thai.cumulative
+```
+
+
+
+```{r}
 ## Thai Confirmed Cases (Jan 2020 - Jan 2021
-plot1 <- ggplot(data.thai.count, aes(x=announce_date, y=cumulative_confirmed)) +
+plot1 <- ggplot(data.thai.count, aes(x=announce_date, y=confirmed)) +
   geom_point() + geom_smooth() +
   xlab(" ") + ylab("Count") + labs(title='Thai Cumulative Confirmed Cases (Jan 2020 - Jan 2021)') +
   theme(axis.text.x=element_text(angle=45, hjust=1))
-plot2 <- ggplot(data.thai.count, aes(x=announce_date, y=comfirmed)) +
+plot2 <- ggplot(data.thai.count, aes(x=announce_date, y=new.confirmed)) +
   geom_point() + geom_smooth() +
     xlab(" ") + ylab("Count")+ labs(title='Thai Confirmed Cases (Jan 2020 - Jan 2021 log scale)') +
    theme(axis.text.x=element_text(angle=45, hjust=1))+scale_y_continuous(trans='log10')
 ## show two plots side by side
 grid.arrange(plot1, plot2, ncol=1)
 ```
+
+
 
 ```{r}
 # Confirmed cases divided by sex (gender)
@@ -1291,7 +1384,7 @@ data.province.long
 ```
 
 ```{r}
-ggplot(data.province.long,aes(x=province,y=count))+
+province.thai <- ggplot(data.province.long,aes(x=province,y=count))+
     geom_bar(stat = "identity",position = "dodge",aes(fill=type))+
     labs(title = "Province of onset and Province of isolation in Thailand")+
     theme(legend.title=element_blank(),
@@ -1299,6 +1392,8 @@ ggplot(data.province.long,aes(x=province,y=count))+
                   plot.title=element_text(size=12),
                   axis.text=element_text(size=10),
                   axis.text.x=element_text(angle=45, hjust=1))+ xlab('') + ylab('Count')
+gly.province.thai <- ggplotly(province.thai)
+gly.province.thai
 ```
 
 ```{r}
@@ -1316,7 +1411,7 @@ data.thai.risk <- df_thai %>%
   group_by(risk) %>%
   summarise(count = n()) %>%
   mutate(percent = (count / sum(count) * 100) %>% round(2)) %>%
-  filter(percent>0.76) %>%
+  filter(percent>4) %>%
   arrange(desc(percent)) 
 data.thai.risk
 ```
@@ -1367,25 +1462,30 @@ ggplot(data.thai.age,aes(x=age,y=count,fill=sex))+geom_bar(stat = "identity")+
 
 ```{r}
 # Confirmed cases divided by nationality
-data.thai.nationality <- df_thai %>%
+data.thai.nationality <- df_thai
+
+data.thai.nationality$nationality[data.thai.nationality$nationality == "????????"] <- "Unknown"
+data.thai.nationality$nationality[data.thai.nationality$nationality == ""] <- "Unknown"
+data.thai.nationality$nationality[data.thai.nationality$nationality == "Burma"] <- "Myanmar"
+
+data.thai.nationality <- data.thai.nationality %>%
   group_by(nationality) %>%
   summarise(count = n()) %>%
   filter(count > 11)%>%
   arrange(desc(count))
-data.thai.nationality$nationality[data.thai.nationality$nationality == "????????"] <- "Unknown"
-data.thai.nationality$nationality[data.thai.nationality$nationality == ""] <- "Unknown"
-data.thai.nationality$nationality[data.thai.nationality$nationality == "Burma"] <- "Myanmar"
+
 data.thai.nationality
 ```
 
 ```{r}
-ggplot(data.thai.nationality)+ 
-  geom_bar(aes(x=nationality,y=count,fill = count),stat = "identity",show.legend = F)+
-    ggtitle('Nationality of Thai Confirmed Cases (log scale)')+
+data.thai.nationality$count[data.thai.nationality$nationality == "Unknown"]
+ggplot(data.thai.nationality, aes(x=reorder(nationality, count),y=count,fill = count))+ 
+  geom_bar(stat = "identity",show.legend = F)+
+    ggtitle('Nationality of Confirmed Cases in Thailand (log scale)')+
     theme(plot.title = element_text(hjust = 0.5))+
     theme(axis.text = element_text(size = 10),
             axis.title = element_text(size = 10),
-            plot.title = element_text(size = 10))+
+            plot.title = element_text(size = 11))+
     xlab("")+ylab("Number of Nationality")+
    scale_y_continuous(trans='log10')+coord_flip()+scale_fill_gradient(low="blue",high = "red")
 ```
