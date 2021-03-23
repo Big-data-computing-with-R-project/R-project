@@ -16,6 +16,9 @@ library(normalr)
 library(ggcorrplot)
 library(flexdashboard)
 library(shinydashboard)
+source("ui_overview.R", local = TRUE)
+source("Thai.R", local = TRUE)
+source("us.R", local = TRUE)
 
 # ------------------------ Define UI -------------------
 ui <- fluidPage(
@@ -33,218 +36,9 @@ ui <- fluidPage(
              inverse = TRUE,
              collapsible = TRUE,
              fluid       = TRUE,
-             tabPanel("Overall",
-                      fluidRow( 
-                        tags$head(
-                        tags$style(type = "text/css", "#overview_map {height: 48vh !important;}"),
-                        tags$style(type = 'text/css', ".slider-animate-button { font-size: 20pt !important; }"),
-                        tags$style(type = 'text/css', ".slider-animate-container { text-align: left !important; }"),
-                        tags$style(type = "text/css", "@media (max-width: 991px) { .details { display: flex; flex-direction: column; } }"),
-                        tags$style(type = "text/css", "@media (max-width: 991px) { .details .map { order: 1; width: 100%; } }"),
-                        tags$style(type = "text/css", "@media (max-width: 991px) { .details .summary { order: 3; width: 100%; } }"),
-                        tags$style(type = "text/css", "@media (max-width: 991px) { .details .slider { order: 2; width: 100%; } }"),
-                      ),
-                        column(12,style='padding:10px;',
-                               fluidRow(
-                                 fluidRow(
-                                   uiOutput("box_keyFigures")
-                                 ),
-                               ),
-                               fluidRow(
-                                 column(
-                                   box(
-                                     width = 12,
-                                     leafletOutput("overview_map")
-                                   ),
-                                   class = "map",
-                                   width = 7,
-                                   style = 'padding:10px;'
-                                 ),
-                                 column(
-                                   uiOutput("summaryTables"),
-                                   class = "summary",
-                                   width = 5,
-                                   style = 'padding:0px;'
-                                 ),
-                               ),
-                               fluidPage(
-                                 sliderInput(
-                                   "timeSlider",
-                                   label = "select data",
-                                   min = min(data_evolution$date),
-                                   max = max(data_evolution$date),
-                                   value = max(data_evolution$date),
-                                   width = "100%",
-                                   timeFormat = "%d/%m/%Y",
-                                   animate = animationOptions(loop = TRUE)
-                                 ),
-                                 class = "slider",
-                                 width = 12,
-                                 style = 'padding:20px'
-                               )
-                        )
-                      )
-             ),
-             tabPanel("US",
-                      fluidRow(#style = "padding: 40px",
-                               tags$head(
-                                 tags$style(type = 'text/css', ".fluidRow {  
-                                                              padding: 500px;"),
-                                 tags$style(type = 'text/css',".container {
-                                                              background-color: #F0F8FF80;
-                                                              padding: 20px; 
-                                                              text-align: center; }"),
-                                 tags$style(type = 'text/css', "p .format1 { /*color : #4c7093;*/ 
-                                                              font-size: 12pt; 
-                                                              padding: 10px; }"),
-                                 tags$style(type = 'text/css', ".countryname { 
-                                                              text-align: center; 
-                                                              font: bold; }"),
-                                 tags$style(type = 'text/css', ".countrynameth { 
-                                                              text-align: center; 
-                                                              font: bold; }"),
-                                 tags$style(type = 'text/css', ".tab1 { 
-                                                              padding-top: 20 px;
-                                                              padding-bottom: 20 px;
-                                                              padding-left: 2em; 
-                                                              padding-right: 2em; }"),
-                                 tags$style(type = 'text/css', ".sidebar { 
-                                                              height: 450px; 
-                                                              text-align: center;
-                                                              justify-content: center;}"),
-                                 
-                               ),
-                               column(12, style = "padding: 40px;",
-                                      h1("United States", class = "countryname"),
-                                      h3("สหรัฐอเมริกา", class = "countrynameth"),
-                                      br(), 
-                                      fluidRow(style = "align: center;",
-                                               #box("confirmUSBox", background = "purple"),  
-                                               #box("deathsUSBox"),
-                                               #column(12,
-                                               #valueBoxOutput("confirmUSBox"),
-                                               #valueBoxOutput("deathsUSBox"),
-                                               #width = 12,
-                                               #style = "margin-left: 100px; align: center;"
-                                               #class = "container"
-                                               #),
-                                      ),
-                               ),
-                               fluidRow(style = "padding: 40px;",
-                                        sidebarLayout(
-                                          sidebarPanel( class="sidebar",
-                                                        p(strong("US Coronavirus Cases", class = "format1")),
-                                                        p("ศูนย์ควบคุมและป้องกันโรคในสหรัฐอเมริกา (CDC) ประกาศตรวจพบผู้ติดเชื้อในสหรัฐอเมริการายแรกในวันที่ 21 มกราคม 2020 ที่รัฐวอชิงตัน โดยผู้ติดเชื้อเดินทางกลับมาจากเมืองอู่ฮั่น ประเทศจีน หลังจากนั้นดอนัลด์ ทรัมป์ ประธานาธิบดีแห่งสหรัฐอเมริกาได้มีการประกาศภาวะฉุกเฉินด้านสาธารณสุขในสหรัฐอเมริกาในวันที่ 3 กุมภาพันธ์ 2020
-                                                          ", class = "tab1"),
-                                                        p("ข้อมูลโรคติดเชื้อไวรัสโคโรนา 2020 ในสหรัฐอเมริกาที่นำมาใช้วิเคราะห์มีการรวบรวมตั้งแต่วันที่ 21 มกราคม 2020 จนถึงวันที่ 24 ธันวาคม 2020
-                                                          ", class = "tab1"),
-                                                        #actionButton("cumulative", "Cumulative"),
-                                                        #actionButton("daily", "Daily"),
-                                                        #hr(),
-                                          ),
-                                          
-                                          mainPanel(
-                                            tabsetPanel(
-                                              type = "tabs",
-                                              tabPanel("Cumulative", br(), plotlyOutput("plotuscase")),
-                                              tabPanel("Daily", br(), plotlyOutput("plotdailycaseus"))
-                                            )
-                                          )
-                                        ),
-                               ),
-                               
-                               fluidRow(
-                                 column(12,
-                                        h3("20 รัฐในสหรัฐอเมริกาที่มีจำนวนผู้ติดเชื้อสูงสุด
-                                          ")
-                                 )
-                               ),
-                               
-                               fluidRow(
-                                 column(6,style = "padding-top: 10px;",
-                                        plotlyOutput("plotrateus")
-                                 ),
-                                 column(6,
-                                        style = "height:200px; background-color: white;",
-                                        DT::dataTableOutput("result")
-                                 )
-                               ),
-                               
-                               fluidRow(
-                                 h3("ความถี่ของข้อมูลที่เกี่ยวข้องของ 20 รัฐที่มีผู้ติดเชื้อสูงสุด
-                                          ", style = "padding-top: 70px;"),
-                               ),
-                               
-                               fluidRow(style = "padding-top: 10px;",
-                                        column(6,
-                                               plotlyOutput("plotcorrus")
-                                        ),
-                                        column(6,
-                                               plotOutput("clustering")
-                                        )
-                               )
-                               
-                               
-                      ),
-             ),
-             tabPanel("Thailand",(fluidRow(style = "padding: 40px",
-                                  column(12, 
-                                         h1("Thailand", class = "countryname"),
-                                         h3("ประเทศไทย", class = "countrynameth"),
-                                         br(), 
-                                         fluidRow(style = "padding: 40px;",
-                                            sidebarLayout(
-                                              sidebarPanel( class="sidebar",
-                                                            p(strong("Thailand Coronavirus Cases", class = "format1")),
-                                                            p("ประเทศไทยมีการแพร่ระบาดไวรัสโคโรนา 2019 ครั้งแรกเมื่อวันที่ 12 มกราคม 2020 โดยเป็นประเทศที่มีผู้ป่วยยืนยันรายแรกนอกประเทศจีน ซึ่งเป็นนักท่องเที่ยวหญิงวัย 61 ปี สัญชาติจีน มีภูมิลำเนาอยู่ที่เมืองอู่ฮั่น ประเทศจีน ได้เดินทางออกจากเมืองอู่ฮั่นมายังท่าอากาศยานนานาชาติสุวรรณภูมิ 
-                                                              ", class = "tab1"),
-                                                            p("ต่อมาในวันที่ 31 มกราคม ชายไทยวัย 50 ปี ซึ่งขับแท็กซี่ในกรุงเทพมหานคร ได้รับผลตรวจว่าติดติดเชื้อไวรัสโคโรนา 2019 เพราะรับผู้โดยสารชาวจีนจากเมืองอู่ฮั่นซึ่งมีอาการป่วยไปส่งโรงพยาบาล ถือว่า ชายคนนี้เป็นคนไทยรายแรกที่ติดไวรัสโคโรน่าสายพันธุ์ใหม่ โดยไม่เคยมีประวัติเดินทางไปประเทศจีนมาก่อน นับได้ว่าเป็นจุดเริ่มต้นของการแพร่ระบาดไวรัสโคโรนา 2019 ในประเทศไทย 
-                                                              ", class = "tab1"),
-                                                            p("ข้อมูลที่นำมาใช้ในการวิเคราะห์รวบรวมตั้งแต่วันที่ 12 มกราคม 2020 – 12 มกราคม 2021
-                                                              ", class = "tab1"),
-                                                              #actionButton("cumulative", "Cumulative"),
-                                                              #actionButton("daily", "Daily"),
-                                                              #hr(),
-                                                            ),
-                                                    
-                                                    mainPanel(
-                                                      tabsetPanel(
-                                                        type = "tabs",
-                                                        tabPanel("Cumulative", br(), plotlyOutput("plotthaicase")),
-                                                        tabPanel("Daily", br(), plotlyOutput("plotdailycasethai"))
-                                                      )
-                                                    )
-                                                  ),
-                                         ),
-                                         
-                                         fluidRow(
-                                           column(12,
-                                                  h3("10 จังหวัดที่มีจำนวนผู้ติดเชื้อสูงสุด
-                                          ")
-                                           )
-                                         ),
-                                         
-                                        fluidRow(
-                                          column(6,
-                                                 plotlyOutput("plotthai")
-                                                 ),
-                                          column(6,style = "height:200px; background-color: white;",
-                                                 DT::dataTableOutput("resultth")
-                                                 )
-                                        ),
-                                        fluidRow(
-                                          column(6,
-                                                 #plotlyOutput("plotcorrus")
-                                          ),
-                                          column(6,
-                                          )
-                                        )
-                                    )
-                                  )
-                                  
-                                   
-                      )
-             ),
+             tabPanel("Overview", page_overview, value = "page-overview"),
+             tabPanel("US", page_us, value = "us"),
+             tabPanel("Thai", page_thai, value = "Thai"),
              tabPanel("DATA Summary",
                       column(12, style = "padding: 40px;",
                              h1("United States", class = "countryname"),
@@ -263,6 +57,9 @@ packageVersion('flexdashboard')
 
 # Define server logic ----
 server <- function(input, output) {
+  observe({
+    data <- data_atDate(input$timeSlider)
+  })
   #--------------- over all ------
   output$dataTable = DT::renderDataTable({
     data.latest.all
@@ -403,6 +200,9 @@ server <- function(input, output) {
       )
   })
   #--------- keyfigures ----------------
+  observe({
+    data <- data_atDate(input$timeSlider)
+  })
   key_figures <- reactive({
     data           <- sumData(input$timeSlider)
     data_yesterday <- sumData(input$timeSlider - 1)
@@ -431,7 +231,6 @@ server <- function(input, output) {
       color    = "yellow",
     )
   })
-  
   
   output$valueBox_recovered <- renderValueBox({
     valueBox(
@@ -462,19 +261,15 @@ server <- function(input, output) {
   
   output$box_keyFigures <- renderUI(box(
     title = paste0("Key Figures (", strftime(input$timeSlider, format = "%d.%m.%Y"), ")"),
-    fluidRow( 
-      tags$head(
-        tags$style(type = 'text/css',".container {background-color: #F0F8FF80;padding: 20px;text-align: center; }"),
-        ),
-      column(3,
-             infoBoxOutput("valueBox_countries", width = 3),
-             )
-        #valueBoxOutput("valueBox_recovered", width = 3),
-        #valueBoxOutput("valueBox_deceased", width = 3),
-        #valueBoxOutput("valueBox_countries", width = 3),
-        #width = 12,
-        #style = "margin-left: -20px"
-      
+    fluidRow(
+      column(
+        valueBoxOutput("valueBox_confirmed", width = 3),
+        valueBoxOutput("valueBox_recovered", width = 3),
+        valueBoxOutput("valueBox_deceased", width = 3),
+        valueBoxOutput("valueBox_countries", width = 3),
+        width = 12,
+        style = "margin-left: -20px"
+      )
     ),
     div("Last updated: ", strftime(changed_date, format = "%d.%m.%Y - %R %Z")),
     width = 12
