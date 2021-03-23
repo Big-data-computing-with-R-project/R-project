@@ -50,6 +50,7 @@ body_overview <- dashboardBody(
 page_overview <- dashboardPage(
   title   = "Overview",
   header  = dashboardHeader(disable = TRUE),
-  sidebar = dashboardSidebar(disable = TRUE),
+  sidebar = dashboardSidebar(disable = TRUE,
+                             sidebar_fullCollapse = TRUE),
   body    = body_overview
 )

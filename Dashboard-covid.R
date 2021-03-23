@@ -16,9 +16,11 @@ library(normalr)
 library(ggcorrplot)
 library(flexdashboard)
 library(shinydashboard)
+library(shinyjs)
 source("ui_overview.R", local = TRUE)
-source("Thai.R", local = TRUE)
-source("us.R", local = TRUE)
+source("Thai.R", encoding = "UTF-8", local = TRUE)
+source("us.R", encoding = "UTF-8", local = TRUE)
+source("model.R", encoding = "UTF-8", local = TRUE)
 
 # ------------------------ Define UI -------------------
 ui <- fluidPage(
@@ -41,15 +43,15 @@ ui <- fluidPage(
              tabPanel("Thai", page_thai, value = "Thai"),
              tabPanel("DATA Summary",
                       column(12, style = "padding: 40px;",
-                             h1("United States", class = "countryname"),
-                             h3("สหรัฐอเมริกา", class = "countrynameth"),
+                             h1("Worldwide Covid-19 Cases", class = "countryname"),
+                             #h3("สหรัฐอเมริกา", class = "countrynameth"),
                              br(), 
                       ),
                       column(12,style='padding:20px;',
                              DT::dataTableOutput("dataTable")
-                      )
-                      
-             )
+                      ),
+             ),
+             tabPanel("Model", page_model, value = "Model")
   )
 )
 
@@ -271,7 +273,7 @@ server <- function(input, output) {
         style = "margin-left: -20px"
       )
     ),
-    div("Last updated: ", strftime(changed_date, format = "%d.%m.%Y - %R %Z")),
+    #div("Last updated: ", strftime(changed_date, format = "%d.%m.%Y - %R %Z")),
     width = 12
   ))
   #--------- US -------------
@@ -280,7 +282,7 @@ server <- function(input, output) {
       most_us$confirmed,
       subtitle = "Confirmed",
       icon     = icon("file-medical"),
-      color    = "red",
+      color    = "blue",
     )
   })
   
@@ -289,7 +291,7 @@ server <- function(input, output) {
       most_us$deaths,
       subtitle = "Deaths",
       icon     = icon("file-medical"),
-      color    = "yellow",
+      color    = "blue",
     )
   })
   
@@ -310,7 +312,7 @@ server <- function(input, output) {
       data.us.latest.show, options = list(
         lengthMenu = FALSE,
         lengthChange = FALSE,
-        pageLength = 6
+        pageLength = 8
       )
     )
   )
