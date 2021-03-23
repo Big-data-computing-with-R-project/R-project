@@ -811,12 +811,17 @@ heatmap.clust <- heatmap.2(as.matrix(norm_data_plot),
                     margins=c(10,6),trace="column")
 #gly.heatmap2 <- plotly_build(heatmap.clust)
 
-#norm_data_plot <- select(norm_data,"country","confirm.rate","death.rate","recover.rate","healthcare","Pornhub","GDP","avg_temp", "sars")
-#norm_data_plot %<>% gather(key=type, value=count, -c(country))
-#level_order <- factor(norm_data_plot$type, 
-                      #level = #c("sars","Pornhub","GDP","avg_temp","healthcare","recover.rate","death.rate","confirm.rate"))
-#View(level_order)
-ggplot(data = norm_data_plot, aes(x=country, y=level_order, fill=count)) + 
+
+norm_data2 = as.data.frame(apply(data.top.world[,2:13],2,normalize))
+norm_data2$country <- c("Argentina","Bangladesh","Brazil","Chile","Colombia","France","Germany","India","Iran","Italy","Mexico","Pakistan","Peru","Russia","saudi Arabia","South Africa","Spain","Turkey","United Kingdom","US")
+#View(norm_data2)
+norm_data_plot2 <- select(norm_data2,"country","confirm.rate","death.rate","recover.rate","healthcare","Pornhub","GDP","avg_temp", "sars")
+#View(norm_data_plot2)
+norm_data_plot2 %<>% gather(key=type, value=count, -c(country))
+level_order <- factor(norm_data_plot2$type,
+                      level =c("sars","Pornhub","GDP","avg_temp","healthcare","recover.rate","death.rate","confirm.rate"))
+View(level_order)
+ggplot(data = norm_data_plot2, aes(x=country, y=level_order, fill=count)) + 
   geom_tile() +
   scale_fill_gradient(low = "pink", high = "blue") +
   xlab("") +

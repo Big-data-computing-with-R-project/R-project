@@ -42,7 +42,7 @@ ui <- fluidPage(
                         tags$style(type = "text/css", "@media (max-width: 991px) { .details { display: flex; flex-direction: column; } }"),
                         tags$style(type = "text/css", "@media (max-width: 991px) { .details .map { order: 1; width: 100%; } }"),
                         tags$style(type = "text/css", "@media (max-width: 991px) { .details .summary { order: 3; width: 100%; } }"),
-                        tags$style(type = "text/css", "@media (max-width: 991px) { .details .slider { order: 2; width: 100%; } }")
+                        tags$style(type = "text/css", "@media (max-width: 991px) { .details .slider { order: 2; width: 100%; } }"),
                       ),
                         column(12,style='padding:10px;',
                                fluidRow(
@@ -462,15 +462,19 @@ server <- function(input, output) {
   
   output$box_keyFigures <- renderUI(box(
     title = paste0("Key Figures (", strftime(input$timeSlider, format = "%d.%m.%Y"), ")"),
-    fluidRow(
-      column(
-        valueBoxOutput("valueBox_confirmed", width = 3),
-        valueBoxOutput("valueBox_recovered", width = 3),
-        valueBoxOutput("valueBox_deceased", width = 3),
-        valueBoxOutput("valueBox_countries", width = 3),
-        width = 12,
-        style = "margin-left: -20px"
-      )
+    fluidRow( 
+      tags$head(
+        tags$style(type = 'text/css',".container {background-color: #F0F8FF80;padding: 20px;text-align: center; }"),
+        ),
+      column(3,
+             infoBoxOutput("valueBox_countries", width = 3),
+             )
+        #valueBoxOutput("valueBox_recovered", width = 3),
+        #valueBoxOutput("valueBox_deceased", width = 3),
+        #valueBoxOutput("valueBox_countries", width = 3),
+        #width = 12,
+        #style = "margin-left: -20px"
+      
     ),
     div("Last updated: ", strftime(changed_date, format = "%d.%m.%Y - %R %Z")),
     width = 12
