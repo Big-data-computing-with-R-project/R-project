@@ -73,10 +73,10 @@ datafromserver.big <-function(){
 ```{r}
 profvis({
 ## 1. profiling function of connecting data
-  small_mysql() # small / local  
-  big_mysql() # big / local
-  small_server() # small / server
-  big_server # big / server
+  datafrommysql() # small / local  
+  datafrommysql.big() # big / local
+  datafromserver() # small / server
+  datafromserver.big() # big / server
 })
 ```
 
