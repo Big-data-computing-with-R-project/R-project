@@ -138,6 +138,7 @@ server <- function(input, output) {
         lat          = ~Lat,
         radius       = ~log(confirmed^(zoomLevel/2)),
         stroke       = FALSE,
+        color        = "red",
         fillOpacity  = 0.5,
         label        = ~label,
         labelOptions = labelOptions(textsize = 15),
@@ -148,7 +149,7 @@ server <- function(input, output) {
         lat          = ~Lat,
         radius       = ~log(confirmedPerCapita^(zoomLevel)),
         stroke       = FALSE,
-        color        = "#00b3ff",
+        color        = "maroon",
         fillOpacity  = 0.5,
         label        = ~label,
         labelOptions = labelOptions(textsize = 15),
@@ -159,7 +160,7 @@ server <- function(input, output) {
         lat          = ~Lat,
         radius       = ~log(recovered^(zoomLevel)),
         stroke       = FALSE,
-        color        = "#000000",
+        color        = "green",
         fillOpacity  = 0.5,
         label        = ~label,
         labelOptions = labelOptions(textsize = 15),
@@ -170,7 +171,7 @@ server <- function(input, output) {
         lat          = ~Lat,
         radius       = ~log(deceased^(zoomLevel)),
         stroke       = FALSE,
-        color        = "#EEEEEE",
+        color        = "light-blue",
         fillOpacity  = 0.5,
         label        = ~label,
         labelOptions = labelOptions(textsize = 15),
@@ -181,7 +182,7 @@ server <- function(input, output) {
         lat          = ~Lat,
         radius       = ~log(active^(zoomLevel / 2)),
         stroke       = FALSE,
-        color        = "#000000",
+        color        = "yellow",
         fillOpacity  = 0.5,
         label        = ~label,
         labelOptions = labelOptions(textsize = 15),
@@ -208,10 +209,10 @@ server <- function(input, output) {
     data_yesterday <- sumData(input$timeSlider - 1)
     
     data_new <- list(
-      new_confirmed = ((data$confirmed - data_yesterday$confirmed) / (data_yesterday$confirmed * 100)),
-      new_recovered = ((data$recovered - data_yesterday$recovered) / (data_yesterday$recovered * 100)),
-      new_deceased  = ((data$deceased - data_yesterday$deceased) / (data_yesterday$deceased * 100)),
-      new_countries = (data$countries - data_yesterday$countries)
+      new_confirmed = (data$confirmed - data_yesterday$confirmed) / data_yesterday$confirmed * 100,
+      new_recovered = (data$recovered - data_yesterday$recovered) / data_yesterday$recovered * 100,
+      new_deceased  = (data$deceased - data_yesterday$deceased) / data_yesterday$deceased * 100,
+      new_countries = data$countries - data_yesterday$countries
     )
     
     keyFigures <- list(
@@ -228,7 +229,7 @@ server <- function(input, output) {
       key_figures()$confirmed,
       subtitle = "Confirmed",
       icon     = icon("file-medical"),
-      color    = "yellow",
+      color    = "red",
     )
   })
   
@@ -237,7 +238,7 @@ server <- function(input, output) {
       key_figures()$recovered,
       subtitle = "Estimated Recoveries",
       icon     = icon("heart"),
-      color    = "yellow"
+      color    = "green"
     )
   })
   
@@ -246,7 +247,7 @@ server <- function(input, output) {
       key_figures()$deceased,
       subtitle = "Deceased",
       icon     = icon("heartbeat"),
-      color    = "yellow"
+      color    = "light-blue",
     )
   })
   

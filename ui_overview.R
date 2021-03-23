@@ -6,7 +6,28 @@ body_overview <- dashboardBody(
     tags$style(type = "text/css", "@media (max-width: 991px) { .details { display: flex; flex-direction: column; } }"),
     tags$style(type = "text/css", "@media (max-width: 991px) { .details .map { order: 1; width: 100%; } }"),
     tags$style(type = "text/css", "@media (max-width: 991px) { .details .summary { order: 3; width: 100%; } }"),
-    tags$style(type = "text/css", "@media (max-width: 991px) { .details .slider { order: 2; width: 100%; } }")
+    tags$style(type = "text/css", "@media (max-width: 991px) { .details .slider { order: 2; width: 100%; } }"),
+    tags$script('
+      setHeight = function() {
+        var window_height = $(window).height();
+        var header_height = $(".main-header").height();
+
+        var boxHeight = window_height - header_height - 30;
+
+        $("#map_container").height(boxHeight);
+        $("#map").height(boxHeight - 20);
+      };
+
+      // Set input$box_height when the connection is established
+      $(document).on("shiny:connected", function(event) {
+        setHeight();
+      });
+
+      // Refresh the box height on every window resize event    
+      $(window).on("resize", function(){
+        setHeight();
+      });
+    ')
   ),
   fluidRow(
     fluidRow(
@@ -20,13 +41,13 @@ body_overview <- dashboardBody(
           leafletOutput("overview_map")
         ),
         class = "map",
-        width = 8,
+        width = 7,
         style = 'padding:0px;'
       ),
       column(
         uiOutput("summaryTables"),
         class = "summary",
-        width = 4,
+        width = 5,
         style = 'padding:0px;'
       ),
       column(
