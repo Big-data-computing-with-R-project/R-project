@@ -1,5 +1,5 @@
 body_us <- dashboardBody(
-  fluidRow(#style = "padding: 40px",
+  fluidRow(style = "padding: 40px",
     tags$head(
       tags$style(type = 'text/css', ".fluidRow {  
                                                               padding: 500px;"),
@@ -7,7 +7,8 @@ body_us <- dashboardBody(
                                                               background-color: #F0F8FF80;
                                                               padding: 20px; 
                                                               text-align: center; }"),
-      tags$style(type = 'text/css', "p .format1 { /*color : #4c7093;*/ 
+      tags$style(type = 'text/css', "p .format1 {             
+                                                              color : #000000;
                                                               font-size: 12pt; 
                                                               padding: 10px; }"),
       tags$style(type = 'text/css', ".countryname { 
@@ -17,6 +18,7 @@ body_us <- dashboardBody(
                                                               text-align: center; 
                                                               font: bold; }"),
       tags$style(type = 'text/css', ".tab1 { 
+                                                              color : #4c7093;
                                                               padding-top: 20 px;
                                                               padding-bottom: 20 px;
                                                               padding-left: 2em; 
@@ -27,23 +29,22 @@ body_us <- dashboardBody(
                                                               justify-content: center;}"),
       
     ),
-    column(12, style = "padding: 40px;",
+    column(12, style = "align: center;",
            h1("United States", class = "countryname"),
            h3("สหรัฐอเมริกา", class = "countrynameth"),
            br(), 
-           fluidRow(style = "align: center;",
-                    #box("confirmUSBox", background = "purple"),  
-                    #box("deathsUSBox"),
-                    #column(12,
-                    #valueBoxOutput("confirmUSBox"),
-                    #valueBoxOutput("deathsUSBox"),
-                    #width = 12,
-                    #style = "margin-left: 100px; align: center;"
-                    #class = "container"
-                    #),
-           ),
+           fluidRow(
+                    column(12,
+                           style = "align: center;",
+                           valueBoxOutput("confirmUSBox"),
+                           valueBoxOutput("deathsUSBox"),
+                            
+                      
+                    ),
+                    
+           ),br(),
     ),
-    fluidRow(style = "padding: 40px;",
+    fluidRow(#style = "padding: 40px;",
              sidebarLayout(
                sidebarPanel( class="sidebar",
                              p(strong("US Coronavirus Cases", class = "format1")),
@@ -74,7 +75,7 @@ body_us <- dashboardBody(
     ),
     
     fluidRow(
-      column(6,style = "padding-top: 10px;",
+      column(6,
              plotlyOutput("plotrateus")
       ),
       column(6,
