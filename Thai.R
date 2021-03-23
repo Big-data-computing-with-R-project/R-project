@@ -1,5 +1,13 @@
 body_thai <- dashboardBody(
   fluidRow(style = "padding: 40px",
+           tags$head(tags$style(type = 'text/css', ".fluidRow {padding: 500px;"),
+                     tags$style(type = 'text/css',".container {background-color: #F0F8FF80;padding: 20px text-align: center; }"),
+                     tags$style(type = 'text/css', "p .format1 {color : #000000;font-size: 12pt;padding: 10px; }"),
+                     tags$style(type = 'text/css', ".countryname {text-align: center;font: bold; }"),
+                     tags$style(type = 'text/css', ".countrynameth {text-align: center;font: bold; }"),
+                     tags$style(type = 'text/css', ".tab1 {color : #4c7093;padding-top: 20 px;padding-bottom: 20 px; padding-left: 2em;padding-right: 2em; }"),
+                     tags$style(type = 'text/css', ".sidebar {height: 450px;text-align: center;justify-content: center;}"),
+           ),
            column(12, 
                   h1("Thailand", class = "countryname"),
                   h3("ประเทศไทย", class = "countrynameth"),
@@ -31,8 +39,7 @@ body_thai <- dashboardBody(
                   
                   fluidRow(
                     column(12,
-                           h3("10 จังหวัดที่มีจำนวนผู้ติดเชื้อสูงสุด
-                                          ")
+                           h3("10 จังหวัดที่มีจำนวนผู้ติดเชื้อ")
                     )
                   ),
                   
