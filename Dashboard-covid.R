@@ -342,7 +342,150 @@ server <- function(input, output) {
       )
     )
   )
+
+
+#---------- Model --------------
+
+init_us <- reactive({
+  initval <- c(input$s_us, input$e_us, input$i_us, input$r_us, input$a_us)
+  n <- sum(initval)
+  return(initval)
+  })
+
+timepoints_us <- reactive({
+  req(input$start_us, input$end_us)
+  timepoints <- seq(input$start_us, input$end_us, by = 1)
+  return(timepoints)
+  })
+
+parameter_us <- reactive({
+  #Parameters
+  #contact_rate = 10                # number of contacts per day
+  #transmission_probability = 0.07 #24441852/328200000  # transmission probability
+  infectious_period = 14         # infectious period 10-20
+  latent_period = 5.2              # latent period
+  deaths_period = 406196/24441852
+
+  Ro = 2.5 #1.9-3.3
+  
+  beta_value = lambda * Ro * (1 / infectious_period)
+  #beta_value = Ro * (1 / infectious_period)
+  gamma_value = 1 / infectious_period
+  delta_value = 1 / latent_period
+  sigma_value = deaths_period
+
+  #Compute Ro - Reproductive number.
+  #Ro = beta_value / gamma_value
+  parameterlist <- c(beta = beta_value, gamma = gamma_value, delta = delta_value, sigma = sigma_value)
+  return(parameterlist)
+})
+
+createmodel <- reactive({
+  model <- lsoda(init_us(), timepoints_us(), seir_modelUS, parameter_us())
+  #model <- as.data.frame(model)
+  return(model)
+})
+
+observeEvent(input$seirdbutton,{
+  output$plotmodel_us <- renderTable({
+    as.data.frame(createmodel())
+  })
+  output$printus <- renderPrint({
+    output$nsum <- init_us()
+  })
+})
+
+#output_us <- lsoda(initval_us, timepoints_us, seir_modelUS, parameter_us)
+#ouput_us <- as.data.frame(output_us)
+
+
+#Compute total population.
+
+
+output$nsum <- renderDataTable({
+  
+  }) 
+
+#output$plotmodel_us <- renderPlot({
+#  ggplot()
+#})
+
+#Initial state values for the differential equations.
+#initial_values = c (S = W/N, E = X/N, I = Y/N, R = Z/N, D = A/N)
+
+######################################## US ####################################################
+
+# #Parameters
+# #contact_rate = 10                # number of contacts per day
+# #transmission_probability = 0.07 #24441852/328200000  # transmission probability
+# infectious_period = 14         # infectious period 10-20
+# latent_period = 5.2              # latent period
+# deaths_period = 406196/24441852
+# 
+# 
+# Ro = 2.5 #1.9-3.3
+# 
+# #Compute values of beta (tranmission rate) and gamma (recovery rate).
+# #beta_value = contact_rate * transmission_probability
+# lambda = 0.8
+# #beta_value = lambda * contact_rate * transmission_probability
+# beta_value = lambda * Ro * (1 / infectious_period)
+# #beta_value = Ro * (1 / infectious_period)
+# gamma_value = 1 / infectious_period
+# delta_value = 1 / latent_period
+# sigma_value = deaths_period
+# 
+# #Compute Ro - Reproductive number.
+# #Ro = beta_value / gamma_value
+# Ro
+# 
+# #Disease dynamics parameters.
+# parameter_list = c (beta = beta_value, gamma = gamma_value, delta = delta_value,sigma = sigma_value)
+# 
+# #Initial values for sub-populations.
+# W = 328200000   # susceptible hosts
+# X = 1           # infectious hosts
+# Y = 0           # recovered hosts
+# Z = 0           # exposed hosts
+# A = 0
+# 
+# ######################## THAI ##################################
+# 
+# #Initial values for sub-populations.
+# W = 69630000        # susceptible hosts
+# X = 1           # infectious hosts
+# Y = 0           # recovered hosts
+# Z = 0           # exposed hosts
+# #Compute total population.
+# N = W + X + Y + Z
+# #Initial state values for the differential equations.
+# initial_values = c (S = W/N, E = X/N, I = Y/N, R = Z/N)
+# 
+# #Parameters
+# contact_rate = 10834/366             # number of contacts per day
+# transmission_probability =  (100*10834)/69630000     # transmission probability
+# infectious_period = 5.2               # infectious period
+# latent_period = 14
+# 
+# #Compute values of beta (tranmission rate) and gamma (recovery rate).
+# lambda = 0.8
+# #beta_value =  contact_rate * transmission_probability
+# beta_value = lambda * contact_rate * transmission_probability
+# #beta_value = lambda * Ro * (1 / infectious_period)
+# #beta_value = Ro * (1 / infectious_period)
+# gamma_value = 1 / infectious_period
+# delta_value = 1 / latent_period
+# Ro = beta_value / gamma_value
+# #Disease dynamics parameters.
+# parameter_list = c (beta = beta_value, gamma = gamma_value, delta = delta_value)
+# Ro
+# delta_value
+
 }
+
+#-----------------------------------------------------------------------------------------------------------------
+
+
 
 # Run the app ----
 shinyApp(ui = ui, server = server)

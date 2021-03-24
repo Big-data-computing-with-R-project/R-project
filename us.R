@@ -7,7 +7,7 @@ body_us <- dashboardBody(
                                                               background-color: #F0F8FF80;
                                                               padding: 20px; 
                                                               text-align: center; }"),
-      tags$style(type = 'text/css', "p .format1 {             
+      tags$style(type = 'text/css', "p {             
                                                               color : #000000;
                                                               font-size: 12pt; 
                                                               padding: 10px; }"),

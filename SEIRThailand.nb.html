@@ -217,42 +217,68 @@ pre code {
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI0xvYWQgYWRkLW9uIHBhY2thZ2VzIC0gZGVTb2x2ZSAtIGNvbnRhaW5zIGxzb2RhIGZ1bmN0aW9uIC0gZGlmZmVyZW50aWFsIGVxdWF0aW9uIHNvbHZlci5cbiNpbnN0YWxsLnBhY2thZ2VzKFxcTWV0cmljc1xcKVxubGlicmFyeShkcGx5cilcbmxpYnJhcnkoZGVTb2x2ZSkgXG5saWJyYXJ5KGdncGxvdDIpXG5saWJyYXJ5KHRpZHl2ZXJzZSlcbmxpYnJhcnkoZ2djb3JycGxvdClcbmxpYnJhcnkoZ3JpZEV4dHJhKVxubGlicmFyeShkcGx5cilcbmxpYnJhcnkoTWV0cmljcylcbmxpYnJhcnkobHVicmlkYXRlKVxuYGBgXG5gYGAifQ== -->
-<pre class="r"><code>```r
-#Load add-on packages - deSolve - contains lsoda function - differential equation solver.
-#install.packages(\Metrics\)
-library(dplyr)
-library(deSolve) 
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI0xvYWQgYWRkLW9uIHBhY2thZ2VzIC0gZGVTb2x2ZSAtIGNvbnRhaW5zIGxzb2RhIGZ1bmN0aW9uIC0gZGlmZmVyZW50aWFsIGVxdWF0aW9uIHNvbHZlci5cbiNpbnN0YWxsLnBhY2thZ2VzKFwiTWV0cmljc1wiKVxubGlicmFyeShkcGx5cilcbmBgYCJ9 -->
+<pre class="r"><code>#Load add-on packages - deSolve - contains lsoda function - differential equation solver.
+#install.packages(&quot;Metrics&quot;)
+library(dplyr)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5BdHRhY2hpbmcgcGFja2FnZTog46S847ixZHBseXLjpLzjuLJcblxuVGhlIGZvbGxvd2luZyBvYmplY3RzIGFyZSBtYXNrZWQgZnJvbSDjpLzjuLFwYWNrYWdlOnN0YXRz46S847iyOlxuXG4gICAgZmlsdGVyLCBsYWdcblxuVGhlIGZvbGxvd2luZyBvYmplY3RzIGFyZSBtYXNrZWQgZnJvbSDjpLzjuLFwYWNrYWdlOmJhc2XjpLzjuLI6XG5cbiAgICBpbnRlcnNlY3QsIHNldGRpZmYsIHNldGVxdWFsLCB1bmlvblxuIn0= -->
+<pre><code>
+Attaching package: 㤼㸱dplyr㤼㸲
+
+The following objects are masked from 㤼㸱package:stats㤼㸲:
+
+    filter, lag
+
+The following objects are masked from 㤼㸱package:base㤼㸲:
+
+    intersect, setdiff, setequal, union</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShkZVNvbHZlKSBcbmxpYnJhcnkoZ2dwbG90MilcbmxpYnJhcnkodGlkeXZlcnNlKVxuYGBgIn0= -->
+<pre class="r"><code>library(deSolve) 
 library(ggplot2)
-library(tidyverse)
-library(ggcorrplot)
-library(gridExtra)
-library(dplyr)
+library(tidyverse)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiLS0gQXR0YWNoaW5nIHBhY2thZ2VzIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tIHRpZHl2ZXJzZSAxLjMuMCAtLVxuPFUrMjIxQT4gdGliYmxlICAzLjAuNiAgICAgPFUrMjIxQT4gcHVycnIgICAwLjMuNFxuPFUrMjIxQT4gdGlkeXIgICAxLjEuMiAgICAgPFUrMjIxQT4gc3RyaW5nciAxLjQuMFxuPFUrMjIxQT4gcmVhZHIgICAxLjQuMCAgICAgPFUrMjIxQT4gZm9yY2F0cyAwLjUuMVxuLS0gQ29uZmxpY3RzIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tIHRpZHl2ZXJzZV9jb25mbGljdHMoKSAtLVxueCBkcGx5cjo6ZmlsdGVyKCkgbWFza3Mgc3RhdHM6OmZpbHRlcigpXG54IGRwbHlyOjpsYWcoKSAgICBtYXNrcyBzdGF0czo6bGFnKClcbiJ9 -->
+<pre><code>-- Attaching packages ----------------------------------------------------------------------------------- tidyverse 1.3.0 --
+&lt;U+221A&gt; tibble  3.0.6     &lt;U+221A&gt; purrr   0.3.4
+&lt;U+221A&gt; tidyr   1.1.2     &lt;U+221A&gt; stringr 1.4.0
+&lt;U+221A&gt; readr   1.4.0     &lt;U+221A&gt; forcats 0.5.1
+-- Conflicts -------------------------------------------------------------------------------------- tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShnZ2NvcnJwbG90KVxubGlicmFyeShncmlkRXh0cmEpXG5gYGAifQ== -->
+<pre class="r"><code>library(ggcorrplot)
+library(gridExtra)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5BdHRhY2hpbmcgcGFja2FnZTog46S847ixZ3JpZEV4dHJh46S847iyXG5cblRoZSBmb2xsb3dpbmcgb2JqZWN0IGlzIG1hc2tlZCBmcm9tIOOkvOO4sXBhY2thZ2U6ZHBseXLjpLzjuLI6XG5cbiAgICBjb21iaW5lXG4ifQ== -->
+<pre><code>
+Attaching package: 㤼㸱gridExtra㤼㸲
+
+The following object is masked from 㤼㸱package:dplyr㤼㸲:
+
+    combine</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShkcGx5cilcbmxpYnJhcnkoTWV0cmljcylcbmxpYnJhcnkobHVicmlkYXRlKVxuYGBgIn0= -->
+<pre class="r"><code>library(dplyr)
 library(Metrics)
 library(lubridate)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5BdHRhY2hpbmcgcGFja2FnZTog46S847ixbHVicmlkYXRl46S847iyXG5cblRoZSBmb2xsb3dpbmcgb2JqZWN0cyBhcmUgbWFza2VkIGZyb20g46S847ixcGFja2FnZTpiYXNl46S847iyOlxuXG4gICAgZGF0ZSwgaW50ZXJzZWN0LCBzZXRkaWZmLCB1bmlvblxuIn0= -->
 <pre><code>
-&lt;!-- rnb-source-end --&gt;
+Attaching package: 㤼㸱lubridate㤼㸲
 
-&lt;!-- rnb-chunk-end --&gt;
+The following objects are masked from 㤼㸱package:base㤼㸲:
 
-
-&lt;!-- rnb-text-begin --&gt;
-
-
-
-
-
-&lt;!-- rnb-text-end --&gt;
-
-
-&lt;!-- rnb-chunk-begin --&gt;
-
-
-&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI0Z1bmN0aW9uIHRvIGNvbXB1dGUgZGVyaXZhdGl2ZXMgb2YgdGhlIGRpZmZlcmVudGlhbCBlcXVhdGlvbnMuXG5zZWlyX21vZGVsVGhhaSA9IGZ1bmN0aW9uIChjdXJyZW50X3RpbWVwb2ludCwgc3RhdGVfdmFsdWVzLCBwYXJhbWV0ZXJzKVxue1xuICAjIGNyZWF0ZSBzdGF0ZSB2YXJpYWJsZXMgKGxvY2FsIHZhcmlhYmxlcylcbiAgUyA9IHN0YXRlX3ZhbHVlcyBbMV0gICAgICAgICMgc3VzY2VwdGlibGVzXG4gIEUgPSBzdGF0ZV92YWx1ZXMgWzJdICAgICAgICAjIGV4cG9zZWRcbiAgSSA9IHN0YXRlX3ZhbHVlcyBbM10gICAgICAgICMgaW5mZWN0aW91c1xuICBSID0gc3RhdGVfdmFsdWVzIFs0XSAgICAgICAgIyByZWNvdmVyZWRcbiAgXG4gIHdpdGggKCBcbiAgICBhcy5saXN0IChwYXJhbWV0ZXJzKSwgICAgICMgdmFyaWFibGUgbmFtZXMgd2l0aGluIHBhcmFtZXRlcnMgY2FuIGJlIHVzZWQgXG4gICAgICAgICB7XG4gICAgICAgICAgICMgY29tcHV0ZSBkZXJpdmF0aXZlc1xuICAgICAgICAgICBkUyA9ICgtYmV0YSAqIFMgKiBJKVxuICAgICAgICAgICBkRSA9IChiZXRhICogUyAqIEkpIC0gKGRlbHRhICogRSlcbiAgICAgICAgICAgZEkgPSAoZGVsdGEgKiBFKSAtIChnYW1tYSAqIEkpXG4gICAgICAgICAgIGRSID0gKGdhbW1hICogSSlcbiAgICAgICAgICAgXG4gICAgICAgICAgICMgY29tYmluZSByZXN1bHRzXG4gICAgICAgICAgIHJlc3VsdHMgPSBjIChkUywgZEUsIGRJLCBkUilcbiAgICAgICAgICAgbGlzdCAocmVzdWx0cylcbiAgICAgICAgIH1cbiAgICApXG59XG5gYGBcbmBgYCJ9 --&gt;
-
-```r
-```r
-#Function to compute derivatives of the differential equations.
+    date, intersect, setdiff, union</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI0Z1bmN0aW9uIHRvIGNvbXB1dGUgZGVyaXZhdGl2ZXMgb2YgdGhlIGRpZmZlcmVudGlhbCBlcXVhdGlvbnMuXG5zZWlyX21vZGVsVGhhaSA9IGZ1bmN0aW9uIChjdXJyZW50X3RpbWVwb2ludCwgc3RhdGVfdmFsdWVzLCBwYXJhbWV0ZXJzKVxue1xuICAjIGNyZWF0ZSBzdGF0ZSB2YXJpYWJsZXMgKGxvY2FsIHZhcmlhYmxlcylcbiAgUyA9IHN0YXRlX3ZhbHVlcyBbMV0gICAgICAgICMgc3VzY2VwdGlibGVzXG4gIEUgPSBzdGF0ZV92YWx1ZXMgWzJdICAgICAgICAjIGV4cG9zZWRcbiAgSSA9IHN0YXRlX3ZhbHVlcyBbM10gICAgICAgICMgaW5mZWN0aW91c1xuICBSID0gc3RhdGVfdmFsdWVzIFs0XSAgICAgICAgIyByZWNvdmVyZWRcbiAgXG4gIHdpdGggKCBcbiAgICBhcy5saXN0IChwYXJhbWV0ZXJzKSwgICAgICMgdmFyaWFibGUgbmFtZXMgd2l0aGluIHBhcmFtZXRlcnMgY2FuIGJlIHVzZWQgXG4gICAgICAgICB7XG4gICAgICAgICAgICMgY29tcHV0ZSBkZXJpdmF0aXZlc1xuICAgICAgICAgICBkUyA9ICgtYmV0YSAqIFMgKiBJKVxuICAgICAgICAgICBkRSA9IChiZXRhICogUyAqIEkpIC0gKGRlbHRhICogRSlcbiAgICAgICAgICAgZEkgPSAoZGVsdGEgKiBFKSAtIChnYW1tYSAqIEkpXG4gICAgICAgICAgIGRSID0gKGdhbW1hICogSSlcbiAgICAgICAgICAgXG4gICAgICAgICAgICMgY29tYmluZSByZXN1bHRzXG4gICAgICAgICAgIHJlc3VsdHMgPSBjIChkUywgZEUsIGRJLCBkUilcbiAgICAgICAgICAgbGlzdCAocmVzdWx0cylcbiAgICAgICAgIH1cbiAgICApXG59XG5gYGAifQ== -->
+<pre class="r"><code>#Function to compute derivatives of the differential equations.
 seir_modelThai = function (current_timepoint, state_values, parameters)
 {
   # create state variables (local variables)
@@ -276,27 +302,13 @@ seir_modelThai = function (current_timepoint, state_values, parameters)
          }
     )
 }</code></pre>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
-
-&lt;!-- rnb-chunk-end --&gt;
-
-
-&lt;!-- rnb-text-begin --&gt;
-
-
-
-&lt;!-- rnb-text-end --&gt;
-
-
-&lt;!-- rnb-chunk-begin --&gt;
-
-
-&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI1BhcmFtZXRlcnNcbmNvbnRhY3RfcmF0ZSA9IDEwODM0LzM2NiAgICAgICAgICAgICAjIG51bWJlciBvZiBjb250YWN0cyBwZXIgZGF5XG50cmFuc21pc3Npb25fcHJvYmFiaWxpdHkgPSAgKDEwMCoxMDgzNCkvNjk2MzAwMDAgICAgICMgdHJhbnNtaXNzaW9uIHByb2JhYmlsaXR5XG5pbmZlY3Rpb3VzX3BlcmlvZCA9IDUuMiAgICAgICAgICAgICAgICMgaW5mZWN0aW91cyBwZXJpb2RcbmxhdGVudF9wZXJpb2QgPSAxNCAgICAgICAgICAgICAgICAgICAgIyBsYXRlbnQgcGVyaW9kXG4jQ29tcHV0ZSBSbyAtIFJlcHJvZHVjdGl2ZSBudW1iZXIuXG4jUm8gPSBiZXRhX3ZhbHVlIC8gZ2FtbWFfdmFsdWVcbiNSbyA9IDIuMDA2XG5gYGBcbmBgYCJ9 --&gt;
-
-```r
-```r
-#Parameters
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI1BhcmFtZXRlcnNcbmNvbnRhY3RfcmF0ZSA9IDEwODM0LzM2NiAgICAgICAgICAgICAjIG51bWJlciBvZiBjb250YWN0cyBwZXIgZGF5XG50cmFuc21pc3Npb25fcHJvYmFiaWxpdHkgPSAgKDEwMCoxMDgzNCkvNjk2MzAwMDAgICAgICMgdHJhbnNtaXNzaW9uIHByb2JhYmlsaXR5XG5pbmZlY3Rpb3VzX3BlcmlvZCA9IDUuMiAgICAgICAgICAgICAgICMgaW5mZWN0aW91cyBwZXJpb2RcbmxhdGVudF9wZXJpb2QgPSAxNCAgICAgICAgICAgICAgICAgICAgIyBsYXRlbnQgcGVyaW9kXG4jQ29tcHV0ZSBSbyAtIFJlcHJvZHVjdGl2ZSBudW1iZXIuXG4jUm8gPSBiZXRhX3ZhbHVlIC8gZ2FtbWFfdmFsdWVcbiNSbyA9IDIuMDA2XG5gYGAifQ== -->
+<pre class="r"><code>#Parameters
 contact_rate = 10834/366             # number of contacts per day
 transmission_probability =  (100*10834)/69630000     # transmission probability
 infectious_period = 5.2               # infectious period
@@ -304,26 +316,13 @@ latent_period = 14                    # latent period
 #Compute Ro - Reproductive number.
 #Ro = beta_value / gamma_value
 #Ro = 2.006</code></pre>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
-
-&lt;!-- rnb-chunk-end --&gt;
-
-
-&lt;!-- rnb-text-begin --&gt;
-
-
-
-&lt;!-- rnb-text-end --&gt;
-
-
-&lt;!-- rnb-chunk-begin --&gt;
-
-
-&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI0NvbXB1dGUgdmFsdWVzIG9mIGJldGEgKHRyYW5taXNzaW9uIHJhdGUpIGFuZCBnYW1tYSAocmVjb3ZlcnkgcmF0ZSkuXG5sYW1iZGEgPSAwLjhcbiNiZXRhX3ZhbHVlID0gIGNvbnRhY3RfcmF0ZSAqIHRyYW5zbWlzc2lvbl9wcm9iYWJpbGl0eVxuYmV0YV92YWx1ZSA9IGxhbWJkYSAqIGNvbnRhY3RfcmF0ZSAqIHRyYW5zbWlzc2lvbl9wcm9iYWJpbGl0eVxuI2JldGFfdmFsdWUgPSBsYW1iZGEgKiBSbyAqICgxIC8gaW5mZWN0aW91c19wZXJpb2QpXG4jYmV0YV92YWx1ZSA9IFJvICogKDEgLyBpbmZlY3Rpb3VzX3BlcmlvZClcbmdhbW1hX3ZhbHVlID0gMSAvIGluZmVjdGlvdXNfcGVyaW9kXG5kZWx0YV92YWx1ZSA9IDEgLyBsYXRlbnRfcGVyaW9kXG5SbyA9IGJldGFfdmFsdWUgLyBnYW1tYV92YWx1ZVxuI0Rpc2Vhc2UgZHluYW1pY3MgcGFyYW1ldGVycy5cbnBhcmFtZXRlcl9saXN0ID0gYyAoYmV0YSA9IGJldGFfdmFsdWUsIGdhbW1hID0gZ2FtbWFfdmFsdWUsIGRlbHRhID0gZGVsdGFfdmFsdWUpXG5Sb1xuYGBgXG5gYGAifQ== --&gt;
-
-```r
-```r
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI0NvbXB1dGUgdmFsdWVzIG9mIGJldGEgKHRyYW5taXNzaW9uIHJhdGUpIGFuZCBnYW1tYSAocmVjb3ZlcnkgcmF0ZSkuXG5sYW1iZGEgPSAwLjhcbiNiZXRhX3ZhbHVlID0gIGNvbnRhY3RfcmF0ZSAqIHRyYW5zbWlzc2lvbl9wcm9iYWJpbGl0eVxuYmV0YV92YWx1ZSA9IGxhbWJkYSAqIGNvbnRhY3RfcmF0ZSAqIHRyYW5zbWlzc2lvbl9wcm9iYWJpbGl0eVxuI2JldGFfdmFsdWUgPSBsYW1iZGEgKiBSbyAqICgxIC8gaW5mZWN0aW91c19wZXJpb2QpXG4jYmV0YV92YWx1ZSA9IFJvICogKDEgLyBpbmZlY3Rpb3VzX3BlcmlvZClcbmdhbW1hX3ZhbHVlID0gMSAvIGluZmVjdGlvdXNfcGVyaW9kXG5kZWx0YV92YWx1ZSA9IDEgLyBsYXRlbnRfcGVyaW9kXG5SbyA9IGJldGFfdmFsdWUgLyBnYW1tYV92YWx1ZVxuI0Rpc2Vhc2UgZHluYW1pY3MgcGFyYW1ldGVycy5cbnBhcmFtZXRlcl9saXN0ID0gYyAoYmV0YSA9IGJldGFfdmFsdWUsIGdhbW1hID0gZ2FtbWFfdmFsdWUsIGRlbHRhID0gZGVsdGFfdmFsdWUpXG5Sb1xuYGBgXG5gYGAifQ== -->
+<pre class="r"><code>```r
 #Compute values of beta (tranmission rate) and gamma (recovery rate).
 lambda = 0.8
 #beta_value =  contact_rate * transmission_probability
