@@ -31,6 +31,11 @@ ui <- fluidPage(
   #tags$head(
   #  tags$link(rel = "shortcut icon", type = "image/png", href = "logo.png")
   #),
+  tags$style(HTML("@import url('https://fonts.googleapis.com/css2?family=Kanit&display=swap');
+                  body{
+                    font-family: 'Kanit', sans-serif;
+                  }
+                 ")),
   tags$style(type = "text/css", ".container-fluid {padding-left: 0px; padding-right: 0px !important;}"),
   tags$style(type = "text/css", ".navbar {margin-bottom: 0px;}"),
   tags$style(type = "text/css", ".content {padding: 0px;}"),
@@ -44,10 +49,11 @@ ui <- fluidPage(
              tabPanel("Overview", page_overview, value = "page-overview"),
              tabPanel("US", page_us, value = "us"),
              tabPanel("Thai", page_thai, value = "Thai"),
-             tabPanel("DATA Summary",
+             tabPanel("DATA Summary", style = "padding-left: 80px; padding-right: 80px; padding-bottom: 80px;",
                       column(12, style = "padding: 40px;",
-                             h1("Worldwide Covid-19 Cases", class = "countryname"),
-                             #h3("สหรัฐอเมริกา", class = "countrynameth"),
+                             h1("Worldwide Covid-19 Cases", class = "topic"),
+                             h3("สถานการณ์โรคติดเชื้อไวรัสโคโรนา 2019 ทั่วโลก
+                                ", class = "topic"),
                              br(), 
                       ),
                       column(12,style='padding:20px;',
@@ -221,10 +227,10 @@ server <- function(input, output) {
     )
     
     keyFigures <- list(
-      "confirmed" = HTML(paste(format(data$confirmed, big.mark = " "), sprintf("<h4>(%+.1f %%)</h4>", data_new$new_confirmed))),
-      "recovered" = HTML(paste(format(data$recovered, big.mark = " "), sprintf("<h4>(%+.1f %%)</h4>", data_new$new_recovered))),
-      "deceased"  = HTML(paste(format(data$deceased, big.mark = " "), sprintf("<h4>(%+.1f %%)</h4>", data_new$new_deceased))),
-      "countries" = HTML(paste(format(data$countries, big.mark = " "), "/ 195", sprintf("<h4>(%+d)</h4>", data_new$new_countries)))
+      "confirmed" = HTML(paste(format(data$confirmed, big.mark = ","), sprintf("<h4>(%+.1f %%)</h4>", data_new$new_confirmed))),
+      "recovered" = HTML(paste(format(data$recovered, big.mark = ","), sprintf("<h4>(%+.1f %%)</h4>", data_new$new_recovered))),
+      "deceased"  = HTML(paste(format(data$deceased, big.mark = ","), sprintf("<h4>(%+.1f %%)</h4>", data_new$new_deceased))),
+      "countries" = HTML(paste(format(data$countries, big.mark = ","), "/ 195", sprintf("<h4>(%+d)</h4>", data_new$new_countries)))
     )
     return(keyFigures)
   })
@@ -347,142 +353,75 @@ server <- function(input, output) {
   )
 
 
-#---------- Model --------------
+#-------------------------------- Model ----------------------------------------
 
-init_us <- reactive({
-  initval <- c(input$s_us, input$e_us, input$i_us, input$r_us, input$a_us)
-  n <- sum(initval)
-  return(initval)
-  })
-
-timepoints_us <- reactive({
-  req(input$start_us, input$end_us)
-  timepoints <- seq(input$start_us, input$end_us, by = 1)
-  return(timepoints)
-  })
-
-parameter_us <- reactive({
-  #Parameters
-  #contact_rate = 10                # number of contacts per day
-  #transmission_probability = 0.07 #24441852/328200000  # transmission probability
-  infectious_period = 14         # infectious period 10-20
-  latent_period = 5.2              # latent period
-  deaths_period = 406196/24441852
-
-  Ro = 2.5 #1.9-3.3
+  ## US (SEIRD Model) ##
   
-  beta_value = lambda * Ro * (1 / infectious_period)
-  #beta_value = Ro * (1 / infectious_period)
-  gamma_value = 1 / infectious_period
-  delta_value = 1 / latent_period
-  sigma_value = deaths_period
-
-  #Compute Ro - Reproductive number.
-  #Ro = beta_value / gamma_value
-  parameterlist <- c(beta = beta_value, gamma = gamma_value, delta = delta_value, sigma = sigma_value)
-  return(parameterlist)
+inputmodel_us <- eventReactive(input$modelbutton_us,{
+   calculatemodel_us(input$s_us, input$e_us, input$i_us, input$r_us, input$d_us, input$obsday) 
 })
 
-createmodel <- reactive({
-  model <- lsoda(init_us(), timepoints_us(), seir_modelUS, parameter_us())
-  #model <- as.data.frame(model)
-  return(model)
+output$plotmodel_us <- renderPlotly({
+  gly.plotmodel_us <- ggplotly(
+    ggplot(inputmodel_us(), aes(x = time)) + 
+    geom_line(aes(y = S, color = "S (Sensitive)"), size = 1.5) +
+    geom_line(aes(y = E, color = "E (Exposed)"), size = 1.5) +
+    geom_line(aes(y = I, color = "I (Infected)"), size = 1.5) +
+    geom_line(aes(y = R, color = "R (Recovered)"), size = 1.5) +
+    geom_line(aes(y = D, color = "D (Deaths)"), size = 1.5) +
+    labs(title = " SEIRD model for Covid-19 in US (Without Protective)",
+         x = "Days from 21 January 2020",
+         y = "Fraction of population (unit: million)",
+         color = "Legend") + 
+      theme(plot.title = element_text(face="bold")) +
+      scale_color_manual(values = colors_us ,breaks = c("S (Sensitive)", "E (Exposed)", "I (Infected)", "R (Recovered)","D (Deaths)"))
+  )
 })
 
-observeEvent(input$seirdbutton,{
-  output$plotmodel_us <- renderTable({
-    as.data.frame(createmodel())
-  })
-  output$printus <- renderPrint({
-    output$nsum <- init_us()
-  })
+output$dataframe_us <- renderDataTable({
+  datatable(
+    inputmodel_us(), options = list(
+      lengthMenu = FALSE,
+      lengthChange = FALSE,
+      pageLength = 10
+      )
+    )
 })
 
-#output_us <- lsoda(initval_us, timepoints_us, seir_modelUS, parameter_us)
-#ouput_us <- as.data.frame(output_us)
+#-----------------------------------------------
 
+  ## Thai (SEIR Model) ##
 
-#Compute total population.
+inputmodel_th <- eventReactive(input$modelbutton_th,{
+  calculatemodel_th(input$s_th, input$e_th, input$i_th, input$r_th, input$obsday_th) 
+})
 
+output$plotmodel_th <- renderPlotly({
+  gly.plotmodel_th <- ggplotly(
+    ggplot(inputmodel_th(), aes(x = time)) + 
+      geom_line(aes(y = S, color = "S (Sensitive)"), size = 1.5) +
+      geom_line(aes(y = E, color = "E (Exposed)"), size = 1.5) +
+      geom_line(aes(y = I, color = "I (Infected)"), size = 1.5) +
+      geom_line(aes(y = R, color = "R (Recovered)"), size = 1.5) +
+      labs(title = " SEIR model for Covid-19 in Thailand (Without Protective)",
+           x = "Days from 12 January 2020",
+           y = "Fraction of population (unit: million)",
+           color = "Legend") + 
+      theme(plot.title = element_text(face="bold")) +
+      scale_color_manual(values = colors_th ,breaks = c("S (Sensitive)", "E (Exposed)", "I (Infected)", "R (Recovered)"))
+  )
+})
 
-output$nsum <- renderDataTable({
-  
-  }) 
+output$dataframe_th <- renderDataTable({
+  datatable(
+    inputmodel_th(), options = list(
+      lengthMenu = FALSE,
+      lengthChange = FALSE,
+      pageLength = 10
+    )
+  )
+})
 
-#output$plotmodel_us <- renderPlot({
-#  ggplot()
-#})
-
-#Initial state values for the differential equations.
-#initial_values = c (S = W/N, E = X/N, I = Y/N, R = Z/N, D = A/N)
-
-######################################## US ####################################################
-
-# #Parameters
-# #contact_rate = 10                # number of contacts per day
-# #transmission_probability = 0.07 #24441852/328200000  # transmission probability
-# infectious_period = 14         # infectious period 10-20
-# latent_period = 5.2              # latent period
-# deaths_period = 406196/24441852
-# 
-# 
-# Ro = 2.5 #1.9-3.3
-# 
-# #Compute values of beta (tranmission rate) and gamma (recovery rate).
-# #beta_value = contact_rate * transmission_probability
-# lambda = 0.8
-# #beta_value = lambda * contact_rate * transmission_probability
-# beta_value = lambda * Ro * (1 / infectious_period)
-# #beta_value = Ro * (1 / infectious_period)
-# gamma_value = 1 / infectious_period
-# delta_value = 1 / latent_period
-# sigma_value = deaths_period
-# 
-# #Compute Ro - Reproductive number.
-# #Ro = beta_value / gamma_value
-# Ro
-# 
-# #Disease dynamics parameters.
-# parameter_list = c (beta = beta_value, gamma = gamma_value, delta = delta_value,sigma = sigma_value)
-# 
-# #Initial values for sub-populations.
-# W = 328200000   # susceptible hosts
-# X = 1           # infectious hosts
-# Y = 0           # recovered hosts
-# Z = 0           # exposed hosts
-# A = 0
-# 
-# ######################## THAI ##################################
-# 
-# #Initial values for sub-populations.
-# W = 69630000        # susceptible hosts
-# X = 1           # infectious hosts
-# Y = 0           # recovered hosts
-# Z = 0           # exposed hosts
-# #Compute total population.
-# N = W + X + Y + Z
-# #Initial state values for the differential equations.
-# initial_values = c (S = W/N, E = X/N, I = Y/N, R = Z/N)
-# 
-# #Parameters
-# contact_rate = 10834/366             # number of contacts per day
-# transmission_probability =  (100*10834)/69630000     # transmission probability
-# infectious_period = 5.2               # infectious period
-# latent_period = 14
-# 
-# #Compute values of beta (tranmission rate) and gamma (recovery rate).
-# lambda = 0.8
-# #beta_value =  contact_rate * transmission_probability
-# beta_value = lambda * contact_rate * transmission_probability
-# #beta_value = lambda * Ro * (1 / infectious_period)
-# #beta_value = Ro * (1 / infectious_period)
-# gamma_value = 1 / infectious_period
-# delta_value = 1 / latent_period
-# Ro = beta_value / gamma_value
-# #Disease dynamics parameters.
-# parameter_list = c (beta = beta_value, gamma = gamma_value, delta = delta_value)
-# Ro
-# delta_value
 
 }
 
