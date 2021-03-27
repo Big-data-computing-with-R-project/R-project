@@ -13,6 +13,14 @@ body_thai <- dashboardBody(
                   h3("ประเทศไทย", class = "countrynameth"),
                   br(), 
                   fluidRow(style = "padding: 40px;",
+                           column(
+                             valueBoxOutput("valueBox_confirmedTH", width = 3),
+                             valueBoxOutput("valueBox_recoveredTH", width = 3),
+                             valueBoxOutput("valueBox_deceasedTH", width = 3),
+                             valueBoxOutput("valueBox_activeTH", width = 3),
+                             width = 12,
+                             style = "margin-left: -20px"
+                           ),         
                            sidebarLayout(
                              sidebarPanel( class="sidebar",
                                            p(strong("Thailand Coronavirus Cases", class = "format1")),

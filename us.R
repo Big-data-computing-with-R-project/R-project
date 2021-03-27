@@ -34,14 +34,14 @@ body_us <- dashboardBody(
            h3("สหรัฐอเมริกา", class = "countrynameth"),
            br(), 
            fluidRow(
-                    column(12,
-                           style = "align: center;",
-                           valueBoxOutput("confirmUSBox"),
-                           valueBoxOutput("deathsUSBox"),
-                            
-                      
-                    ),
-                    
+                    column(
+                           valueBoxOutput("valueBox_confirmedUS", width = 3),
+                           valueBoxOutput("valueBox_recoveredUS", width = 3),
+                           valueBoxOutput("valueBox_deceasedUS", width = 3),
+                           valueBoxOutput("valueBox_activeUS", width = 3),
+                           width = 12,
+                           style = "margin-left: -20px"
+                    ),         
            ),br(),
     ),
     fluidRow(#style = "padding: 40px;",

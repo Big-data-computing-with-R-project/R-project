@@ -16,26 +16,39 @@ library("tidyr")
 library("normalr")
 library("ggcorrplot")
  
-my_db <- src_mysql(
-  dbname = "covid19",
-  host = "cvd-database.cmxpnyylhkiw.us-east-2.rds.amazonaws.com",
-  user = "admin",
-  password = "RprojectCovid19"
-)
-my_db
-data_confirmed <- tbl(my_db, sql("select * from covid19_confirmed"))
-data_confirmed <- as.data.frame(data_confirmed)
-data_confirmed
-data_deceased <- tbl(my_db, sql("select * from covid19_deaths"))
-data_deceased <- as.data.frame(data_deceased)
-data_deceased
-data_recovered <- tbl(my_db, sql("select * from covid19_recovered"))
-data_recovered <- as.data.frame(data_recovered)
-data_recovered
-# TODO: Still throws a warning but works for now
-#data_confirmed <- read_csv("data/time_series_covid19_confirmed_global.csv")
-#data_deceased  <- read_csv("data/time_series_covid19_deaths_global.csv")
-# data_recovered <- read_csv("data/time_series_covid19_recovered_global.csv")
+downloadGithubData <- function() {
+  download.file(
+    url      = "https://github.com/CSSEGISandData/COVID-19/archive/master.zip",
+    destfile = "dataRealtime/covid19_data.zip"
+  )
+  
+  data_path <- "COVID-19-master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_"
+  unzip(
+    zipfile   = "dataRealtime/covid19_data.zip",  
+    files     = paste0(data_path, c("confirmed_global.csv", "deaths_global.csv", "recovered_global.csv")),
+    exdir     = "dataRealtime",
+    junkpaths = T
+  )
+}
+
+
+updateData <- function() {
+  # Download data from Johns Hopkins (https://github.com/CSSEGISandData/COVID-19) if the data is older than 0.5h
+  if (!dir_exists("dataRealtime")) {
+    dir.create('data')
+    downloadGithubData()
+  } else if ((!file.exists("dataRealtime/covid19_data.zip")) || (as.double(Sys.time() - file_info("dataRealtime/covid19_data.zip")$change_time, units = "hours") > 0.5)) {
+    downloadGithubData()
+  }
+}
+
+# Update with start of app
+updateData()
+
+data_confirmed <- read_csv("dataRealtime/time_series_covid19_confirmed_global.csv")%>% rename(`Country.Region`=`Country/Region`)%>%rename(`Province.State`=`Province/State`)
+data_deceased  <- read_csv("dataRealtime/time_series_covid19_deaths_global.csv")%>% rename(`Country.Region`=`Country/Region`)%>%rename(`Province.State`=`Province/State`)
+data_recovered <- read_csv("dataRealtime/time_series_covid19_recovered_global.csv")%>% rename(`Country.Region`=`Country/Region`)%>%rename(`Province.State`=`Province/State`)
+
 
 # Get latest data
 current_date <- as.Date(names(data_confirmed)[ncol(data_confirmed)], format = "%m/%d/%y")
@@ -139,15 +152,41 @@ data_atDate <- function(inputDate) {
 
 data_latests <- data_atDate(max(data_evolution$date))
 
+#US
+us_countriesActive <- data_evolution %>%
+  filter(`Country.Region` == "US") %>% filter(var == "active", date == current_date)%>%
+  group_by(`Country.Region`)%>%arrange(desc(value)) %>%
+  top_n(1) 
+us_countriesConfirmed <- data_evolution %>%
+  filter(`Country.Region` == "US") %>% filter(var == "confirmed", date == current_date)%>%
+  group_by(`Country.Region`)%>%arrange(desc(value)) %>%
+  top_n(1) 
+us_countriesRecovered <- data_evolution %>%
+  filter(`Country.Region` == "US") %>% filter(var == "recovered", date == current_date)%>%
+  group_by(`Country.Region`)%>%arrange(desc(value)) %>%
+  top_n(1) 
+us_countriesDeceased <- data_evolution %>%
+  filter(`Country.Region` == "US") %>% filter(var == "deceased", date == current_date)%>%
+  group_by(`Country.Region`)%>%arrange(desc(value)) %>%
+  top_n(1)
 
-top5_countries <- data_evolution %>%
-  filter(var == "active", date == current_date) %>%
-  group_by(`Country.Region`) %>%
-  summarise(value = sum(value, na.rm = T)) %>%
-  arrange(desc(value)) %>%
-  top_n(5) %>%
-  select(`Country.Region`) %>%
-  pull()
+#Thailand
+th_countriesActive <- data_evolution %>%
+  filter(`Country.Region` == "Thailand") %>% filter(var == "active", date == current_date)%>%
+  group_by(`Country.Region`)%>%arrange(desc(value)) %>%
+  top_n(1) 
+th_countriesConfirmed <- data_evolution %>%
+  filter(`Country.Region` == "Thailand") %>% filter(var == "confirmed", date == current_date)%>%
+  group_by(`Country.Region`)%>%arrange(desc(value)) %>%
+  top_n(1) 
+th_countriesRecovered <- data_evolution %>%
+  filter(`Country.Region` == "Thailand") %>% filter(var == "recovered", date == current_date)%>%
+  group_by(`Country.Region`)%>%arrange(desc(value)) %>%
+  top_n(1) 
+th_countriesDeceased <- data_evolution %>%
+  filter(`Country.Region` == "Thailand") %>% filter(var == "deceased", date == current_date)%>%
+  group_by(`Country.Region`)%>%arrange(desc(value)) %>%
+  top_n(1)
 
 
 

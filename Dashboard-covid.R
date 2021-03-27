@@ -62,6 +62,12 @@ packageVersion('flexdashboard')
 
 # Define server logic ----
 server <- function(input, output) {
+  # Trigger once an hour
+  dataLoadingTrigger <- reactiveTimer(3600000)
+  
+  observeEvent(dataLoadingTrigger, {
+    updateData()
+  })
   observe({
     data <- data_atDate(input$timeSlider)
   })
@@ -281,21 +287,39 @@ server <- function(input, output) {
     width = 12
   ))
   #--------- US -------------
-  output$confirmUSBox <- renderValueBox({
+  output$valueBox_confirmedUS <- renderValueBox({
     valueBox(
-      most_us$confirmed,
+      us_countriesConfirmed$value,
       subtitle = "Confirmed",
       icon     = icon("file-medical"),
-      color    = "blue",
+      color    = "red",
     )
   })
   
-  output$deathsUSBox <- renderValueBox({
+  output$valueBox_recoveredUS <- renderValueBox({
     valueBox(
-      most_us$deaths,
-      subtitle = "Deaths",
-      icon     = icon("file-medical"),
-      color    = "blue",
+      us_countriesRecovered$value,
+      subtitle = "Estimated Recoveries",
+      icon     = icon("heart"),
+      color    = "green"
+    )
+  })
+  
+  output$valueBox_deceasedUS <- renderValueBox({
+    valueBox(
+      us_countriesDeceased$value,
+      subtitle = "Deceased",
+      icon     = icon("heartbeat"),
+      color    = "light-blue",
+    )
+  })
+  
+  output$valueBox_activeUS <- renderValueBox({
+    valueBox(
+      us_countriesActive$value,
+      subtitle = "Active",
+      icon     = icon("flag"),
+      color    = "yellow"
     )
   })
   
@@ -327,6 +351,41 @@ server <- function(input, output) {
               margins=c(10,6),trace="column")
   })
   #-------- Thailand ----------
+  output$valueBox_confirmedTH <- renderValueBox({
+    valueBox(
+      th_countriesConfirmed$value,
+      subtitle = "Confirmed",
+      icon     = icon("file-medical"),
+      color    = "red",
+    )
+  })
+  
+  output$valueBox_recoveredTH <- renderValueBox({
+    valueBox(
+      th_countriesRecovered$value,
+      subtitle = "Estimated Recoveries",
+      icon     = icon("heart"),
+      color    = "green"
+    )
+  })
+  
+  output$valueBox_deceasedTH <- renderValueBox({
+    valueBox(
+      th_countriesDeceased$value,
+      subtitle = "Deceased",
+      icon     = icon("heartbeat"),
+      color    = "light-blue",
+    )
+  })
+  
+  output$valueBox_activeTH <- renderValueBox({
+    valueBox(
+      th_countriesActive$value,
+      subtitle = "Active",
+      icon     = icon("flag"),
+      color    = "yellow"
+    )
+  })
   output$plotthaicase <- renderPlotly({
     gly.plot_thai.cumulative
   })
