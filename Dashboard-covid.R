@@ -31,6 +31,11 @@ ui <- fluidPage(
   #tags$head(
   #  tags$link(rel = "shortcut icon", type = "image/png", href = "logo.png")
   #),
+  tags$style(HTML("@import url('https://fonts.googleapis.com/css2?family=Kanit&display=swap');
+                  body{
+                    font-family: 'Kanit', sans-serif;
+                  }
+                 ")),
   tags$style(type = "text/css", ".container-fluid {padding-left: 0px; padding-right: 0px !important;}"),
   tags$style(type = "text/css", ".navbar {margin-bottom: 0px;}"),
   tags$style(type = "text/css", ".content {padding: 0px;}"),
@@ -44,10 +49,11 @@ ui <- fluidPage(
              tabPanel("Overview", page_overview, value = "page-overview"),
              tabPanel("US", page_us, value = "us"),
              tabPanel("Thai", page_thai, value = "Thai"),
-             tabPanel("DATA Summary",
+             tabPanel("DATA Summary", style = "padding-left: 80px; padding-right: 80px; padding-bottom: 80px;",
                       column(12, style = "padding: 40px;",
-                             h1("Worldwide Covid-19 Cases", class = "countryname"),
-                             #h3("สหรัฐอเมริกา", class = "countrynameth"),
+                             h1("Worldwide Covid-19 Cases", class = "topic"),
+                             h3("สถานการณ์โรคติดเชื้อไวรัสโคโรนา 2019 ทั่วโลก
+                                ", class = "topic"),
                              br(), 
                       ),
                       column(12,style='padding:20px;',
@@ -227,10 +233,10 @@ server <- function(input, output) {
     )
     
     keyFigures <- list(
-      "confirmed" = HTML(paste(format(data$confirmed, big.mark = " "), sprintf("<h4>(%+.1f %%)</h4>", data_new$new_confirmed))),
-      "recovered" = HTML(paste(format(data$recovered, big.mark = " "), sprintf("<h4>(%+.1f %%)</h4>", data_new$new_recovered))),
-      "deceased"  = HTML(paste(format(data$deceased, big.mark = " "), sprintf("<h4>(%+.1f %%)</h4>", data_new$new_deceased))),
-      "countries" = HTML(paste(format(data$countries, big.mark = " "), "/ 195", sprintf("<h4>(%+d)</h4>", data_new$new_countries)))
+      "confirmed" = HTML(paste(format(data$confirmed, big.mark = ","), sprintf("<h4>(%+.1f %%)</h4>", data_new$new_confirmed))),
+      "recovered" = HTML(paste(format(data$recovered, big.mark = ","), sprintf("<h4>(%+.1f %%)</h4>", data_new$new_recovered))),
+      "deceased"  = HTML(paste(format(data$deceased, big.mark = ","), sprintf("<h4>(%+.1f %%)</h4>", data_new$new_deceased))),
+      "countries" = HTML(paste(format(data$countries, big.mark = ","), "/ 195", sprintf("<h4>(%+d)</h4>", data_new$new_countries)))
     )
     return(keyFigures)
   })
@@ -404,7 +410,83 @@ server <- function(input, output) {
       )
     )
   )
+
+
+#-------------------------------- Model ----------------------------------------
+
+  ## US (SEIRD Model) ##
+  
+inputmodel_us <- eventReactive(input$modelbutton_us,{
+   calculatemodel_us(input$s_us, input$e_us, input$i_us, input$r_us, input$d_us, input$obsday) 
+})
+
+output$plotmodel_us <- renderPlotly({
+  gly.plotmodel_us <- ggplotly(
+    ggplot(inputmodel_us(), aes(x = time)) + 
+    geom_line(aes(y = S, color = "S (Sensitive)"), size = 1.5) +
+    geom_line(aes(y = E, color = "E (Exposed)"), size = 1.5) +
+    geom_line(aes(y = I, color = "I (Infected)"), size = 1.5) +
+    geom_line(aes(y = R, color = "R (Recovered)"), size = 1.5) +
+    geom_line(aes(y = D, color = "D (Deaths)"), size = 1.5) +
+    labs(title = " SEIRD model for Covid-19 in US (Without Protective)",
+         x = "Days from 21 January 2020",
+         y = "Fraction of population (unit: million)",
+         color = "Legend") + 
+      theme(plot.title = element_text(face="bold")) +
+      scale_color_manual(values = colors_us ,breaks = c("S (Sensitive)", "E (Exposed)", "I (Infected)", "R (Recovered)","D (Deaths)"))
+  )
+})
+
+output$dataframe_us <- renderDataTable({
+  datatable(
+    inputmodel_us(), options = list(
+      lengthMenu = FALSE,
+      lengthChange = FALSE,
+      pageLength = 10
+      )
+    )
+})
+
+#-----------------------------------------------
+
+  ## Thai (SEIR Model) ##
+
+inputmodel_th <- eventReactive(input$modelbutton_th,{
+  calculatemodel_th(input$s_th, input$e_th, input$i_th, input$r_th, input$obsday_th) 
+})
+
+output$plotmodel_th <- renderPlotly({
+  gly.plotmodel_th <- ggplotly(
+    ggplot(inputmodel_th(), aes(x = time)) + 
+      geom_line(aes(y = S, color = "S (Sensitive)"), size = 1.5) +
+      geom_line(aes(y = E, color = "E (Exposed)"), size = 1.5) +
+      geom_line(aes(y = I, color = "I (Infected)"), size = 1.5) +
+      geom_line(aes(y = R, color = "R (Recovered)"), size = 1.5) +
+      labs(title = " SEIR model for Covid-19 in Thailand (Without Protective)",
+           x = "Days from 12 January 2020",
+           y = "Fraction of population (unit: million)",
+           color = "Legend") + 
+      theme(plot.title = element_text(face="bold")) +
+      scale_color_manual(values = colors_th ,breaks = c("S (Sensitive)", "E (Exposed)", "I (Infected)", "R (Recovered)"))
+  )
+})
+
+output$dataframe_th <- renderDataTable({
+  datatable(
+    inputmodel_th(), options = list(
+      lengthMenu = FALSE,
+      lengthChange = FALSE,
+      pageLength = 10
+    )
+  )
+})
+
+
 }
+
+#-----------------------------------------------------------------------------------------------------------------
+
+
 
 # Run the app ----
 shinyApp(ui = ui, server = server)
