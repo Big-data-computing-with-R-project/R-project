@@ -24,7 +24,7 @@ source("ui_overview.R", local = TRUE)
 source("Thai.R", encoding = "UTF-8", local = TRUE)
 source("us.R", encoding = "UTF-8", local = TRUE)
 source("model.R", encoding = "UTF-8", local = TRUE)
-
+source("ui_fullTable.R", encoding = "UTF-8", local = TRUE)
 # ------------------------ Define UI -------------------
 ui <- fluidPage(
   title = "COVID-19 Global Cases",
@@ -49,22 +49,12 @@ ui <- fluidPage(
              tabPanel("Overview", page_overview, value = "page-overview"),
              tabPanel("US", page_us, value = "us"),
              tabPanel("Thai", page_thai, value = "Thai"),
-             tabPanel("DATA Summary", style = "padding-left: 80px; padding-right: 80px; padding-bottom: 80px;",
-                      column(12, style = "padding: 40px;",
-                             h1("Worldwide Covid-19 Cases", class = "topic"),
-                             h3("สถานการณ์โรคติดเชื้อไวรัสโคโรนา 2019 ทั่วโลก
-                                ", class = "topic"),
-                             br(), 
-                      ),
-                      column(12,style='padding:20px;',
-                             DT::dataTableOutput("dataTable")
-                      ),
-             ),
+             tabPanel("Table", page_fullTable, value = "page-fullTable" ),
              tabPanel("Model", page_model, value = "Model")
   )
 )
 
-packageVersion('flexdashboard')
+#packageVersion('flexdashboard')
 
 # Define server logic ----
 server <- function(input, output) {
@@ -86,7 +76,7 @@ server <- function(input, output) {
   })
   
   output$overview_map <- renderLeaflet(map)
-  #---------------- summary rable -----------------------
+  #---------------- Table -----------------------
   output$summaryTables <- renderUI({
     tabBox(
       tabPanel("Country.Region",
@@ -293,9 +283,18 @@ server <- function(input, output) {
     width = 12
   ))
   #--------- US -------------
+  key_figuresus <- reactive({
+    keyFiguresus <- list(
+      "confirmed" = HTML(paste(format(us_countriesConfirmed$value, big.mark = ","))),
+      "recovered" = HTML(paste(format(us_countriesRecovered$value, big.mark = ","))),
+      "deceased"  = HTML(paste(format(us_countriesDeceased$value, big.mark = ","))),
+      "active" = HTML(paste(format(us_countriesActive$value, big.mark = ",")))
+    )
+    return(keyFiguresus)
+  })
   output$valueBox_confirmedUS <- renderValueBox({
     valueBox(
-      us_countriesConfirmed$value,
+      key_figuresus()$confirmed,
       subtitle = "Confirmed",
       icon     = icon("file-medical"),
       color    = "red",
@@ -304,7 +303,7 @@ server <- function(input, output) {
   
   output$valueBox_recoveredUS <- renderValueBox({
     valueBox(
-      us_countriesRecovered$value,
+      key_figuresus()$recovered,
       subtitle = "Estimated Recoveries",
       icon     = icon("heart"),
       color    = "green"
@@ -313,7 +312,7 @@ server <- function(input, output) {
   
   output$valueBox_deceasedUS <- renderValueBox({
     valueBox(
-      us_countriesDeceased$value,
+      key_figuresus()$deceased,
       subtitle = "Deceased",
       icon     = icon("heartbeat"),
       color    = "light-blue",
@@ -322,7 +321,7 @@ server <- function(input, output) {
   
   output$valueBox_activeUS <- renderValueBox({
     valueBox(
-      us_countriesActive$value,
+      key_figuresus()$active,
       subtitle = "Active",
       icon     = icon("flag"),
       color    = "yellow"
@@ -357,9 +356,18 @@ server <- function(input, output) {
               margins=c(10,6),trace="column")
   })
   #-------- Thailand ----------
+  key_figuresth <- reactive({
+    keyFiguresth <- list(
+      "confirmed" = HTML(paste(format(th_countriesConfirmed$value, big.mark = ","))),
+      "recovered" = HTML(paste(format(th_countriesRecovered$value, big.mark = ","))),
+      "deceased"  = HTML(paste(format(th_countriesDeceased$value, big.mark = ","))),
+      "active" = HTML(paste(format(th_countriesActive$value, big.mark = ",")))
+    )
+    return(keyFiguresth)
+  })
   output$valueBox_confirmedTH <- renderValueBox({
     valueBox(
-      th_countriesConfirmed$value,
+      key_figuresth()$confirmed,
       subtitle = "Confirmed",
       icon     = icon("file-medical"),
       color    = "red",
@@ -368,7 +376,7 @@ server <- function(input, output) {
   
   output$valueBox_recoveredTH <- renderValueBox({
     valueBox(
-      th_countriesRecovered$value,
+      key_figuresth()$recovered,
       subtitle = "Estimated Recoveries",
       icon     = icon("heart"),
       color    = "green"
@@ -377,7 +385,7 @@ server <- function(input, output) {
   
   output$valueBox_deceasedTH <- renderValueBox({
     valueBox(
-      th_countriesDeceased$value,
+      key_figuresth()$deceased,
       subtitle = "Deceased",
       icon     = icon("heartbeat"),
       color    = "light-blue",
@@ -386,7 +394,7 @@ server <- function(input, output) {
   
   output$valueBox_activeTH <- renderValueBox({
     valueBox(
-      th_countriesActive$value,
+      key_figuresth()$active,
       subtitle = "Active",
       icon     = icon("flag"),
       color    = "yellow"
@@ -410,7 +418,85 @@ server <- function(input, output) {
       )
     )
   )
-
+#------------------------ Table ---------------------------------------------
+  output$fullTable <- renderDataTable({
+    data       <- getFullTableData("Country.Region")
+    columNames <- c(
+      "Country",
+      "Total Confirmed",
+      "New Confirmed",
+      "Total Confirmed <br>(per 100k)",
+      "Total Estimated Recoveries",
+      "New Estimated Recoveries",
+      "Total Deceased",
+      "New Deceased",
+      "Total Active",
+      "New Active",
+      "Total Active <br>(per 100k)")
+    datatable(
+      data,
+      rownames  = FALSE,
+      colnames  = columNames,
+      escape    = FALSE,
+      selection = "none",
+      options   = list(
+        pageLength     = -1,
+        order          = list(8, "desc"),
+        scrollX        = TRUE,
+        scrollY        = "calc(100vh - 250px)",
+        scrollCollapse = TRUE,
+        dom            = "ft",
+        server         = FALSE,
+        columnDefs     = list(
+          list(
+            targets = c(2, 5, 7, 9),
+            render  = JS(
+              "function(data, type, row, meta) {
+              if (data != null) {
+                split = data.split('|')
+                if (type == 'display') {
+                  return split[1];
+                } else {
+                  return split[0];
+                }
+              }
+            }"
+            )
+          ),
+          list(className = 'dt-right', targets = 1:ncol(data) - 1),
+          list(width = '100px', targets = 0),
+          list(visible = FALSE, targets = 11:14)
+        )
+      )
+    ) %>%
+      formatStyle(
+        columns    = "Country.Region",
+        fontWeight = "bold"
+      ) %>%
+      formatStyle(
+        columns         = "confirmed_new",
+        valueColumns    = "confirmed_newPer",
+        backgroundColor = styleInterval(c(10, 20, 33, 50, 75), c("NULL", "#FFE5E5", "#FFB2B2", "#FF7F7F", "#FF4C4C", "#983232")),
+        color           = styleInterval(75, c("#000000", "#FFFFFF"))
+      ) %>%
+      formatStyle(
+        columns         = "deceased_new",
+        valueColumns    = "deceased_newPer",
+        backgroundColor = styleInterval(c(10, 20, 33, 50, 75), c("NULL", "#FFE5E5", "#FFB2B2", "#FF7F7F", "#FF4C4C", "#983232")),
+        color           = styleInterval(75, c("#000000", "#FFFFFF"))
+      ) %>%
+      formatStyle(
+        columns         = "active_new",
+        valueColumns    = "active_newPer",
+        backgroundColor = styleInterval(c(-33, -20, -10, 10, 20, 33, 50, 75), c("#66B066", "#99CA99", "#CCE4CC", "NULL", "#FFE5E5", "#FFB2B2", "#FF7F7F", "#FF4C4C", "#983232")),
+        color           = styleInterval(75, c("#000000", "#FFFFFF"))
+      ) %>%
+      formatStyle(
+        columns         = "recovered_new",
+        valueColumns    = "recovered_newPer",
+        backgroundColor = styleInterval(c(10, 20, 33), c("NULL", "#CCE4CC", "#99CA99", "#66B066"))
+      )
+  })
 
 #-------------------------------- Model ----------------------------------------
 
