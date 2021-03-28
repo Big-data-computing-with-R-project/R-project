@@ -34,6 +34,8 @@ ui <- fluidPage(
   tags$style(HTML("@import url('https://fonts.googleapis.com/css2?family=Kanit&display=swap');
                   body{
                     font-family: 'Kanit', sans-serif;
+                    /*overflow-y: hidden; 
+                    width: 100%;*/
                   }
                  ")),
   tags$style(type = "text/css", ".container-fluid {padding-left: 0px; padding-right: 0px !important;}"),
@@ -86,7 +88,7 @@ server <- function(input, output) {
   })
   
   output$overview_map <- renderLeaflet(map)
-  #---------------- summary rable -----------------------
+  #---------------- summary table -----------------------
   output$summaryTables <- renderUI({
     tabBox(
       tabPanel("Country.Region",
@@ -145,10 +147,10 @@ server <- function(input, output) {
     req(input$timeSlider, input$overview_map_zoom)
     zoomLevel               <- input$overview_map_zoom
     data                    <- data_atDate(input$timeSlider) %>% addLabel()
-    data$confirmedPerCapita <- data$confirmed / data$population * 100000
-    data$activePerCapita    <- data$active / data$population * 100000
+    #data$confirmedPerCapita <- data$confirmed / data$population * 100000
+    #data$activePerCapita    <- data$active / data$population * 100000
     
-    leafletProxy("overview_map", data = data) %>%
+    leafletProxy("overview_map", data = (data %>% select(-(Province.State)))) %>%
       clearMarkers() %>%
       addCircleMarkers(
         lng          = ~Long,
@@ -161,61 +163,61 @@ server <- function(input, output) {
         labelOptions = labelOptions(textsize = 15),
         group        = "Confirmed"
       ) %>%
-      addCircleMarkers(
-        lng          = ~Long,
-        lat          = ~Lat,
-        radius       = ~log(confirmedPerCapita^(zoomLevel)),
-        stroke       = FALSE,
-        color        = "maroon",
-        fillOpacity  = 0.5,
-        label        = ~label,
-        labelOptions = labelOptions(textsize = 15),
-        group        = "Confirmed (per capita)"
-      ) %>%
+      # addCircleMarkers(
+      #   lng          = ~Long,
+      #   lat          = ~Lat,
+      #   radius       = ~log(confirmedPerCapita^(zoomLevel)),
+      #   stroke       = FALSE,
+      #   color        = "maroon",
+      #   fillOpacity  = 0.5,
+      #   label        = ~label,
+      #   labelOptions = labelOptions(textsize = 15),
+      #   group        = "Confirmed (per capita)"
+      # ) %>%
       addCircleMarkers(
         lng          = ~Long,
         lat          = ~Lat,
         radius       = ~log(recovered^(zoomLevel)),
         stroke       = FALSE,
-        color        = "green",
+        color        = "#74d47b",
         fillOpacity  = 0.5,
         label        = ~label,
         labelOptions = labelOptions(textsize = 15),
-        group = "Estimated Recoveries"
+        group = "Recovered"
       ) %>%
       addCircleMarkers(
         lng          = ~Long,
         lat          = ~Lat,
         radius       = ~log(deceased^(zoomLevel)),
         stroke       = FALSE,
-        color        = "light-blue",
+        color        = "	#8ec3f4", #light-blue
         fillOpacity  = 0.5,
         label        = ~label,
         labelOptions = labelOptions(textsize = 15),
-        group        = "Deceased"
+        group        = "Deaths"
       ) %>%
       addCircleMarkers(
         lng          = ~Long,
         lat          = ~Lat,
         radius       = ~log(active^(zoomLevel / 2)),
         stroke       = FALSE,
-        color        = "yellow",
+        color        = "#ffc022", #yellow
         fillOpacity  = 0.5,
         label        = ~label,
         labelOptions = labelOptions(textsize = 15),
-        group        = "Active"
-      ) %>%
-      addCircleMarkers(
-        lng          = ~Long,
-        lat          = ~Lat,
-        radius       = ~log(activePerCapita^(zoomLevel)),
-        stroke       = FALSE,
-        color        = "#EEEEEE",
-        fillOpacity  = 0.5,
-        label        = ~label,
-        labelOptions = labelOptions(textsize = 15),
-        group        = "Active (per capita)"
-      )
+        group        = "Current Confirmed"
+      ) #%>%
+      # addCircleMarkers(
+      #   lng          = ~Long,
+      #   lat          = ~Lat,
+      #   radius       = ~log(activePerCapita^(zoomLevel)),
+      #   stroke       = FALSE,
+      #   color        = "#EEEEEE",
+      #   fillOpacity  = 0.5,
+      #   label        = ~label,
+      #   labelOptions = labelOptions(textsize = 15),
+      #   group        = "Active (per capita)"
+      # )
   })
   #--------- keyfigures ----------------
   observe({
@@ -253,7 +255,7 @@ server <- function(input, output) {
   output$valueBox_recovered <- renderValueBox({
     valueBox(
       key_figures()$recovered,
-      subtitle = "Estimated Recoveries",
+      subtitle = "Recovery",
       icon     = icon("heart"),
       color    = "green"
     )
@@ -262,7 +264,7 @@ server <- function(input, output) {
   output$valueBox_deceased <- renderValueBox({
     valueBox(
       key_figures()$deceased,
-      subtitle = "Deceased",
+      subtitle = "Deaths",
       icon     = icon("heartbeat"),
       color    = "light-blue",
     )
@@ -305,7 +307,7 @@ server <- function(input, output) {
   output$valueBox_recoveredUS <- renderValueBox({
     valueBox(
       us_countriesRecovered$value,
-      subtitle = "Estimated Recoveries",
+      subtitle = "Recovery",
       icon     = icon("heart"),
       color    = "green"
     )
@@ -314,7 +316,7 @@ server <- function(input, output) {
   output$valueBox_deceasedUS <- renderValueBox({
     valueBox(
       us_countriesDeceased$value,
-      subtitle = "Deceased",
+      subtitle = "Deaths",
       icon     = icon("heartbeat"),
       color    = "light-blue",
     )
@@ -323,7 +325,7 @@ server <- function(input, output) {
   output$valueBox_activeUS <- renderValueBox({
     valueBox(
       us_countriesActive$value,
-      subtitle = "Active",
+      subtitle = "Current Confirmed",
       icon     = icon("flag"),
       color    = "yellow"
     )
@@ -369,7 +371,7 @@ server <- function(input, output) {
   output$valueBox_recoveredTH <- renderValueBox({
     valueBox(
       th_countriesRecovered$value,
-      subtitle = "Estimated Recoveries",
+      subtitle = "Recovery",
       icon     = icon("heart"),
       color    = "green"
     )
@@ -378,7 +380,7 @@ server <- function(input, output) {
   output$valueBox_deceasedTH <- renderValueBox({
     valueBox(
       th_countriesDeceased$value,
-      subtitle = "Deceased",
+      subtitle = "Deaths",
       icon     = icon("heartbeat"),
       color    = "light-blue",
     )
@@ -387,7 +389,7 @@ server <- function(input, output) {
   output$valueBox_activeTH <- renderValueBox({
     valueBox(
       th_countriesActive$value,
-      subtitle = "Active",
+      subtitle = "Current Confirmed",
       icon     = icon("flag"),
       color    = "yellow"
     )

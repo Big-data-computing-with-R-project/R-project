@@ -779,7 +779,7 @@ data.top.world <- mergcountry(data.top.world, df_temp)
 index <- is.na(data.top.world)
 data.top.world[index] <- 0
 data.top.world
-View(data.top.world)
+#View(data.top.world)
 
 
 normalize = function(data){
@@ -820,7 +820,7 @@ norm_data_plot2 <- select(norm_data2,"country","confirm.rate","death.rate","reco
 norm_data_plot2 %<>% gather(key=type, value=count, -c(country))
 level_order <- factor(norm_data_plot2$type,
                       level =c("sars","Pornhub","GDP","avg_temp","healthcare","recover.rate","death.rate","confirm.rate"))
-View(level_order)
+#View(level_order)
 ggplot(data = norm_data_plot2, aes(x=country, y=level_order, fill=count)) + 
   geom_tile() +
   scale_fill_gradient(low = "pink", high = "blue") +
@@ -901,11 +901,11 @@ data.us.total <- df_us %>% group_by(date) %>%
 
 data.us <- df_us
 data.us %<>% rbind(data.us.total)
-View(data.us)
+#View(data.us)
 
 data.us.long <- data.us %>% 
   gather(key = type, value = count, -c(date, state)) 
-View(data.us.long)
+#View(data.us.long)
 
 us.total <- data.us.total %>%
   mutate(new.confirmed = ifelse(date == day1, 0, confirmed - lag(confirmed, n=1)),
@@ -961,7 +961,7 @@ data.us %<>% mutate(new.confirmed = ifelse(date == day1, NA, confirmed - lag(con
 
 data.us %<>% mutate(new.confirmed = ifelse(new.confirmed < 0, 0, new.confirmed),
                  new.deaths = ifelse(new.deaths < 0, 0, new.deaths))
-View(data.us)
+#View(data.us)
 
 #data.us.daily <- data.us %>% filter(state == "US")
 #View(data.us.daily)
@@ -1252,7 +1252,7 @@ df_thai
 df_thai <- df_thai %>% select(!No.) %>% select(!notification_date) %>% 
   group_by(announce_date)
 df_thai
-View(df_thai)
+#View(df_thai)
 ```
 
 ```{r}
@@ -1260,7 +1260,7 @@ View(df_thai)
 data.thai.count <- df_thai %>%
   select(announce_date) %>%
   summarise(confirmed = n()) %>% as.data.frame()
-View(data.thai.count)
+#View(data.thai.count)
 data.thai.count$cumulative_confirmed <- cumsum(data.thai.count[, 2])
 ```
 ```{r}
