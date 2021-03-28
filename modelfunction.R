@@ -68,7 +68,7 @@ seir_modelUS = function (current_timepoint, state_values, parameters)
     
     dfmodel_us <- as.data.frame(outputmodel_us)
     dfmodel_us[, 2:ncol(dfmodel_us)] <- (n / 1000000) * dfmodel_us[, 2:ncol(dfmodel_us)]
-    dfmodel_us[, 2:ncol(dfmodel_us)] <- dfmodel_us[, 2:ncol(dfmodel_us)] %>% round(2)
+    dfmodel_us[, 2:ncol(dfmodel_us)] <- dfmodel_us[, 2:ncol(dfmodel_us)] %>% round(4)
     
     dfmodel_us <- as.data.frame(dfmodel_us)
     return(dfmodel_us)
@@ -113,7 +113,7 @@ seir_modelUS = function (current_timepoint, state_values, parameters)
   latent_period_th = 14
 
   #Compute values of beta (tranmission rate) and gamma (recovery rate).
-  lambda_th = 0.8
+  lambda_th = 0.65
   #beta_value =  contact_rate * transmission_probability
   beta_value_th = lambda_th * contact_rate_th * transmission_probability_th
   #beta_value = lambda * Ro * (1 / infectious_period)
@@ -139,7 +139,7 @@ seir_modelUS = function (current_timepoint, state_values, parameters)
     
     dfmodel_th <- as.data.frame(outputmodel_th)
     dfmodel_th[, 2:ncol(dfmodel_th)] <- (n / 1000000) * dfmodel_th[, 2:ncol(dfmodel_th)]
-    dfmodel_th[, 2:ncol(dfmodel_th)] <- dfmodel_th[, 2:ncol(dfmodel_th)] %>% round(2)
+    dfmodel_th[, 2:ncol(dfmodel_th)] <- dfmodel_th[, 2:ncol(dfmodel_th)] %>% round(4)
     
     dfmodel_th <- as.data.frame(dfmodel_th)
     return(dfmodel_th)

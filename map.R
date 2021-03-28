@@ -5,9 +5,9 @@ addLabel <- function(data) {
     '<b>', ifelse(is.na(data$`Province.State`), data$`Country.Region`, data$`Province.State`), '</b><br>
     <table style="width:120px;">
     <tr><td>Confirmed:</td><td align="right">', data$confirmed, '</td></tr>
-    <tr><td>Deceased:</td><td align="right">', data$deceased, '</td></tr>
-    <tr><td>Estimated Recoveries:</td><td align="right">', data$recovered, '</td></tr>
-    <tr><td>Active:</td><td align="right">', data$active, '</td></tr>
+    <tr><td>Deaths:</td><td align="right">', data$deceased, '</td></tr>
+    <tr><td>Recovery:</td><td align="right">', data$recovered, '</td></tr>
+    <tr><td>Current Confirmed:</td><td align="right">', data$active, '</td></tr>
     </table>'
   )
   data$label <- lapply(data$label, HTML)
@@ -23,13 +23,13 @@ map <- leaflet(addLabel(data_latests)) %>%
   addProviderTiles(providers$HERE.satelliteDay, group = "Satellite") %>%
   addLayersControl(
     baseGroups    = c("Light", "Satellite"),
-    overlayGroups = c("Confirmed", "Confirmed (per capita)", "Estimated Recoveries", "Deceased", "Active", "Active (per capita)")
+    overlayGroups = c("Confirmed", "Recovered", "Deaths", "Current Confirmed")
   ) %>%
-  hideGroup("Confirmed (per capita)") %>%
-  hideGroup("Estimated Recoveries") %>%
-  hideGroup("Deceased") %>%
-  hideGroup("Active") %>%
-  hideGroup("Active (per capita)") %>%
+  #hideGroup("Confirmed (per capita)") %>%
+  hideGroup("Recovered") %>%
+  hideGroup("Deaths") %>%
+  hideGroup("Current Confirmed") %>%
+  #hideGroup("Active (per capita)") %>%
   addEasyButton(easyButton(
     icon    = "glyphicon glyphicon-globe", title = "Reset zoom",
     onClick = JS("function(btn, map){ map.setView([20, 0], 2); }"))) %>%

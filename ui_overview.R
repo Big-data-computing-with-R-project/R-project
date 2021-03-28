@@ -1,5 +1,6 @@
-body_overview <- dashboardBody(
+body_overview <- dashboardBody(class = "site",
   tags$head(
+    tags$style(type = "text/css", ".site {overflow-y: hidden; width: 100%;}"),
     tags$style(type = "text/css", "#overview_map {height: 48vh !important;}"),
     tags$style(type = 'text/css', ".slider-animate-button { font-size: 20pt !important; }"),
     tags$style(type = 'text/css', ".slider-animate-container { text-align: left !important; }"),
@@ -48,24 +49,29 @@ body_overview <- dashboardBody(
         uiOutput("summaryTables"),
         class = "summary",
         width = 5,
-        style = 'padding:0px;'
+        style = 'padding:0px; height: 400px;'
       ),
       column(
-        sliderInput(
-          "timeSlider",
-          label      = "Select date",
-          min        = min(data_evolution$date),
-          max        = max(data_evolution$date),
-          value      = max(data_evolution$date),
-          width      = "100%",
-          timeFormat = "%d.%m.%Y",
-          animate    = animationOptions(loop = TRUE)
-        ),
-        class = "slider",
-        width = 12
-      )
+      sliderInput(
+        "timeSlider",
+        label      = "Select date",
+        min        = min(data_evolution$date),
+        max        = max(data_evolution$date),
+        value      = max(data_evolution$date),
+        width      = "100%",
+        timeFormat = "%d.%m.%Y",
+        animate    = animationOptions(loop = TRUE)
+      ),
+      class = "slider",
+      width = 12,
+      style = "padding-left: 20px; padding-right: 20px; padding-bottom: 20px;"
     )
+    ),
+    
+    
   )
+   
+   
 )
 
 page_overview <- dashboardPage(
