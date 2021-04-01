@@ -5,7 +5,7 @@ body_fullTable <- dashboardBody(
   fluidPage(
     fluidRow(
       column(12, style = "padding: 40px;",
-             h1("Worldwide Covid-19 Caes", class = "topic"),
+             h1("Worldwide Covid-19 Cases", class = "topic"),
              h3("สถานการณ์โรคติดเชื้อไวรัสโคโรนา2019 ทั่วโลก", class = "topic"),
              br()
              ), 

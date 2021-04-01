@@ -2,7 +2,7 @@
 getFullTableData <- function(groupBy) {
   padding_left <- max(str_length(data_evolution$value_new), na.rm = TRUE)
   data         <- data_evolution %>%
-    filter(date == current_date) %>%
+    dplyr::filter(date == current_date) %>%
     pivot_wider(names_from = var, values_from = c(value, value_new)) %>%
     select(-date, -Lat, -Long) %>%
     add_row(
@@ -52,4 +52,5 @@ getFullTableData <- function(groupBy) {
     select(-population) %>%
     as.data.frame()
 }
+
 

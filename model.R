@@ -91,14 +91,37 @@ body_model <- dashboardBody(
                                   column(12, numericInput("d_us", label = "D (Deaths)", 0, min = 0, max = 100))
                                   ),
                                   
-                                  sliderInput("obsday", "จำนวนวัน
-                                              ", value = 1, min = 1, max = 1000),
-                                              actionButton("modelbutton_us", "สร้างโมเดล
-                                                           ")
+                                fluidRow(
+                                  numericInput("num_obsday", label = "จำนวนวัน
+                                               ", 1, min = 1, max = 1000),
+                                  sliderInput("obsday", "
+                                              ", value = 1, min = 1, max = 1000)
+                                  )
+                                  
                                 ),
-                   mainPanel(style = "align: center;",
+                   mainPanel(
                      plotlyOutput("plotmodel_us"),
+                     
+                     fluidRow(
+                              box(
+                                  p(strong("Parameter Plot (เลือกพารามิเตอร์ที่ต้องการพลอต)"), style ="font-size: 12pt"),
+                                     radioButtons("radio_us", "",
+                                                  choices = list("S (Sensitive)" = "s_us_choice",
+                                                                 "E (Exposed)" = "e_us_choice",
+                                                                 "I (Infected)" = "i_us_choice",
+                                                                 "R (Recovered)" = "r_us_choice",
+                                                                 "D (Deaths)" = "d_us_choice"
+                                                                 ),
+                                                  inline = TRUE,
+                                                  width = "100%"
+                                                  ), 
+                                  width=12
+                                  )
+                              ),
+                     
+                     plotlyOutput("select_parameter_us"),
                      dataTableOutput("dataframe_us", height = "40em")
+                     
                      )
                    )
                  )
@@ -126,15 +149,35 @@ body_model <- dashboardBody(
                                   column(6, numericInput("i_th", label = "I (Infected)", 1, min = 0, max = 100)),
                                   column(6, numericInput("r_th", label = "R (Recovered)", 0, min = 0, max = 100))
                                   ),
-                                  
-                                  sliderInput("obsday_th", "จำนวนวัน
-                                              ", value = 1, min = 1, max = 1000
-                                              ),
-                                              actionButton("modelbutton_th", "สร้างโมเดล
-                                                           ")
+                                
+                                fluidRow(
+                                  numericInput("num_obsday_th", label = "จำนวนวัน
+                                               ", 1, min = 1, max = 1000),
+                                  sliderInput("obsday_th", "
+                                              ", value = 1, min = 1, max = 1000)
+                                  )
                                 ),
                    mainPanel(style = "align: center;",
                      plotlyOutput("plotmodel_th"),
+                     
+                     fluidRow(
+                       box(
+                         p(strong("Parameter Plot (เลือกพารามิเตอร์ที่ต้องการพลอต)"), style ="font-size: 12pt"),
+                         radioButtons("radio_th", "",
+                                      choices = list("S (Sensitive)" = "s_th_choice",
+                                                     "E (Exposed)" = "e_th_choice",
+                                                     "I (Infected)" = "i_th_choice",
+                                                     "R (Recovered)" = "r_th_choice"
+                                      ),
+                                      inline = TRUE,
+                                      width = "100%"
+                         ), 
+                         width=12
+                       )
+                     ),
+                     
+                     plotlyOutput("select_parameter_th"),
+                     
                      dataTableOutput("dataframe_th", height = "40em")
                      )
                    )

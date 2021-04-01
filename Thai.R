@@ -1,5 +1,5 @@
 body_thai <- dashboardBody(
-  fluidRow(style = "padding-left: 80px; padding-right: 80px; padding-bottom: 80px;",
+  fluidRow(style = "padding-left: 40px; padding-right: 40px; padding-bottom: 40px;",
            tags$head(
              tags$style(type = 'text/css', ".fluidRow { padding: 500px;}"),
              tags$style(type = 'text/css',".container { background-color: #F0F8FF80; padding: 20px; text-align: center; }"),
@@ -7,12 +7,14 @@ body_thai <- dashboardBody(
              tags$style(type = 'text/css', ".tab1 { color : #4c7093; padding-top: 20 px; padding-bottom: 20 px; padding-left: 2em; padding-right: 2em; }"),
              tags$style(type = 'text/css', ".inputtext { color : #000000; text-align: center; justify-content: center; }"),
              tags$style(type = 'text/css', ".normaltext { color : #000000; padding: 50px; height: 470px;  /*justify-content: center; */}"),
-           ),
-           column(12, style = "padding: 40px;",
+           
+             ),
+           fluidRow(
+             column(12, style = "padding: 40px;",
                   h1("Kingdom of Thailand", class = "topic"),
                   h3("ราชอาณาจักรไทย", class = "topic"),
                   br(), 
-                  fluidRow(style = "padding: 20px;",
+                  fluidRow(
                            column(
                              valueBoxOutput("valueBox_confirmedTH", width = 3),
                              valueBoxOutput("valueBox_recoveredTH", width = 3),
@@ -20,9 +22,14 @@ body_thai <- dashboardBody(
                              valueBoxOutput("valueBox_activeTH", width = 3),
                              width = 12,
                              style = "margin-left: -20px"
-                           ),         
-                           sidebarLayout(
-                             sidebarPanel( class="normaltext",
+                           ) 
+                    ),
+                  br(),
+                  ),
+             
+             fluidRow(style="padding-top: 10px;",
+                      sidebarLayout(
+                        sidebarPanel( class="normaltext",
                                            p(strong("Thailand Coronavirus Cases")),
                                            p("ประเทศไทยมีการแพร่ระบาดไวรัสโคโรนา 2019 ครั้งแรกเมื่อวันที่ 12 มกราคม 2020 โดยเป็นประเทศที่มีผู้ป่วยยืนยันรายแรกนอกประเทศจีน ซึ่งเป็นนักท่องเที่ยวหญิงวัย 61 ปี สัญชาติจีน มีภูมิลำเนาอยู่ที่เมืองอู่ฮั่น ประเทศจีน ได้เดินทางออกจากเมืองอู่ฮั่นมายังท่าอากาศยานนานาชาติสุวรรณภูมิ 
                                       "),
@@ -30,6 +37,8 @@ body_thai <- dashboardBody(
                                       "),
                                            p("ข้อมูลที่นำมาใช้ในการวิเคราะห์รวบรวมตั้งแต่วันที่ 12 มกราคม 2020 – 12 มกราคม 2021
                                       "),
+                                          p("ข้อมูลจาก: ศูนย์บริหารสถานการณ์แพร่ระบาดของโรคติดเชื้อไวรัสโคโรนา 2019 (ศบค.)
+                                            ", style = "font-style: italic;")
                              ),
                              mainPanel(
                                tabsetPanel(
@@ -38,17 +47,17 @@ body_thai <- dashboardBody(
                                  tabPanel("Daily", br(), plotlyOutput("plotdailycasethai"))
                                )
                              )
-                           ),
-                  ),
-           br(),
-           fluidRow(style = "padding-top: 20px;",
+                           )
+           ),
+           
+           fluidRow(style = "padding-top: 10px;",
              column(12,
                     h3("10 จังหวัดที่มีจำนวนผู้ติดเชื้อสูงสุด", class = "topic")
                     )
              ),
            
            br(),
-           fluidRow(
+           fluidRow(style = "padding-top: 10px;",
              column(6,
                     plotlyOutput("plotthai")
                     ),
@@ -56,7 +65,32 @@ body_thai <- dashboardBody(
                     DT::dataTableOutput("resultth")
                     )
              ),
+           
+           fluidRow(), br(),
+           fluidRow(style = "padding-top: 10px;",
+                    column(6, 
+                           h3("กลุ่มเสี่ยงที่พบจากการติดเชื้อ
+                              ", class = "topic"),
+                           plotOutput("thairisk")
+                    ),
+                    column(6,
+                           h3("ผู้ติดเชื้อแบ่งตามกลุ่มอายุและเพศ
+                              ", class = "topic"),
+                           plotlyOutput("thaiage")
+                    )
+            ),
+           
+           fluidRow(), br(),
+           fluidRow(style = "padding-top: 10px;",
+                    column(6, 
+                           h3("สัญชาติของผู้ติดเชื้อที่พบในประเทศไทย
+                              ", class = "topic"),
+                           plotlyOutput("thainationality")
+                    )
+           ),
+           
            )
+        
   )
 )
 

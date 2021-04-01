@@ -15,6 +15,8 @@ library("tidyr")
 #library(knitr)
 library("normalr")
 library("ggcorrplot")
+library("gplots")
+library("shinyWidgets")
  
 downloadGithubData <- function() {
   download.file(
@@ -35,7 +37,7 @@ downloadGithubData <- function() {
 updateData <- function() {
   # Download data from Johns Hopkins (https://github.com/CSSEGISandData/COVID-19) if the data is older than 0.5h
   if (!dir_exists("dataRealtime")) {
-    dir.create('data')
+    dir.create('dataRealtime')
     downloadGithubData()
   } else if ((!file.exists("dataRealtime/covid19_data.zip")) || (as.double(Sys.time() - file_info("dataRealtime/covid19_data.zip")$change_time, units = "hours") > 0.5)) {
     downloadGithubData()
@@ -147,44 +149,44 @@ data_atDate <- function(inputDate) {
   data_evolution[which(data_evolution$date == inputDate),] %>%
     distinct() %>%
     pivot_wider(id_cols = c("Province.State", "Country.Region", "date", "Lat", "Long", "population"), names_from = var, values_from = value) %>%
-    filter(confirmed > 0 | recovered > 0 | deceased > 0 |  active > 0)
+    dplyr::filter(confirmed > 0 | recovered > 0 | deceased > 0 |  active > 0)
 }
 
 data_latests <- data_atDate(max(data_evolution$date))
 
 #US
 us_countriesActive <- data_evolution %>%
-  filter(`Country.Region` == "US") %>% filter(var == "active", date == current_date)%>%
+  dplyr::filter(`Country.Region` == "US") %>% dplyr::filter(var == "active", date == current_date)%>%
   group_by(`Country.Region`)%>%arrange(desc(value)) %>%
   top_n(1) 
 us_countriesConfirmed <- data_evolution %>%
-  filter(`Country.Region` == "US") %>% filter(var == "confirmed", date == current_date)%>%
+  dplyr::filter(`Country.Region` == "US") %>% dplyr::filter(var == "confirmed", date == current_date)%>%
   group_by(`Country.Region`)%>%arrange(desc(value)) %>%
   top_n(1) 
 us_countriesRecovered <- data_evolution %>%
-  filter(`Country.Region` == "US") %>% filter(var == "recovered", date == current_date)%>%
+  dplyr::filter(`Country.Region` == "US") %>% dplyr::filter(var == "recovered", date == current_date)%>%
   group_by(`Country.Region`)%>%arrange(desc(value)) %>%
   top_n(1) 
 us_countriesDeceased <- data_evolution %>%
-  filter(`Country.Region` == "US") %>% filter(var == "deceased", date == current_date)%>%
+  dplyr::filter(`Country.Region` == "US") %>% dplyr::filter(var == "deceased", date == current_date)%>%
   group_by(`Country.Region`)%>%arrange(desc(value)) %>%
   top_n(1)
 
 #Thailand
 th_countriesActive <- data_evolution %>%
-  filter(`Country.Region` == "Thailand") %>% filter(var == "active", date == current_date)%>%
+  dplyr::filter(`Country.Region` == "Thailand") %>% dplyr::filter(var == "active", date == current_date)%>%
   group_by(`Country.Region`)%>%arrange(desc(value)) %>%
   top_n(1) 
 th_countriesConfirmed <- data_evolution %>%
-  filter(`Country.Region` == "Thailand") %>% filter(var == "confirmed", date == current_date)%>%
+  dplyr::filter(`Country.Region` == "Thailand") %>% dplyr::filter(var == "confirmed", date == current_date)%>%
   group_by(`Country.Region`)%>%arrange(desc(value)) %>%
   top_n(1) 
 th_countriesRecovered <- data_evolution %>%
-  filter(`Country.Region` == "Thailand") %>% filter(var == "recovered", date == current_date)%>%
+  dplyr::filter(`Country.Region` == "Thailand") %>% dplyr::filter(var == "recovered", date == current_date)%>%
   group_by(`Country.Region`)%>%arrange(desc(value)) %>%
   top_n(1) 
 th_countriesDeceased <- data_evolution %>%
-  filter(`Country.Region` == "Thailand") %>% filter(var == "deceased", date == current_date)%>%
+  dplyr::filter(`Country.Region` == "Thailand") %>% dplyr::filter(var == "deceased", date == current_date)%>%
   group_by(`Country.Region`)%>%arrange(desc(value)) %>%
   top_n(1)
 
