@@ -1,4 +1,3 @@
-library("htmltools")
 
 addLabel <- function(data) {
   data$label <- paste0(

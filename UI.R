@@ -19,13 +19,14 @@ library(shinydashboard)
 library(Metrics)
 library(gplots)
 library(shinyWidgets)
+library("htmltools")
 #system("defaults write org.R-project.R force.LANG en_US.UTF-8")
 Sys.setlocale("LC_ALL","thai")
 source("ui_overview.R", local = TRUE)
 source("Thai.R", encoding = "UTF-8", local = TRUE)
 source("us.R", encoding = "UTF-8", local = TRUE)
 source("model.R", encoding = "UTF-8", local = TRUE)
-source("ui_fullTable.R", encoding = "UTF-8", local = TRUE)
+source("ui_fulltable.R", encoding = "UTF-8", local = TRUE)
 # ------------------------ Define UI -------------------
 ui <- fluidPage(
   title = "COVID-19 Global Cases",
