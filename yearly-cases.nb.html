@@ -217,27 +217,42 @@ pre code {
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2luc3RhbGwucGFja2FnZXMoXCJrbml0clwiKVxuI2luc3RhbGwucGFja2FnZXMoXCJncmlkXCIpXG4jaW5zdGFsbC5wYWNrYWdlcyhcIk1MUk1QQVwiKVxuI2luc3RhbGwucGFja2FnZXMoXCJkcHJlcFwiKVxuI2luc3RhbGwucGFja2FnZXMoXCJub3JtYWxyXCIpXG4jaW5zdGFsbC5wYWNrYWdlcyhcImdnY29ycnBsb3RcIilcbiNpbnN0YWxsLnBhY2thZ2VzKFwiUkNvbG9yQnJld2VyXCIpXG4jaW5zdGFsbC5wYWNrYWdlcyhcInJnZGFsXCIpXG4jaW5zdGFsbC5wYWNrYWdlcyhcImpzb25saXRlXCIpXG4jaW5zdGFsbC5wYWNrYWdlcyhcIlJDb2xvckJyZXdlclwiKVxuI2luc3RhbGwucGFja2FnZXMoXCJyZWFkclwiKVxuU3lzLnNldGxvY2FsZShcIkxDX0FMTFwiLCBcIkVuZ2xpc2hcIilcblN5cy5zZXRlbnYoXCJMQU5HVUFHRVwiPVwiRW5cIilcbmBgYCJ9 -->
-<pre class="r"><code>#install.packages(&quot;knitr&quot;)
-#install.packages(&quot;grid&quot;)
-#install.packages(&quot;MLRMPA&quot;)
-#install.packages(&quot;dprep&quot;)
-#install.packages(&quot;normalr&quot;)
-#install.packages(&quot;ggcorrplot&quot;)
-#install.packages(&quot;RColorBrewer&quot;)
-#install.packages(&quot;rgdal&quot;)
-#install.packages(&quot;jsonlite&quot;)
-#install.packages(&quot;RColorBrewer&quot;)
-#install.packages(&quot;readr&quot;)
-Sys.setlocale(&quot;LC_ALL&quot;, &quot;English&quot;)
-Sys.setenv(&quot;LANGUAGE&quot;=&quot;En&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShncmlkRXh0cmEpXG5saWJyYXJ5KGRwbHlyKVxubGlicmFyeShsdWJyaWRhdGUpXG5saWJyYXJ5KG1hZ3JpdHRyKVxubGlicmFyeShnZ3Bsb3QyKVxubGlicmFyeSh0aWR5cilcbmxpYnJhcnkoa25pdHIpXG5saWJyYXJ5KG5vcm1hbHIpXG5saWJyYXJ5KGdnY29ycnBsb3QpXG5saWJyYXJ5KGxlYWZsZXQpXG5saWJyYXJ5KHBsb3RseSlcbmxpYnJhcnkoUkNvbG9yQnJld2VyKVxubGlicmFyeShyZWFkcilcblxuIz8/c3JjX215c3FsXG5teV9kYiA8LSBzcmNfbXlzcWwoXG4gIGRibmFtZSA9IFwiY292aWRcIixcbiAgaG9zdCA9IFwibG9jYWxob3N0XCIsXG4gIHVzZXIgPSBcInJvb3RcIixcbiAgcGFzc3dvcmQgPSBcIjEyMzRcIlxuKVxubXlfZGJcblxuIyNpbXBvcnQgZGF0YVxuZGZfY29uZiA8LSB0YmwobXlfZGIsIHNxbChcInNlbGVjdCAqIGZyb20gY292aWQxOV9jb25maXJtZWRcIikpXG5kZl9jb25mIDwtIGFzLmRhdGEuZnJhbWUoZGZfY29uZilcbmRmX2NvbmZcbmRmX2RlYXRocyA8LSB0YmwobXlfZGIsIHNxbChcInNlbGVjdCAqIGZyb20gY292aWQxOV9kZWF0aHNcIikpXG5kZl9kZWF0aHMgPC0gYXMuZGF0YS5mcmFtZShkZl9kZWF0aHMpXG5kZl9kZWF0aHNcbmRmX3JlY292ZXIgPC0gdGJsKG15X2RiLCBzcWwoXCJzZWxlY3QgKiBmcm9tIGNvdmlkMTlfcmVjb3ZlcmVkXCIpKVxuZGZfcmVjb3ZlciA8LSBhcy5kYXRhLmZyYW1lKGRmX3JlY292ZXIpXG5kZl9yZWNvdmVyXG5gYGAifQ== -->
-<pre class="r"><code>library(gridExtra)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI2luc3RhbGwucGFja2FnZXMoXFxrbml0clxcKVxuI2luc3RhbGwucGFja2FnZXMoXFxncmlkXFwpXG4jaW5zdGFsbC5wYWNrYWdlcyhcXE1MUk1QQVxcKVxuI2luc3RhbGwucGFja2FnZXMoXFxkcHJlcFxcKVxuI2luc3RhbGwucGFja2FnZXMoXFxub3JtYWxyXFwpXG4jaW5zdGFsbC5wYWNrYWdlcyhcXGdnY29ycnBsb3RcXClcbiNpbnN0YWxsLnBhY2thZ2VzKFxcUkNvbG9yQnJld2VyXFwpXG4jaW5zdGFsbC5wYWNrYWdlcyhcXHJnZGFsXFwpXG4jaW5zdGFsbC5wYWNrYWdlcyhcXGpzb25saXRlXFwpXG4jaW5zdGFsbC5wYWNrYWdlcyhcXFJDb2xvckJyZXdlclxcKVxuI2luc3RhbGwucGFja2FnZXMoXFxyZWFkclxcKVxuU3lzLnNldGxvY2FsZShcXExDX0FMTFxcLCBcXEVuZ2xpc2hcXClcblN5cy5zZXRlbnYoXFxMQU5HVUFHRVxcPVxcRW5cXClcbmBgYFxuYGBgIn0= -->
+<pre class="r"><code>```r
+#install.packages(\knitr\)
+#install.packages(\grid\)
+#install.packages(\MLRMPA\)
+#install.packages(\dprep\)
+#install.packages(\normalr\)
+#install.packages(\ggcorrplot\)
+#install.packages(\RColorBrewer\)
+#install.packages(\rgdal\)
+#install.packages(\jsonlite\)
+#install.packages(\RColorBrewer\)
+#install.packages(\readr\)
+Sys.setlocale(\LC_ALL\, \English\)
+Sys.setenv(\LANGUAGE\=\En\)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxubGlicmFyeShncmlkRXh0cmEpXG5saWJyYXJ5KGRwbHlyKVxubGlicmFyeShsdWJyaWRhdGUpXG5saWJyYXJ5KG1hZ3JpdHRyKVxubGlicmFyeShnZ3Bsb3QyKVxubGlicmFyeSh0aWR5cilcbmxpYnJhcnkoa25pdHIpXG5saWJyYXJ5KG5vcm1hbHIpXG5saWJyYXJ5KGdnY29ycnBsb3QpXG5saWJyYXJ5KGxlYWZsZXQpXG5saWJyYXJ5KHBsb3RseSlcbmxpYnJhcnkoUkNvbG9yQnJld2VyKVxubGlicmFyeShyZWFkcilcblxuIz8/c3JjX215c3FsXG5teV9kYiA8LSBzcmNfbXlzcWwoXG4gIGRibmFtZSA9IFxcY292aWRcXCxcbiAgaG9zdCA9IFxcbG9jYWxob3N0XFwsXG4gIHVzZXIgPSBcXHJvb3RcXCxcbiAgcGFzc3dvcmQgPSBcXDEyMzRcXFxuKVxubXlfZGJcblxuIyNpbXBvcnQgZGF0YVxuZGZfY29uZiA8LSB0YmwobXlfZGIsIHNxbChcXHNlbGVjdCAqIGZyb20gY292aWQxOV9jb25maXJtZWRcXCkpXG5kZl9jb25mIDwtIGFzLmRhdGEuZnJhbWUoZGZfY29uZilcbmRmX2NvbmZcbmRmX2RlYXRocyA8LSB0YmwobXlfZGIsIHNxbChcXHNlbGVjdCAqIGZyb20gY292aWQxOV9kZWF0aHNcXCkpXG5kZl9kZWF0aHMgPC0gYXMuZGF0YS5mcmFtZShkZl9kZWF0aHMpXG5kZl9kZWF0aHNcbmRmX3JlY292ZXIgPC0gdGJsKG15X2RiLCBzcWwoXFxzZWxlY3QgKiBmcm9tIGNvdmlkMTlfcmVjb3ZlcmVkXFwpKVxuZGZfcmVjb3ZlciA8LSBhcy5kYXRhLmZyYW1lKGRmX3JlY292ZXIpXG5kZl9yZWNvdmVyXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+library(gridExtra)
 library(dplyr)
 library(lubridate)
 library(magrittr)
@@ -253,30 +268,44 @@ library(readr)
 
 #??src_mysql
 my_db &lt;- src_mysql(
-  dbname = &quot;covid&quot;,
-  host = &quot;localhost&quot;,
-  user = &quot;root&quot;,
-  password = &quot;1234&quot;
+  dbname = \covid\,
+  host = \localhost\,
+  user = \root\,
+  password = \1234\
 )
 my_db
 
 ##import data
-df_conf &lt;- tbl(my_db, sql(&quot;select * from covid19_confirmed&quot;))
+df_conf &lt;- tbl(my_db, sql(\select * from covid19_confirmed\))
 df_conf &lt;- as.data.frame(df_conf)
 df_conf
-df_deaths &lt;- tbl(my_db, sql(&quot;select * from covid19_deaths&quot;))
+df_deaths &lt;- tbl(my_db, sql(\select * from covid19_deaths\))
 df_deaths &lt;- as.data.frame(df_deaths)
 df_deaths
-df_recover &lt;- tbl(my_db, sql(&quot;select * from covid19_recovered&quot;))
+df_recover &lt;- tbl(my_db, sql(\select * from covid19_recovered\))
 df_recover &lt;- as.data.frame(df_recover)
 df_recover</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyNjaGVjayB0aGUgdGltZSBmcmFtZSBvZiB0aGUgZGF0YVxubi5jb2wgPC0gbmNvbChkZl9jb25mKVxuZGF0ZXMgPC0gbmFtZXMoZGZfY29uZilbNTpuLmNvbF0lPiUgbWR5KClcbnJhbmdlKGRhdGVzKVxubWluLmRhdGUgPC0gbWluKGRhdGVzKVxubWF4LmRhdGUgPC0gbWF4KGRhdGVzKVxubWluLmRhdGUudHh0IDwtIG1pbi5kYXRlICU+JSBmb3JtYXQoJyVkICViICVZJylcbm1heC5kYXRlLnR4dCA8LSBtYXguZGF0ZSAlPiUgZm9ybWF0KCclZCAlYiAlWScpXG5gYGAifQ== -->
-<pre class="r"><code>##check the time frame of the data
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyNjaGVjayB0aGUgdGltZSBmcmFtZSBvZiB0aGUgZGF0YVxubi5jb2wgPC0gbmNvbChkZl9jb25mKVxuZGF0ZXMgPC0gbmFtZXMoZGZfY29uZilbNTpuLmNvbF0lPiUgbWR5KClcbnJhbmdlKGRhdGVzKVxubWluLmRhdGUgPC0gbWluKGRhdGVzKVxubWF4LmRhdGUgPC0gbWF4KGRhdGVzKVxubWluLmRhdGUudHh0IDwtIG1pbi5kYXRlICU+JSBmb3JtYXQoJyVkICViICVZJylcbm1heC5kYXRlLnR4dCA8LSBtYXguZGF0ZSAlPiUgZm9ybWF0KCclZCAlYiAlWScpXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+##check the time frame of the data
 n.col &lt;- ncol(df_conf)
 dates &lt;- names(df_conf)[5:n.col]%&gt;% mdy()
 range(dates)
@@ -284,11 +313,20 @@ min.date &lt;- min(dates)
 max.date &lt;- max(dates)
 min.date.txt &lt;- min.date %&gt;% format(&#39;%d %b %Y&#39;)
 max.date.txt &lt;- max.date %&gt;% format(&#39;%d %b %Y&#39;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2NsZWFuIGRhdGFcbmNsZWFuRGF0YSA8LSBmdW5jdGlvbihkYXRhKSB7XG4gICMjIHJlbW92ZSBzb21lIGNvbHVtbnNcbiAgZGF0YSAlPD4lIHNlbGVjdCgtYyhQcm92aW5jZS5TdGF0ZSwgTGF0LCBMb25nKSkgJT4lIHJlbmFtZShjb3VudHJ5PUNvdW50cnkuUmVnaW9uKVxuICAjIyBjb252ZXJ0IGZyb20gd2lkZSB0byBsb25nIGZvcm1hdFxuICBkYXRhICU8PiUgZ2F0aGVyKGtleT1kYXRlLCB2YWx1ZT1jb3VudCwgLWNvdW50cnkpXG4gICMjIGNvbnZlcnQgZnJvbSBjaGFyYWN0ZXIgdG8gZGF0ZVxuICBkYXRhICU8PiUgbXV0YXRlKGRhdGUgPSBkYXRlICU+JSBtZHkoKSlcbiAgIyMgYWdncmVnYXRlIGJ5IGNvdW50cnlcbiAgZGF0YSAlPD4lIGdyb3VwX2J5KGNvdW50cnksIGRhdGUpICU+JSBzdW1tYXJpc2UoY291bnQ9c3VtKGNvdW50LCBuYS5ybT1UKSkgJT4lIGFzLmRhdGEuZnJhbWUoKVxuICByZXR1cm4oZGF0YSlcbn1cbiMjIGNsZWFuIHRoZSB0aHJlZSBkYXRhIHNldHNcbmRhdGEuY29uZmlybWVkIDwtIGRmX2NvbmYgJT4lIGNsZWFuRGF0YSgpICU+JSByZW5hbWUoY29uZmlybWVkPWNvdW50KVxuZGF0YS5kZWF0aHMgPC0gZGZfZGVhdGhzICU+JSBjbGVhbkRhdGEoKSAlPiUgcmVuYW1lKGRlYXRocz1jb3VudClcbmRhdGEucmVjb3ZlcmVkIDwtIGRmX3JlY292ZXIgJT4lIGNsZWFuRGF0YSgpICU+JSByZW5hbWUocmVjb3ZlcmVkPWNvdW50KVxuZGF0YSA8LSBkYXRhLmNvbmZpcm1lZCAlPiUgbWVyZ2UoZGF0YS5kZWF0aHMsIGFsbD1UKSAlPiUgbWVyZ2UoZGF0YS5yZWNvdmVyZWQsIGFsbD1UKVxuZGF0YVxuIyMgY291bnRyaWVzL3JlZ2lvbnMgd2l0aCBjb25maXJtZWQgY2FzZXMsIGV4Y2wuIGNydWlzZSBzaGlwc1xuY291bnRyaWVzIDwtIGRhdGEgJT4lIHB1bGwoY291bnRyeSkgJT4lIHNldGRpZmYoJ0NydWlzZSBTaGlwJylcbmRhdGFcbmRhdGEud29ybGQgPC0gZGF0YSAlPiUgZ3JvdXBfYnkoZGF0ZSkgJT4lXG4gIHN1bW1hcmlzZShjb3VudHJ5PSdXb3JsZCcsXG4gICAgICAgICAgICBjb25maXJtZWQgPSBzdW0oY29uZmlybWVkLCBuYS5ybT1UKSxcbiAgICAgICAgICAgIGRlYXRocyA9IHN1bShkZWF0aHMsIG5hLnJtPVQpLFxuICAgICAgICAgICAgcmVjb3ZlcmVkID0gc3VtKHJlY292ZXJlZCwgbmEucm09VCkpXG5kYXRhICU8PiUgcmJpbmQoZGF0YS53b3JsZClcbmRhdGFcbmRhdGEgJTw+JSBtdXRhdGUoY3VycmVudC5jb25maXJtZWQgPSBjb25maXJtZWQgLSBkZWF0aHMgLSByZWNvdmVyZWQpXG5WaWV3KGRhdGEpXG5gYGAifQ== -->
-<pre class="r"><code>#clean data
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI2NsZWFuIGRhdGFcbmNsZWFuRGF0YSA8LSBmdW5jdGlvbihkYXRhKSB7XG4gICMjIHJlbW92ZSBzb21lIGNvbHVtbnNcbiAgZGF0YSAlPD4lIHNlbGVjdCgtYyhQcm92aW5jZS5TdGF0ZSwgTGF0LCBMb25nKSkgJT4lIHJlbmFtZShjb3VudHJ5PUNvdW50cnkuUmVnaW9uKVxuICAjIyBjb252ZXJ0IGZyb20gd2lkZSB0byBsb25nIGZvcm1hdFxuICBkYXRhICU8PiUgZ2F0aGVyKGtleT1kYXRlLCB2YWx1ZT1jb3VudCwgLWNvdW50cnkpXG4gICMjIGNvbnZlcnQgZnJvbSBjaGFyYWN0ZXIgdG8gZGF0ZVxuICBkYXRhICU8PiUgbXV0YXRlKGRhdGUgPSBkYXRlICU+JSBtZHkoKSlcbiAgIyMgYWdncmVnYXRlIGJ5IGNvdW50cnlcbiAgZGF0YSAlPD4lIGdyb3VwX2J5KGNvdW50cnksIGRhdGUpICU+JSBzdW1tYXJpc2UoY291bnQ9c3VtKGNvdW50LCBuYS5ybT1UKSkgJT4lIGFzLmRhdGEuZnJhbWUoKVxuICByZXR1cm4oZGF0YSlcbn1cbiMjIGNsZWFuIHRoZSB0aHJlZSBkYXRhIHNldHNcbmRhdGEuY29uZmlybWVkIDwtIGRmX2NvbmYgJT4lIGNsZWFuRGF0YSgpICU+JSByZW5hbWUoY29uZmlybWVkPWNvdW50KVxuZGF0YS5kZWF0aHMgPC0gZGZfZGVhdGhzICU+JSBjbGVhbkRhdGEoKSAlPiUgcmVuYW1lKGRlYXRocz1jb3VudClcbmRhdGEucmVjb3ZlcmVkIDwtIGRmX3JlY292ZXIgJT4lIGNsZWFuRGF0YSgpICU+JSByZW5hbWUocmVjb3ZlcmVkPWNvdW50KVxuZGF0YSA8LSBkYXRhLmNvbmZpcm1lZCAlPiUgbWVyZ2UoZGF0YS5kZWF0aHMsIGFsbD1UKSAlPiUgbWVyZ2UoZGF0YS5yZWNvdmVyZWQsIGFsbD1UKVxuZGF0YVxuIyMgY291bnRyaWVzL3JlZ2lvbnMgd2l0aCBjb25maXJtZWQgY2FzZXMsIGV4Y2wuIGNydWlzZSBzaGlwc1xuY291bnRyaWVzIDwtIGRhdGEgJT4lIHB1bGwoY291bnRyeSkgJT4lIHNldGRpZmYoJ0NydWlzZSBTaGlwJylcbmRhdGFcbmRhdGEud29ybGQgPC0gZGF0YSAlPiUgZ3JvdXBfYnkoZGF0ZSkgJT4lXG4gIHN1bW1hcmlzZShjb3VudHJ5PSdXb3JsZCcsXG4gICAgICAgICAgICBjb25maXJtZWQgPSBzdW0oY29uZmlybWVkLCBuYS5ybT1UKSxcbiAgICAgICAgICAgIGRlYXRocyA9IHN1bShkZWF0aHMsIG5hLnJtPVQpLFxuICAgICAgICAgICAgcmVjb3ZlcmVkID0gc3VtKHJlY292ZXJlZCwgbmEucm09VCkpXG5kYXRhICU8PiUgcmJpbmQoZGF0YS53b3JsZClcbmRhdGFcbmRhdGEgJTw+JSBtdXRhdGUoY3VycmVudC5jb25maXJtZWQgPSBjb25maXJtZWQgLSBkZWF0aHMgLSByZWNvdmVyZWQpXG5WaWV3KGRhdGEpXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+#clean data
 cleanData &lt;- function(data) {
   ## remove some columns
   data %&lt;&gt;% select(-c(Province.State, Lat, Long)) %&gt;% rename(country=Country.Region)
@@ -318,11 +356,20 @@ data %&lt;&gt;% rbind(data.world)
 data
 data %&lt;&gt;% mutate(current.confirmed = confirmed - deaths - recovered)
 View(data)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBXb3JsZCBjb25maXJtZWQgY2FzZXMgbWFwXG54IDwtIHJhdy5jb25maXJtZWRcbngkY29uZmlybWVkIDwtIHhbLCBuY29sKHgpXVxueCAlPD4lIHNlbGVjdChjKENvdW50cnkuUmVnaW9uLCBQcm92aW5jZS5TdGF0ZSwgTGF0LCBMb25nLCBjb25maXJtZWQpKSAlPiVcbm11dGF0ZSh0eHQ9cGFzdGUwKENvdW50cnkuUmVnaW9uLCAnIC0gJywgUHJvdmluY2UuU3RhdGUsICc6ICcsIGNvbmZpcm1lZCkpXG5tIDwtIGxlYWZsZXQod2lkdGg9MTIwMCwgaGVpZ2h0PTgwMCkgJT4lIGFkZFRpbGVzKClcbiMgY2lyY2xlIG1hcmtlciAodW5pdHMgaW4gcGl4ZWxzKVxubSAlPD4lIGFkZENpcmNsZU1hcmtlcnMoeCRMb25nLCB4JExhdCxcbiAgICAgICAgICAgICAgICAgICAgICAgICMgcmFkaXVzPTIrbG9nMih4JGNvbmZpcm1lZCksXG4gICAgICAgICAgICAgICAgICAgICAgICByYWRpdXM9MC4wMypzcXJ0KHgkY29uZmlybWVkKSxcbiAgICAgICAgICAgICAgICAgICAgICAgIHN0cm9rZT1GLFxuICAgICAgICAgICAgICAgICAgICAgICAgY29sb3I9J3JlZCcsIGZpbGxPcGFjaXR5PTAuMyxcbiAgICAgICAgICAgICAgICAgICAgICAgIGxhYmVsPXgkdHh0KVxuIyB3b3JsZFxubVxuYGBgIn0= -->
-<pre class="r"><code># World confirmed cases map
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyBXb3JsZCBjb25maXJtZWQgY2FzZXMgbWFwXG54IDwtIHJhdy5jb25maXJtZWRcbngkY29uZmlybWVkIDwtIHhbLCBuY29sKHgpXVxueCAlPD4lIHNlbGVjdChjKENvdW50cnkuUmVnaW9uLCBQcm92aW5jZS5TdGF0ZSwgTGF0LCBMb25nLCBjb25maXJtZWQpKSAlPiVcbm11dGF0ZSh0eHQ9cGFzdGUwKENvdW50cnkuUmVnaW9uLCAnIC0gJywgUHJvdmluY2UuU3RhdGUsICc6ICcsIGNvbmZpcm1lZCkpXG5tIDwtIGxlYWZsZXQod2lkdGg9MTIwMCwgaGVpZ2h0PTgwMCkgJT4lIGFkZFRpbGVzKClcbiMgY2lyY2xlIG1hcmtlciAodW5pdHMgaW4gcGl4ZWxzKVxubSAlPD4lIGFkZENpcmNsZU1hcmtlcnMoeCRMb25nLCB4JExhdCxcbiAgICAgICAgICAgICAgICAgICAgICAgICMgcmFkaXVzPTIrbG9nMih4JGNvbmZpcm1lZCksXG4gICAgICAgICAgICAgICAgICAgICAgICByYWRpdXM9MC4wMypzcXJ0KHgkY29uZmlybWVkKSxcbiAgICAgICAgICAgICAgICAgICAgICAgIHN0cm9rZT1GLFxuICAgICAgICAgICAgICAgICAgICAgICAgY29sb3I9J3JlZCcsIGZpbGxPcGFjaXR5PTAuMyxcbiAgICAgICAgICAgICAgICAgICAgICAgIGxhYmVsPXgkdHh0KVxuIyB3b3JsZFxubVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+# World confirmed cases map
 x &lt;- raw.confirmed
 x$confirmed &lt;- x[, ncol(x)]
 x %&lt;&gt;% select(c(Country.Region, Province.State, Lat, Long, confirmed)) %&gt;%
@@ -337,11 +384,20 @@ m %&lt;&gt;% addCircleMarkers(x$Long, x$Lat,
                         label=x$txt)
 # world
 m</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMgQ2hpbmFcbm0gJT4lIHNldFZpZXcoOTUsIDM1LCB6b29tPTQpXG4jIyBBdXN0cmFsaWEgYW5kIE5ldyBaZWFsYW5kXG5tICU+JSBzZXRWaWV3KDEzNSwgLTI3LCB6b29tPTQpXG4jIyBVUyBhbmQgQ2FuYWRhXG5tICU+JSBzZXRWaWV3KC0xMDUsIDQwLCB6b29tPTQpXG4jIyBFdXJvcGVcbm0gJT4lIHNldFZpZXcoMTAsIDUwLCB6b29tPTQpXG5cbmBgYCJ9 -->
-<pre class="r"><code>## China
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyMgQ2hpbmFcbm0gJT4lIHNldFZpZXcoOTUsIDM1LCB6b29tPTQpXG4jIyBBdXN0cmFsaWEgYW5kIE5ldyBaZWFsYW5kXG5tICU+JSBzZXRWaWV3KDEzNSwgLTI3LCB6b29tPTQpXG4jIyBVUyBhbmQgQ2FuYWRhXG5tICU+JSBzZXRWaWV3KC0xMDUsIDQwLCB6b29tPTQpXG4jIyBFdXJvcGVcbm0gJT4lIHNldFZpZXcoMTAsIDUwLCB6b29tPTQpXG5cbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+## China
 m %&gt;% setView(95, 35, zoom=4)
 ## Australia and New Zealand
 m %&gt;% setView(135, -27, zoom=4)
@@ -350,13 +406,28 @@ m %&gt;% setView(-105, 40, zoom=4)
 ## Europe
 m %&gt;% setView(10, 50, zoom=4)
 </code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBuZXcuY29uZmlybWVkIG5ldy5kZWF0aHMgbmV3LnJlY292ZXJlZFxuZGF0YSAlPD4lIGFycmFuZ2UoY291bnRyeSwgZGF0ZSlcbm4gPC0gbnJvdyhkYXRhKVxuZGF5MSA8LSBtaW4oZGF0YSRkYXRlKVxuZGF0YSAlPD4lIG11dGF0ZShuZXcuY29uZmlybWVkID0gaWZlbHNlKGRhdGUgPT0gZGF5MSwgTkEsIGNvbmZpcm1lZCAtIGxhZyhjb25maXJtZWQsIG49MSkpLFxuICAgICAgICAgICAgICAgICBuZXcuZGVhdGhzID0gaWZlbHNlKGRhdGUgPT0gZGF5MSwgTkEsIGRlYXRocyAtIGxhZyhkZWF0aHMsIG49MSkpLFxuICAgICAgICAgICAgICAgICBuZXcucmVjb3ZlcmVkID0gaWZlbHNlKGRhdGUgPT0gZGF5MSwgTkEsIHJlY292ZXJlZCAtIGxhZyhyZWNvdmVyZWQsIG49MSkpKVxuZGF0YSAlPD4lIG11dGF0ZShuZXcuY29uZmlybWVkID0gaWZlbHNlKG5ldy5jb25maXJtZWQgPCAwLCAwLCBuZXcuY29uZmlybWVkKSxcbiAgICAgICAgICAgICAgICAgbmV3LmRlYXRocyA9IGlmZWxzZShuZXcuZGVhdGhzIDwgMCwgMCwgbmV3LmRlYXRocyksXG4gICAgICAgICAgICAgICAgIG5ldy5yZWNvdmVyZWQgPSBpZmVsc2UobmV3LnJlY292ZXJlZCA8IDAsIDAsIG5ldy5yZWNvdmVyZWQpKVxuIyMgZGVhdGggcmF0ZSBiYXNlZCBvbiB0b3RhbCBkZWF0aHMgYW5kIHJlY292ZXJlZCBjYXNlc1xuZGF0YSAlPD4lIG11dGF0ZShyYXRlLnVwcGVyID0gKDEwMCAqIGRlYXRocyAvIChkZWF0aHMgKyByZWNvdmVyZWQpKSAlPiUgcm91bmQoMSksXG4gICAgICAgICAgICAgICAgIHJhdGUudXBwZXIgPSBpZmVsc2UoaXMubmFuKHJhdGUudXBwZXIpLCAwLCByYXRlLnVwcGVyKSlcblxuIyMgbG93ZXIgYm91bmQ6IGRlYXRoIHJhdGUgYmFzZWQgb24gdG90YWwgY29uZmlybWVkIGNhc2VzXG5kYXRhICU8PiUgbXV0YXRlKHJhdGUubG93ZXIgPSAoMTAwICogZGVhdGhzIC8gY29uZmlybWVkKSAlPiUgcm91bmQoMSksXG4gICAgICAgICAgICAgICAgIHJhdGUubG93ZXIgPSBpZmVsc2UoaXMubmFuKHJhdGUubG93ZXIpLCAwLCByYXRlLmxvd2VyKSlcblxuIyMgZGVhdGggcmF0ZSBiYXNlZCBvbiB0aGUgbnVtYmVyIG9mIGRlYXRoL3JlY292ZXJlZCBvbiBldmVyeSBzaW5nbGUgZGF5XG5kYXRhICU8PiUgbXV0YXRlKHJhdGUuZGFpbHkgPSAoMTAwICogbmV3LmRlYXRocyAvIChuZXcuZGVhdGhzICsgbmV3LnJlY292ZXJlZCkpICU+JSByb3VuZCgxKSxcbiAgICAgICAgICAgICAgICAgcmF0ZS5kYWlseSA9IGlmZWxzZShpcy5uYW4ocmF0ZS5kYWlseSksIDAsIHJhdGUuZGFpbHkpKVxuXG5WaWV3KGRhdGEpXG5gYGAifQ== -->
-<pre class="r"><code># new.confirmed new.deaths new.recovered
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyBuZXcuY29uZmlybWVkIG5ldy5kZWF0aHMgbmV3LnJlY292ZXJlZFxuZGF0YSAlPD4lIGFycmFuZ2UoY291bnRyeSwgZGF0ZSlcbm4gPC0gbnJvdyhkYXRhKVxuZGF5MSA8LSBtaW4oZGF0YSRkYXRlKVxuZGF0YSAlPD4lIG11dGF0ZShuZXcuY29uZmlybWVkID0gaWZlbHNlKGRhdGUgPT0gZGF5MSwgTkEsIGNvbmZpcm1lZCAtIGxhZyhjb25maXJtZWQsIG49MSkpLFxuICAgICAgICAgICAgICAgICBuZXcuZGVhdGhzID0gaWZlbHNlKGRhdGUgPT0gZGF5MSwgTkEsIGRlYXRocyAtIGxhZyhkZWF0aHMsIG49MSkpLFxuICAgICAgICAgICAgICAgICBuZXcucmVjb3ZlcmVkID0gaWZlbHNlKGRhdGUgPT0gZGF5MSwgTkEsIHJlY292ZXJlZCAtIGxhZyhyZWNvdmVyZWQsIG49MSkpKVxuZGF0YSAlPD4lIG11dGF0ZShuZXcuY29uZmlybWVkID0gaWZlbHNlKG5ldy5jb25maXJtZWQgPCAwLCAwLCBuZXcuY29uZmlybWVkKSxcbiAgICAgICAgICAgICAgICAgbmV3LmRlYXRocyA9IGlmZWxzZShuZXcuZGVhdGhzIDwgMCwgMCwgbmV3LmRlYXRocyksXG4gICAgICAgICAgICAgICAgIG5ldy5yZWNvdmVyZWQgPSBpZmVsc2UobmV3LnJlY292ZXJlZCA8IDAsIDAsIG5ldy5yZWNvdmVyZWQpKVxuIyMgZGVhdGggcmF0ZSBiYXNlZCBvbiB0b3RhbCBkZWF0aHMgYW5kIHJlY292ZXJlZCBjYXNlc1xuZGF0YSAlPD4lIG11dGF0ZShyYXRlLnVwcGVyID0gKDEwMCAqIGRlYXRocyAvIChkZWF0aHMgKyByZWNvdmVyZWQpKSAlPiUgcm91bmQoMSksXG4gICAgICAgICAgICAgICAgIHJhdGUudXBwZXIgPSBpZmVsc2UoaXMubmFuKHJhdGUudXBwZXIpLCAwLCByYXRlLnVwcGVyKSlcblxuIyMgbG93ZXIgYm91bmQ6IGRlYXRoIHJhdGUgYmFzZWQgb24gdG90YWwgY29uZmlybWVkIGNhc2VzXG5kYXRhICU8PiUgbXV0YXRlKHJhdGUubG93ZXIgPSAoMTAwICogZGVhdGhzIC8gY29uZmlybWVkKSAlPiUgcm91bmQoMSksXG4gICAgICAgICAgICAgICAgIHJhdGUubG93ZXIgPSBpZmVsc2UoaXMubmFuKHJhdGUubG93ZXIpLCAwLCByYXRlLmxvd2VyKSlcblxuIyMgZGVhdGggcmF0ZSBiYXNlZCBvbiB0aGUgbnVtYmVyIG9mIGRlYXRoL3JlY292ZXJlZCBvbiBldmVyeSBzaW5nbGUgZGF5XG5kYXRhICU8PiUgbXV0YXRlKHJhdGUuZGFpbHkgPSAoMTAwICogbmV3LmRlYXRocyAvIChuZXcuZGVhdGhzICsgbmV3LnJlY292ZXJlZCkpICU+JSByb3VuZCgxKSxcbiAgICAgICAgICAgICAgICAgcmF0ZS5kYWlseSA9IGlmZWxzZShpcy5uYW4ocmF0ZS5kYWlseSksIDAsIHJhdGUuZGFpbHkpKVxuXG5WaWV3KGRhdGEpXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+# new.confirmed new.deaths new.recovered
 data %&lt;&gt;% arrange(country, date)
 n &lt;- nrow(data)
 day1 &lt;- min(data$date)
@@ -379,13 +450,27 @@ data %&lt;&gt;% mutate(rate.daily = (100 * new.deaths / (new.deaths + new.recove
                  rate.daily = ifelse(is.nan(rate.daily), 0, rate.daily))
 
 View(data)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMgY29udmVydCBmcm9tIHdpZGUgdG8gbG9uZyBmb3JtYXRcbmRhdGEubG9uZyA8LSBkYXRhICU+JVxuICBzZWxlY3QoYyhjb3VudHJ5LCBkYXRlLCBjb25maXJtZWQsIGN1cnJlbnQuY29uZmlybWVkLCByZWNvdmVyZWQsIGRlYXRocykpICU+JVxuICBnYXRoZXIoa2V5PXR5cGUsIHZhbHVlPWNvdW50LCAtYyhjb3VudHJ5LCBkYXRlKSlcbiMjIHNldCBmYWN0b3IgbGV2ZWxzIHRvIHNob3cgdGhlbSBpbiBhIGRlc2lyYWJsZSBvcmRlclxuZGF0YS5sb25nICU8PiUgbXV0YXRlKHR5cGU9cmVjb2RlX2ZhY3Rvcih0eXBlLCBjb25maXJtZWQ9J1RvdGFsIENvbmZpcm1lZCcsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGN1cnJlbnQuY29uZmlybWVkPSdDdXJyZW50IENvbmZpcm1lZCcsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHJlY292ZXJlZD0nUmVjb3ZlcmVkJyxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZGVhdGhzPSdEZWF0aHMnKSlcblZpZXcoZGF0YS5sb25nKVxuYGBgIn0= -->
-<pre class="r"><code>## convert from wide to long format
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyMgY29udmVydCBmcm9tIHdpZGUgdG8gbG9uZyBmb3JtYXRcbmRhdGEubG9uZyA8LSBkYXRhICU+JVxuICBzZWxlY3QoYyhjb3VudHJ5LCBkYXRlLCBjb25maXJtZWQsIGN1cnJlbnQuY29uZmlybWVkLCByZWNvdmVyZWQsIGRlYXRocykpICU+JVxuICBnYXRoZXIoa2V5PXR5cGUsIHZhbHVlPWNvdW50LCAtYyhjb3VudHJ5LCBkYXRlKSlcbiMjIHNldCBmYWN0b3IgbGV2ZWxzIHRvIHNob3cgdGhlbSBpbiBhIGRlc2lyYWJsZSBvcmRlclxuZGF0YS5sb25nICU8PiUgbXV0YXRlKHR5cGU9cmVjb2RlX2ZhY3Rvcih0eXBlLCBjb25maXJtZWQ9J1RvdGFsIENvbmZpcm1lZCcsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGN1cnJlbnQuY29uZmlybWVkPSdDdXJyZW50IENvbmZpcm1lZCcsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHJlY292ZXJlZD0nUmVjb3ZlcmVkJyxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZGVhdGhzPSdEZWF0aHMnKSlcblZpZXcoZGF0YS5sb25nKVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+## convert from wide to long format
 data.long &lt;- data %&gt;%
   select(c(country, date, confirmed, current.confirmed, recovered, deaths)) %&gt;%
   gather(key=type, value=count, -c(country, date))
@@ -395,13 +480,27 @@ data.long %&lt;&gt;% mutate(type=recode_factor(type, confirmed=&#39;Total Confir
                                          recovered=&#39;Recovered&#39;,
                                          deaths=&#39;Deaths&#39;))
 View(data.long)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGYgPC0gZGF0YS5sb25nICU+JSBmaWx0ZXIoY291bnRyeSAlaW4lIHRvcC5jb3VudHJpZXMpICU8PiVcbiAgbXV0YXRlKGNvdW50cnk9Y291bnRyeSAlPiUgZmFjdG9yKGxldmVscz1jKHRvcC5jb3VudHJpZXMpKSlcbmRmICU+JSBmaWx0ZXIoY291bnRyeSAhPSAnV29ybGQnICYgdHlwZSAhPSAnVG90YWwgQ29uZmlybWVkJykgJT4lXG4gIGdncGxvdChhZXMoeD1kYXRlLCB5PWNvdW50LCBjb2xvcj10eXBlKSkgK1xuICBnZW9tX2xpbmUoKStcbiAgI2dlb21fYXJlYShhbHBoYT0wLjUpICtcbiMgeGxhYignJykgKyB5bGFiKCcnKSArXG4gIGxhYnModGl0bGU9cGFzdGUwKCdOdW1iZXJzIG9mIENPVklELTE5IENhc2VzIGluIFRvcCAyMCBDb3VudHJpZXMgLSAnLFxuICAgICAgICAgICAgICAgICAgICBtYXguZGF0ZS50eHQpKSArXG4gIHNjYWxlX2NvbG9yX21hbnVhbCh2YWx1ZXM9YygncmVkJywgJ2dyZWVuJywgJ2JsYWNrJykpICtcbiAgdGhlbWUobGVnZW5kLnRpdGxlPWVsZW1lbnRfYmxhbmsoKSwgbGVnZW5kLnBvc2l0aW9uPSdib3R0b20nLFxuICAgICAgICBwbG90LnRpdGxlID0gZWxlbWVudF90ZXh0KHNpemU9MTIpLFxuICAgICAgICBheGlzLnRpdGxlLng9ZWxlbWVudF9ibGFuaygpLFxuICAgICAgICBheGlzLnRpdGxlLnk9ZWxlbWVudF9ibGFuaygpLFxuICAgICAgICBsZWdlbmQua2V5LnNpemU9dW5pdCgwLjQsICdjbScpLFxuICAgICAgICBsZWdlbmQudGV4dD1lbGVtZW50X3RleHQoc2l6ZT0xMiksXG4gICAgICAgIHN0cmlwLnRleHQueD1lbGVtZW50X3RleHQoc2l6ZT0xMiksXG4gICAgICAgIGF4aXMudGV4dD1lbGVtZW50X3RleHQoc2l6ZT0xMiksXG4gICAgICAgIGF4aXMudGV4dC54PWVsZW1lbnRfdGV4dChhbmdsZT00NSwgaGp1c3Q9MSkpICtcbiAgZmFjZXRfd3JhcCh+Y291bnRyeSwgbmNvbD00LCBzY2FsZXM9J2ZyZWVfeScpICtcbiAgc2NhbGVfeV9jb250aW51b3VzKHRyYW5zPSdsb2cxMCcpXG5cbmBgYCJ9 -->
-<pre class="r"><code>df &lt;- data.long %&gt;% filter(country %in% top.countries) %&lt;&gt;%
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZGYgPC0gZGF0YS5sb25nICU+JSBmaWx0ZXIoY291bnRyeSAlaW4lIHRvcC5jb3VudHJpZXMpICU8PiVcbiAgbXV0YXRlKGNvdW50cnk9Y291bnRyeSAlPiUgZmFjdG9yKGxldmVscz1jKHRvcC5jb3VudHJpZXMpKSlcbmRmICU+JSBmaWx0ZXIoY291bnRyeSAhPSAnV29ybGQnICYgdHlwZSAhPSAnVG90YWwgQ29uZmlybWVkJykgJT4lXG4gIGdncGxvdChhZXMoeD1kYXRlLCB5PWNvdW50LCBjb2xvcj10eXBlKSkgK1xuICBnZW9tX2xpbmUoKStcbiAgI2dlb21fYXJlYShhbHBoYT0wLjUpICtcbiMgeGxhYignJykgKyB5bGFiKCcnKSArXG4gIGxhYnModGl0bGU9cGFzdGUwKCdOdW1iZXJzIG9mIENPVklELTE5IENhc2VzIGluIFRvcCAyMCBDb3VudHJpZXMgLSAnLFxuICAgICAgICAgICAgICAgICAgICBtYXguZGF0ZS50eHQpKSArXG4gIHNjYWxlX2NvbG9yX21hbnVhbCh2YWx1ZXM9YygncmVkJywgJ2dyZWVuJywgJ2JsYWNrJykpICtcbiAgdGhlbWUobGVnZW5kLnRpdGxlPWVsZW1lbnRfYmxhbmsoKSwgbGVnZW5kLnBvc2l0aW9uPSdib3R0b20nLFxuICAgICAgICBwbG90LnRpdGxlID0gZWxlbWVudF90ZXh0KHNpemU9MTIpLFxuICAgICAgICBheGlzLnRpdGxlLng9ZWxlbWVudF9ibGFuaygpLFxuICAgICAgICBheGlzLnRpdGxlLnk9ZWxlbWVudF9ibGFuaygpLFxuICAgICAgICBsZWdlbmQua2V5LnNpemU9dW5pdCgwLjQsICdjbScpLFxuICAgICAgICBsZWdlbmQudGV4dD1lbGVtZW50X3RleHQoc2l6ZT0xMiksXG4gICAgICAgIHN0cmlwLnRleHQueD1lbGVtZW50X3RleHQoc2l6ZT0xMiksXG4gICAgICAgIGF4aXMudGV4dD1lbGVtZW50X3RleHQoc2l6ZT0xMiksXG4gICAgICAgIGF4aXMudGV4dC54PWVsZW1lbnRfdGV4dChhbmdsZT00NSwgaGp1c3Q9MSkpICtcbiAgZmFjZXRfd3JhcCh+Y291bnRyeSwgbmNvbD00LCBzY2FsZXM9J2ZyZWVfeScpICtcbiAgc2NhbGVfeV9jb250aW51b3VzKHRyYW5zPSdsb2cxMCcpXG5cbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+df &lt;- data.long %&gt;% filter(country %in% top.countries) %&lt;&gt;%
   mutate(country=country %&gt;% factor(levels=c(top.countries)))
 df %&gt;% filter(country != &#39;World&#39; &amp; type != &#39;Total Confirmed&#39;) %&gt;%
   ggplot(aes(x=date, y=count, color=type)) +
@@ -423,13 +522,28 @@ df %&gt;% filter(country != &#39;World&#39; &amp; type != &#39;Total Confirmed&#
   facet_wrap(~country, ncol=4, scales=&#39;free_y&#39;) +
   scale_y_continuous(trans=&#39;log10&#39;)
 </code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyNOdW1iZXIgb2YgY2FzZSBXb3JsZFxud29ybGQgPC0gZmlsdGVyKGRhdGEubG9uZyxjb3VudHJ5ID09ICdXb3JsZCcpXG53b3JsZFxucGxvdDEgPC0gd29ybGQgJT4lIGZpbHRlcih0eXBlICE9ICdUb3RhbCBDb25maXJtZWQnKSAlPiVcbiAgZ2dwbG90KGFlcyh4PWRhdGUsIHk9Y291bnQpKSArXG4gIGdlb21fYXJlYShhZXMoZmlsbD10eXBlKSwgYWxwaGE9MC41KSArXG4gIGxhYnModGl0bGU9cGFzdGUwKCdOdW1iZXJzIG9mIENhc2VzIFdvcmxkd2lkZSAtICcsIG1heC5kYXRlLnR4dCkpICtcbiAgc2NhbGVfZmlsbF9tYW51YWwodmFsdWVzPWMoJ3JlZCcsICdncmVlbicsICdibGFjaycpKSArXG4gIHRoZW1lKGxlZ2VuZC50aXRsZT1lbGVtZW50X2JsYW5rKCksIGxlZ2VuZC5wb3NpdGlvbj0nYm90dG9tJyxcbiAgICAgICAgcGxvdC50aXRsZSA9IGVsZW1lbnRfdGV4dChzaXplPTcpLFxuICAgICAgICBheGlzLnRpdGxlLng9ZWxlbWVudF9ibGFuaygpLFxuICAgICAgICBheGlzLnRpdGxlLnk9ZWxlbWVudF9ibGFuaygpLFxuICAgICAgICBsZWdlbmQua2V5LnNpemU9dW5pdCgwLjIsICdjbScpLFxuICAgICAgICBsZWdlbmQudGV4dD1lbGVtZW50X3RleHQoc2l6ZT02KSxcbiAgICAgICAgYXhpcy50ZXh0PWVsZW1lbnRfdGV4dChzaXplPTcpLFxuICAgICAgICBheGlzLnRleHQueD1lbGVtZW50X3RleHQoYW5nbGU9NDUsIGhqdXN0PTEpKVxucGxvdDIgPC0gd29ybGQgJT4lXG4gIGdncGxvdChhZXMoeD1kYXRlLCB5PWNvdW50KSkgK1xuICBnZW9tX2xpbmUoYWVzKGNvbG9yPXR5cGUpKSArXG4gIGxhYnModGl0bGU9cGFzdGUwKCdOdW1iZXJzIG9mIENhc2VzIFdvcmxkd2lkZSAobG9nIHNjYWxlKSAtICcsIG1heC5kYXRlLnR4dCkpICtcbiAgc2NhbGVfY29sb3JfbWFudWFsKHZhbHVlcz1jKCdwdXJwbGUnLCAncmVkJywgJ2dyZWVuJywgJ2JsYWNrJykpICtcbiAgdGhlbWUobGVnZW5kLnRpdGxlPWVsZW1lbnRfYmxhbmsoKSwgbGVnZW5kLnBvc2l0aW9uPSdib3R0b20nLFxuICAgICAgICBwbG90LnRpdGxlID0gZWxlbWVudF90ZXh0KHNpemU9NyksXG4gICAgICAgIGF4aXMudGl0bGUueD1lbGVtZW50X2JsYW5rKCksXG4gICAgICAgIGF4aXMudGl0bGUueT1lbGVtZW50X2JsYW5rKCksXG4gICAgICAgIGxlZ2VuZC5rZXkuc2l6ZT11bml0KDAuMiwgJ2NtJyksXG4gICAgICAgIGxlZ2VuZC50ZXh0PWVsZW1lbnRfdGV4dChzaXplPTYpLFxuICAgICAgICBheGlzLnRleHQ9ZWxlbWVudF90ZXh0KHNpemU9NyksXG4gICAgICAgIGF4aXMudGV4dC54PWVsZW1lbnRfdGV4dChhbmdsZT00NSwgaGp1c3Q9MSkpICtcbiAgc2NhbGVfeV9jb250aW51b3VzKHRyYW5zPSdsb2cxMCcpXG4jIyBzaG93IHR3byBwbG90cyBzaWRlIGJ5IHNpZGVcbmdyaWQuYXJyYW5nZShwbG90MSwgcGxvdDIsIG5jb2w9MilcblxuZ2x5LnBsb3QxIDwtIGdncGxvdGx5KHBsb3QxKVxuZ2x5LnBsb3QxXG5cbmdseS5wbG90MiA8LSBnZ3Bsb3RseShwbG90MilcbmdseS5wbG90MlxuYGBgIn0= -->
-<pre class="r"><code>##Number of case World
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyNOdW1iZXIgb2YgY2FzZSBXb3JsZFxud29ybGQgPC0gZmlsdGVyKGRhdGEubG9uZyxjb3VudHJ5ID09ICdXb3JsZCcpXG53b3JsZFxucGxvdDEgPC0gd29ybGQgJT4lIGZpbHRlcih0eXBlICE9ICdUb3RhbCBDb25maXJtZWQnKSAlPiVcbiAgZ2dwbG90KGFlcyh4PWRhdGUsIHk9Y291bnQpKSArXG4gIGdlb21fYXJlYShhZXMoZmlsbD10eXBlKSwgYWxwaGE9MC41KSArXG4gIGxhYnModGl0bGU9cGFzdGUwKCdOdW1iZXJzIG9mIENhc2VzIFdvcmxkd2lkZSAtICcsIG1heC5kYXRlLnR4dCkpICtcbiAgc2NhbGVfZmlsbF9tYW51YWwodmFsdWVzPWMoJ3JlZCcsICdncmVlbicsICdibGFjaycpKSArXG4gIHRoZW1lKGxlZ2VuZC50aXRsZT1lbGVtZW50X2JsYW5rKCksIGxlZ2VuZC5wb3NpdGlvbj0nYm90dG9tJyxcbiAgICAgICAgcGxvdC50aXRsZSA9IGVsZW1lbnRfdGV4dChzaXplPTcpLFxuICAgICAgICBheGlzLnRpdGxlLng9ZWxlbWVudF9ibGFuaygpLFxuICAgICAgICBheGlzLnRpdGxlLnk9ZWxlbWVudF9ibGFuaygpLFxuICAgICAgICBsZWdlbmQua2V5LnNpemU9dW5pdCgwLjIsICdjbScpLFxuICAgICAgICBsZWdlbmQudGV4dD1lbGVtZW50X3RleHQoc2l6ZT02KSxcbiAgICAgICAgYXhpcy50ZXh0PWVsZW1lbnRfdGV4dChzaXplPTcpLFxuICAgICAgICBheGlzLnRleHQueD1lbGVtZW50X3RleHQoYW5nbGU9NDUsIGhqdXN0PTEpKVxucGxvdDIgPC0gd29ybGQgJT4lXG4gIGdncGxvdChhZXMoeD1kYXRlLCB5PWNvdW50KSkgK1xuICBnZW9tX2xpbmUoYWVzKGNvbG9yPXR5cGUpKSArXG4gIGxhYnModGl0bGU9cGFzdGUwKCdOdW1iZXJzIG9mIENhc2VzIFdvcmxkd2lkZSAobG9nIHNjYWxlKSAtICcsIG1heC5kYXRlLnR4dCkpICtcbiAgc2NhbGVfY29sb3JfbWFudWFsKHZhbHVlcz1jKCdwdXJwbGUnLCAncmVkJywgJ2dyZWVuJywgJ2JsYWNrJykpICtcbiAgdGhlbWUobGVnZW5kLnRpdGxlPWVsZW1lbnRfYmxhbmsoKSwgbGVnZW5kLnBvc2l0aW9uPSdib3R0b20nLFxuICAgICAgICBwbG90LnRpdGxlID0gZWxlbWVudF90ZXh0KHNpemU9NyksXG4gICAgICAgIGF4aXMudGl0bGUueD1lbGVtZW50X2JsYW5rKCksXG4gICAgICAgIGF4aXMudGl0bGUueT1lbGVtZW50X2JsYW5rKCksXG4gICAgICAgIGxlZ2VuZC5rZXkuc2l6ZT11bml0KDAuMiwgJ2NtJyksXG4gICAgICAgIGxlZ2VuZC50ZXh0PWVsZW1lbnRfdGV4dChzaXplPTYpLFxuICAgICAgICBheGlzLnRleHQ9ZWxlbWVudF90ZXh0KHNpemU9NyksXG4gICAgICAgIGF4aXMudGV4dC54PWVsZW1lbnRfdGV4dChhbmdsZT00NSwgaGp1c3Q9MSkpICtcbiAgc2NhbGVfeV9jb250aW51b3VzKHRyYW5zPSdsb2cxMCcpXG4jIyBzaG93IHR3byBwbG90cyBzaWRlIGJ5IHNpZGVcbmdyaWQuYXJyYW5nZShwbG90MSwgcGxvdDIsIG5jb2w9MilcblxuZ2x5LnBsb3QxIDwtIGdncGxvdGx5KHBsb3QxKVxuZ2x5LnBsb3QxXG5cbmdseS5wbG90MiA8LSBnZ3Bsb3RseShwbG90MilcbmdseS5wbG90MlxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+##Number of case World
 world &lt;- filter(data.long,country == &#39;World&#39;)
 world
 plot1 &lt;- world %&gt;% filter(type != &#39;Total Confirmed&#39;) %&gt;%
@@ -467,13 +581,27 @@ gly.plot1
 
 gly.plot2 &lt;- ggplotly(plot2)
 gly.plot2</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMgQ3VycmVudCBDb25maXJtZWQgQ2FzZXNcbmRhdGEud29ybGQgPC0gZGF0YSAlPiUgZmlsdGVyKGNvdW50cnk9PSdXb3JsZCcpXG5uIDwtIG5yb3coZGF0YS53b3JsZClcbnBsb3QxIDwtIGdncGxvdChkYXRhLndvcmxkLCBhZXMoeD1kYXRlLCB5PWN1cnJlbnQuY29uZmlybWVkKSkgK1xuICBnZW9tX3BvaW50KCkgKyBnZW9tX3Ntb290aCgpICtcbiAgeGxhYignJykgKyB5bGFiKCdDb3VudCcpICsgbGFicyh0aXRsZT0nQ3VycmVudCBDb25maXJtZWQgQ2FzZXMnKSArXG4gIHRoZW1lKGF4aXMudGV4dC54PWVsZW1lbnRfdGV4dChhbmdsZT00NSwgaGp1c3Q9MSkpXG5wbG90MiA8LSBnZ3Bsb3QoZGF0YS53b3JsZCwgYWVzKHg9ZGF0ZSwgeT1uZXcuY29uZmlybWVkKSkgK1xuICBnZW9tX3BvaW50KCkgKyBnZW9tX3Ntb290aCgpICtcbiAgeGxhYignJykgKyB5bGFiKCdDb3VudCcpICsgbGFicyh0aXRsZT0nRGFpbHkgTmV3IENvbmZpcm1lZCBDYXNlcycpICtcbiAgdGhlbWUoYXhpcy50ZXh0Lng9ZWxlbWVudF90ZXh0KGFuZ2xlPTQ1LCBoanVzdD0xKSlcbiMjIHNob3cgdHdvIHBsb3RzIHNpZGUgYnkgc2lkZVxuZ3JpZC5hcnJhbmdlKHBsb3QxLCBwbG90MiwgbmNvbD0yKVxuXG5WaWV3KGRhdGEud29ybGQpXG5gYGAifQ== -->
-<pre class="r"><code>## Current Confirmed Cases
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyMgQ3VycmVudCBDb25maXJtZWQgQ2FzZXNcbmRhdGEud29ybGQgPC0gZGF0YSAlPiUgZmlsdGVyKGNvdW50cnk9PSdXb3JsZCcpXG5uIDwtIG5yb3coZGF0YS53b3JsZClcbnBsb3QxIDwtIGdncGxvdChkYXRhLndvcmxkLCBhZXMoeD1kYXRlLCB5PWN1cnJlbnQuY29uZmlybWVkKSkgK1xuICBnZW9tX3BvaW50KCkgKyBnZW9tX3Ntb290aCgpICtcbiAgeGxhYignJykgKyB5bGFiKCdDb3VudCcpICsgbGFicyh0aXRsZT0nQ3VycmVudCBDb25maXJtZWQgQ2FzZXMnKSArXG4gIHRoZW1lKGF4aXMudGV4dC54PWVsZW1lbnRfdGV4dChhbmdsZT00NSwgaGp1c3Q9MSkpXG5wbG90MiA8LSBnZ3Bsb3QoZGF0YS53b3JsZCwgYWVzKHg9ZGF0ZSwgeT1uZXcuY29uZmlybWVkKSkgK1xuICBnZW9tX3BvaW50KCkgKyBnZW9tX3Ntb290aCgpICtcbiAgeGxhYignJykgKyB5bGFiKCdDb3VudCcpICsgbGFicyh0aXRsZT0nRGFpbHkgTmV3IENvbmZpcm1lZCBDYXNlcycpICtcbiAgdGhlbWUoYXhpcy50ZXh0Lng9ZWxlbWVudF90ZXh0KGFuZ2xlPTQ1LCBoanVzdD0xKSlcbiMjIHNob3cgdHdvIHBsb3RzIHNpZGUgYnkgc2lkZVxuZ3JpZC5hcnJhbmdlKHBsb3QxLCBwbG90MiwgbmNvbD0yKVxuXG5WaWV3KGRhdGEud29ybGQpXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+## Current Confirmed Cases
 data.world &lt;- data %&gt;% filter(country==&#39;World&#39;)
 n &lt;- nrow(data.world)
 plot1 &lt;- ggplot(data.world, aes(x=date, y=current.confirmed)) +
@@ -488,11 +616,20 @@ plot2 &lt;- ggplot(data.world, aes(x=date, y=new.confirmed)) +
 grid.arrange(plot1, plot2, ncol=2)
 
 View(data.world)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMgYSBzY2F0dGVyIHBsb3Qgd2l0aCBhIHNtb290aGVkIGxpbmUgYW5kIHZlcnRpY2FsIHgtYXhpcyBsYWJlbHNcbnBsb3QxIDwtIGdncGxvdChkYXRhLndvcmxkLCBhZXMoeD1kYXRlLCB5PWRlYXRocykpICtcbiAgZ2VvbV9wb2ludCgpICsgZ2VvbV9zbW9vdGgoKSArXG4gIHhsYWIoJycpICsgeWxhYignQ291bnQnKSArIGxhYnModGl0bGU9J0FjY3VtdWxhdGl2ZSBEZWF0aHMnKSArXG4gIHRoZW1lKGF4aXMudGV4dC54PWVsZW1lbnRfdGV4dChhbmdsZT00NSwgaGp1c3Q9MSkpXG5wbG90MiA8LSBnZ3Bsb3QoZGF0YS53b3JsZCwgYWVzKHg9ZGF0ZSwgeT1yZWNvdmVyZWQpKSArXG4gIGdlb21fcG9pbnQoKSArIGdlb21fc21vb3RoKCkgK1xuICB4bGFiKCcnKSArIHlsYWIoJ0NvdW50JykgKyBsYWJzKHRpdGxlPSdBY2N1bXVsYXRpdmUgUmVjb3ZlcmVkIENhc2VzJykgK1xuICB0aGVtZShheGlzLnRleHQueD1lbGVtZW50X3RleHQoYW5nbGU9NDUsIGhqdXN0PTEpKVxucGxvdDMgPC0gZ2dwbG90KGRhdGEud29ybGQsIGFlcyh4PWRhdGUsIHk9bmV3LmRlYXRocykpICtcbiAgZ2VvbV9wb2ludCgpICsgZ2VvbV9zbW9vdGgoKSArXG4gIHhsYWIoJycpICsgeWxhYignQ291bnQnKSArIGxhYnModGl0bGU9J05ldyBEZWF0aHMnKSArXG4gIHRoZW1lKGF4aXMudGV4dC54PWVsZW1lbnRfdGV4dChhbmdsZT00NSwgaGp1c3Q9MSkpXG5wbG90NCA8LSBnZ3Bsb3QoZGF0YS53b3JsZCwgYWVzKHg9ZGF0ZSwgeT1uZXcucmVjb3ZlcmVkKSkgK1xuICBnZW9tX3BvaW50KCkgKyBnZW9tX3Ntb290aCgpICtcbiAgeGxhYignJykgKyB5bGFiKCdDb3VudCcpICsgbGFicyh0aXRsZT0nTmV3IFJlY292ZXJlZCBDYXNlcycpICtcbiAgdGhlbWUoYXhpcy50ZXh0Lng9ZWxlbWVudF90ZXh0KGFuZ2xlPTQ1LCBoanVzdD0xKSlcbiMjIHNob3cgZm91ciBwbG90cyB0b2dldGhlciwgd2l0aCAyIHBsb3RzIGluIGVhY2ggcm93XG5ncmlkLmFycmFuZ2UocGxvdDEsIHBsb3QyLCBwbG90MywgcGxvdDQsIG5yb3c9MilcblxuYGBgIn0= -->
-<pre class="r"><code>## a scatter plot with a smoothed line and vertical x-axis labels
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyMgYSBzY2F0dGVyIHBsb3Qgd2l0aCBhIHNtb290aGVkIGxpbmUgYW5kIHZlcnRpY2FsIHgtYXhpcyBsYWJlbHNcbnBsb3QxIDwtIGdncGxvdChkYXRhLndvcmxkLCBhZXMoeD1kYXRlLCB5PWRlYXRocykpICtcbiAgZ2VvbV9wb2ludCgpICsgZ2VvbV9zbW9vdGgoKSArXG4gIHhsYWIoJycpICsgeWxhYignQ291bnQnKSArIGxhYnModGl0bGU9J0FjY3VtdWxhdGl2ZSBEZWF0aHMnKSArXG4gIHRoZW1lKGF4aXMudGV4dC54PWVsZW1lbnRfdGV4dChhbmdsZT00NSwgaGp1c3Q9MSkpXG5wbG90MiA8LSBnZ3Bsb3QoZGF0YS53b3JsZCwgYWVzKHg9ZGF0ZSwgeT1yZWNvdmVyZWQpKSArXG4gIGdlb21fcG9pbnQoKSArIGdlb21fc21vb3RoKCkgK1xuICB4bGFiKCcnKSArIHlsYWIoJ0NvdW50JykgKyBsYWJzKHRpdGxlPSdBY2N1bXVsYXRpdmUgUmVjb3ZlcmVkIENhc2VzJykgK1xuICB0aGVtZShheGlzLnRleHQueD1lbGVtZW50X3RleHQoYW5nbGU9NDUsIGhqdXN0PTEpKVxucGxvdDMgPC0gZ2dwbG90KGRhdGEud29ybGQsIGFlcyh4PWRhdGUsIHk9bmV3LmRlYXRocykpICtcbiAgZ2VvbV9wb2ludCgpICsgZ2VvbV9zbW9vdGgoKSArXG4gIHhsYWIoJycpICsgeWxhYignQ291bnQnKSArIGxhYnModGl0bGU9J05ldyBEZWF0aHMnKSArXG4gIHRoZW1lKGF4aXMudGV4dC54PWVsZW1lbnRfdGV4dChhbmdsZT00NSwgaGp1c3Q9MSkpXG5wbG90NCA8LSBnZ3Bsb3QoZGF0YS53b3JsZCwgYWVzKHg9ZGF0ZSwgeT1uZXcucmVjb3ZlcmVkKSkgK1xuICBnZW9tX3BvaW50KCkgKyBnZW9tX3Ntb290aCgpICtcbiAgeGxhYignJykgKyB5bGFiKCdDb3VudCcpICsgbGFicyh0aXRsZT0nTmV3IFJlY292ZXJlZCBDYXNlcycpICtcbiAgdGhlbWUoYXhpcy50ZXh0Lng9ZWxlbWVudF90ZXh0KGFuZ2xlPTQ1LCBoanVzdD0xKSlcbiMjIHNob3cgZm91ciBwbG90cyB0b2dldGhlciwgd2l0aCAyIHBsb3RzIGluIGVhY2ggcm93XG5ncmlkLmFycmFuZ2UocGxvdDEsIHBsb3QyLCBwbG90MywgcGxvdDQsIG5yb3c9MilcblxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+## a scatter plot with a smoothed line and vertical x-axis labels
 plot1 &lt;- ggplot(data.world, aes(x=date, y=deaths)) +
   geom_point() + geom_smooth() +
   xlab(&#39;&#39;) + ylab(&#39;Count&#39;) + labs(title=&#39;Accumulative Deaths&#39;) +
@@ -512,13 +649,27 @@ plot4 &lt;- ggplot(data.world, aes(x=date, y=new.recovered)) +
 ## show four plots together, with 2 plots in each row
 grid.arrange(plot1, plot2, plot3, plot4, nrow=2)
 </code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMgY29udmVydCBmcm9tIHdpZGUgdG8gbG9uZyBmb3JtYXQsIGZvciBkcmF3aW5nIGFyZWEgcGxvdHNcbnJhdGVzLmxvbmcgPC0gZGF0YSAlPiVcbiAgc2VsZWN0KGMoY291bnRyeSwgZGF0ZSwgcmF0ZS51cHBlciwgcmF0ZS5sb3dlciwgcmF0ZS5kYWlseSkpICU+JVxuICBnYXRoZXIoa2V5PXR5cGUsIHZhbHVlPWNvdW50LCAtYyhjb3VudHJ5LCBkYXRlKSlcbiMgc2V0IGZhY3RvciBsZXZlbHMgdG8gc2hvdyB0aGVtIGluIGEgZGVzaXJhYmxlIG9yZGVyXG5yYXRlcy5sb25nICU8PiUgbXV0YXRlKHR5cGU9cmVjb2RlX2ZhY3Rvcih0eXBlLCByYXRlLmRhaWx5PSdEYWlseScsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgIHJhdGUudXBwZXI9J1VwcGVyIGJvdW5kJyxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcmF0ZS5sb3dlciA9ICdMb3dlciBib3VuZCcpKSBcbiNWaWV3KHJhdGVzLmxvbmcpIFxuXG5nIDwtIHJhdGVzLmxvbmcgJT4lIGZpbHRlcihjb3VudHJ5ID09IFwiV29ybGRcIikgJT4lIFxuICBnZ3Bsb3QoYWVzKHggPSBkYXRlLCB5ID0gY291bnQsIGNvbG9yID0gdHlwZSkpICsgXG4gIGdlb21fbGluZSgpICtcbiAgbGFicyh0aXRsZSA9IFwiV29ybGQgRGVhdGggUmF0ZSAoJSlcIikgK1xuICB4bGFiKFwiXCIpICsgeWxhYihcIkRlYXRoIFJhdGUgKCUpXCIpXG5cbmdcblxuZ2x5LmRlYXRoIDwtIGdncGxvdGx5KGcpXG5nbHkuZGVhdGhcbmBgYCJ9 -->
-<pre class="r"><code>## convert from wide to long format, for drawing area plots
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyMgY29udmVydCBmcm9tIHdpZGUgdG8gbG9uZyBmb3JtYXQsIGZvciBkcmF3aW5nIGFyZWEgcGxvdHNcbnJhdGVzLmxvbmcgPC0gZGF0YSAlPiVcbiAgc2VsZWN0KGMoY291bnRyeSwgZGF0ZSwgcmF0ZS51cHBlciwgcmF0ZS5sb3dlciwgcmF0ZS5kYWlseSkpICU+JVxuICBnYXRoZXIoa2V5PXR5cGUsIHZhbHVlPWNvdW50LCAtYyhjb3VudHJ5LCBkYXRlKSlcbiMgc2V0IGZhY3RvciBsZXZlbHMgdG8gc2hvdyB0aGVtIGluIGEgZGVzaXJhYmxlIG9yZGVyXG5yYXRlcy5sb25nICU8PiUgbXV0YXRlKHR5cGU9cmVjb2RlX2ZhY3Rvcih0eXBlLCByYXRlLmRhaWx5PSdEYWlseScsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgIHJhdGUudXBwZXI9J1VwcGVyIGJvdW5kJyxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcmF0ZS5sb3dlciA9ICdMb3dlciBib3VuZCcpKSBcbiNWaWV3KHJhdGVzLmxvbmcpIFxuXG5nIDwtIHJhdGVzLmxvbmcgJT4lIGZpbHRlcihjb3VudHJ5ID09IFxcV29ybGRcXCkgJT4lIFxuICBnZ3Bsb3QoYWVzKHggPSBkYXRlLCB5ID0gY291bnQsIGNvbG9yID0gdHlwZSkpICsgXG4gIGdlb21fbGluZSgpICtcbiAgbGFicyh0aXRsZSA9IFxcV29ybGQgRGVhdGggUmF0ZSAoJSlcXCkgK1xuICB4bGFiKFxcXFwpICsgeWxhYihcXERlYXRoIFJhdGUgKCUpXFwpXG5cbmdcblxuZ2x5LmRlYXRoIDwtIGdncGxvdGx5KGcpXG5nbHkuZGVhdGhcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+## convert from wide to long format, for drawing area plots
 rates.long &lt;- data %&gt;%
   select(c(country, date, rate.upper, rate.lower, rate.daily)) %&gt;%
   gather(key=type, value=count, -c(country, date))
@@ -528,23 +679,37 @@ rates.long %&lt;&gt;% mutate(type=recode_factor(type, rate.daily=&#39;Daily&#39;
                              rate.lower = &#39;Lower bound&#39;)) 
 #View(rates.long) 
 
-g &lt;- rates.long %&gt;% filter(country == &quot;World&quot;) %&gt;% 
+g &lt;- rates.long %&gt;% filter(country == \World\) %&gt;% 
   ggplot(aes(x = date, y = count, color = type)) + 
   geom_line() +
-  labs(title = &quot;World Death Rate (%)&quot;) +
-  xlab(&quot;&quot;) + ylab(&quot;Death Rate (%)&quot;)
+  labs(title = \World Death Rate (%)\) +
+  xlab(\\) + ylab(\Death Rate (%)\)
 
 g
 
 gly.death &lt;- ggplotly(g)
 gly.death</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMgcmFua2luZyBieSBjb25maXJtZWQgY2FzZXNcbmRhdGEubGF0ZXN0LmFsbCA8LSBkYXRhICU+JSBmaWx0ZXIoZGF0ZSA9PSBtYXgoZGF0ZSkpICU+JVxuICBzZWxlY3QoY291bnRyeSwgZGF0ZSxjb25maXJtZWQsIG5ldy5jb25maXJtZWQsIGN1cnJlbnQuY29uZmlybWVkLFxuICAgICAgICAgcmVjb3ZlcmVkLCBkZWF0aHMsIG5ldy5kZWF0aHMsIGRlYXRoLnJhdGU9cmF0ZS5sb3dlcikgJT4lXG4gIG11dGF0ZShyYW5raW5nID0gZGVuc2VfcmFuayhkZXNjKGNvbmZpcm1lZCkpKSAlPiVcbiAgYXJyYW5nZShyYW5raW5nKVxuVmlldyhkYXRhLmxhdGVzdC5hbGwpXG5cbmsgPC0gMjBcbiMjIHRvcCAyMCBjb3VudHJpZXM6IDIxIGluY2wuICdXb3JsZCdcbnRvcC5jb3VudHJpZXMgPC0gZGF0YS5sYXRlc3QuYWxsICU+JSBmaWx0ZXIocmFua2luZyA8PSBrICsgMSkgJT4lXG4gIGFycmFuZ2UocmFua2luZykgJT4lIHB1bGwoY291bnRyeSkgJT4lIGFzLmNoYXJhY3RlcigpXG50b3AuY291bnRyaWVzICU+JSBzZXRkaWZmKCdXb3JsZCcpICU+JSBwcmludCgpXG5gYGAifQ== -->
-<pre class="r"><code>## ranking by confirmed cases
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyMgcmFua2luZyBieSBjb25maXJtZWQgY2FzZXNcbmRhdGEubGF0ZXN0LmFsbCA8LSBkYXRhICU+JSBmaWx0ZXIoZGF0ZSA9PSBtYXgoZGF0ZSkpICU+JVxuICBzZWxlY3QoY291bnRyeSwgZGF0ZSxjb25maXJtZWQsIG5ldy5jb25maXJtZWQsIGN1cnJlbnQuY29uZmlybWVkLFxuICAgICAgICAgcmVjb3ZlcmVkLCBkZWF0aHMsIG5ldy5kZWF0aHMsIGRlYXRoLnJhdGU9cmF0ZS5sb3dlcikgJT4lXG4gIG11dGF0ZShyYW5raW5nID0gZGVuc2VfcmFuayhkZXNjKGNvbmZpcm1lZCkpKSAlPiVcbiAgYXJyYW5nZShyYW5raW5nKVxuVmlldyhkYXRhLmxhdGVzdC5hbGwpXG5cbmsgPC0gMjBcbiMjIHRvcCAyMCBjb3VudHJpZXM6IDIxIGluY2wuICdXb3JsZCdcbnRvcC5jb3VudHJpZXMgPC0gZGF0YS5sYXRlc3QuYWxsICU+JSBmaWx0ZXIocmFua2luZyA8PSBrICsgMSkgJT4lXG4gIGFycmFuZ2UocmFua2luZykgJT4lIHB1bGwoY291bnRyeSkgJT4lIGFzLmNoYXJhY3RlcigpXG50b3AuY291bnRyaWVzICU+JSBzZXRkaWZmKCdXb3JsZCcpICU+JSBwcmludCgpXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+## ranking by confirmed cases
 data.latest.all &lt;- data %&gt;% filter(date == max(date)) %&gt;%
   select(country, date,confirmed, new.confirmed, current.confirmed,
          recovered, deaths, new.deaths, death.rate=rate.lower) %&gt;%
@@ -557,13 +722,27 @@ k &lt;- 20
 top.countries &lt;- data.latest.all %&gt;% filter(ranking &lt;= k + 1) %&gt;%
   arrange(ranking) %&gt;% pull(country) %&gt;% as.character()
 top.countries %&gt;% setdiff(&#39;World&#39;) %&gt;% print()</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YS5sYXRlc3QgPC0gZGF0YS5sYXRlc3QuYWxsICU+JSBmaWx0ZXIoIWlzLm5hKGNvdW50cnkpKSAlPiVcbiAgbXV0YXRlKGNvdW50cnk9aWZlbHNlKHJhbmtpbmcgPD0gayArIDEsIGFzLmNoYXJhY3Rlcihjb3VudHJ5KSwgJ090aGVycycpKSAlPiVcbiAgbXV0YXRlKGNvdW50cnk9Y291bnRyeSAlPiUgZmFjdG9yKGxldmVscz1jKHRvcC5jb3VudHJpZXMsICdPdGhlcnMnKSkpXG5kYXRhLmxhdGVzdCAlPD4lIGdyb3VwX2J5KGNvdW50cnkpICU+JVxuICBzdW1tYXJpc2UoY29uZmlybWVkPXN1bShjb25maXJtZWQpLCBuZXcuY29uZmlybWVkPXN1bShuZXcuY29uZmlybWVkKSxcbiAgICAgICAgICAgIGN1cnJlbnQuY29uZmlybWVkPXN1bShjdXJyZW50LmNvbmZpcm1lZCksXG4gICAgICAgICAgICByZWNvdmVyZWQ9c3VtKHJlY292ZXJlZCksIGRlYXRocz1zdW0oZGVhdGhzKSwgbmV3LmRlYXRocz1zdW0obmV3LmRlYXRocykpICU+JVxuICBtdXRhdGUoZGVhdGgucmF0ZT0oMTAwICogZGVhdGhzL2NvbmZpcm1lZCkgJT4lIHJvdW5kKDEpKSBcbmRhdGEubGF0ZXN0XG5kYXRhLmxhdGVzdCAlPD4lIHNlbGVjdChjKGNvdW50cnksIGNvbmZpcm1lZCwgZGVhdGhzLCBkZWF0aC5yYXRlLFxuICAgICAgICAgICAgICAgICAgICAgICAgICBuZXcuY29uZmlybWVkLCBuZXcuZGVhdGhzLCBjdXJyZW50LmNvbmZpcm1lZCxyZWNvdmVyZWQpKSAlPiVcbiAgbXV0YXRlKHJlY292ZXIucmF0ZT0oMTAwICogcmVjb3ZlcmVkL2NvbmZpcm1lZCkgJT4lIHJvdW5kKDEpKVxuZGF0YS5sYXRlc3RcblxuZGZfcG9wIDwtIHRibChteV9kYiwgc3FsKFwic2VsZWN0ICogZnJvbSBwb3B1bGF0aW9uIFwiKSlcbmRmX3BvcCA8LSBhcy5kYXRhLmZyYW1lKGRmX3BvcClcbmRmX3BvcCA8LSByZW5hbWUoZGZfcG9wLFwiY291bnRyeVwiPVwiQ291bnRyeVwiKVxuXG4jIEFkZCBXb3JsZCBQb3B1bGF0aW9uXG53b3JsZF9wb3AgPC0gc3VtKGRmX3BvcCRgUG9wdWxhdGlvbiAoMjAyMClgKVxuZGZfcG9wW25yb3coZGZfcG9wKSArIDEsXSA9IGMoXCJXb3JsZFwiLCB3b3JsZF9wb3ApXG5cbiMgQWRkIE90aGVyIENvdW50cmllcyBQb3B1bGF0aW9uXG50b3BfcG9wIDwtIGZpbHRlcihkZl9wb3AsIGRmX3BvcCRjb3VudHJ5ICVpbiUgdG9wLmNvdW50cmllcyAmIGRmX3BvcCRjb3VudHJ5ICE9IFwiV29ybGRcIilcbnRvcF9wb3AgPC0gc3VtKHRvcF9wb3AkYFBvcHVsYXRpb24gKDIwMjApYCAlPiUgYXMubnVtZXJpYygpKVxub3RoZXJzX3BvcCA8LSAod29ybGRfcG9wIC0gdG9wX3BvcCkgXG5kZl9wb3BbbnJvdyhkZl9wb3ApICsgMSxdID0gYyhcIk90aGVyc1wiLCBvdGhlcnNfcG9wKVxuVmlldyhkZl9wb3ApXG5cbmRhdGEubGF0ZXN0IDwtIG1lcmdlKHggPSBkYXRhLmxhdGVzdCwgeSA9IGRmX3BvcCwgYnkgPSBcImNvdW50cnlcIiwgYWxsLnggPSBUUlVFKSBcbmRhdGEubGF0ZXN0XG5kYXRhLmxhdGVzdCA8LSByZW5hbWUoZGF0YS5sYXRlc3QsXCJwb3B1bGF0aW9uXCIgPSBcIlBvcHVsYXRpb24gKDIwMjApXCIpXG5kYXRhLmxhdGVzdCRwb3B1bGF0aW9uIDwtIGRhdGEubGF0ZXN0JHBvcHVsYXRpb24gJT4lIGFzLm51bWVyaWMoKVxuZGF0YS5sYXRlc3QgIDwtIGRhdGEubGF0ZXN0ICU+JVxuICBzZWxlY3QoYyhjb3VudHJ5LCBjb25maXJtZWQsIGRlYXRocywgZGVhdGgucmF0ZSxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgbmV3LmNvbmZpcm1lZCwgbmV3LmRlYXRocyxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgY3VycmVudC5jb25maXJtZWQsIHJlY292ZXJlZCwgcmVjb3Zlci5yYXRlLCBwb3B1bGF0aW9uKSkgJT4lXG4gIG11dGF0ZShjb25maXJtLnJhdGUgPSAoMTAwICogY29uZmlybWVkIC8gcG9wdWxhdGlvbikgJT4lIHJvdW5kKDEpKVxuZGF0YS5sYXRlc3RcbmBgYCJ9 -->
-<pre class="r"><code>data.latest &lt;- data.latest.all %&gt;% filter(!is.na(country)) %&gt;%
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZGF0YS5sYXRlc3QgPC0gZGF0YS5sYXRlc3QuYWxsICU+JSBmaWx0ZXIoIWlzLm5hKGNvdW50cnkpKSAlPiVcbiAgbXV0YXRlKGNvdW50cnk9aWZlbHNlKHJhbmtpbmcgPD0gayArIDEsIGFzLmNoYXJhY3Rlcihjb3VudHJ5KSwgJ090aGVycycpKSAlPiVcbiAgbXV0YXRlKGNvdW50cnk9Y291bnRyeSAlPiUgZmFjdG9yKGxldmVscz1jKHRvcC5jb3VudHJpZXMsICdPdGhlcnMnKSkpXG5kYXRhLmxhdGVzdCAlPD4lIGdyb3VwX2J5KGNvdW50cnkpICU+JVxuICBzdW1tYXJpc2UoY29uZmlybWVkPXN1bShjb25maXJtZWQpLCBuZXcuY29uZmlybWVkPXN1bShuZXcuY29uZmlybWVkKSxcbiAgICAgICAgICAgIGN1cnJlbnQuY29uZmlybWVkPXN1bShjdXJyZW50LmNvbmZpcm1lZCksXG4gICAgICAgICAgICByZWNvdmVyZWQ9c3VtKHJlY292ZXJlZCksIGRlYXRocz1zdW0oZGVhdGhzKSwgbmV3LmRlYXRocz1zdW0obmV3LmRlYXRocykpICU+JVxuICBtdXRhdGUoZGVhdGgucmF0ZT0oMTAwICogZGVhdGhzL2NvbmZpcm1lZCkgJT4lIHJvdW5kKDEpKSBcbmRhdGEubGF0ZXN0XG5kYXRhLmxhdGVzdCAlPD4lIHNlbGVjdChjKGNvdW50cnksIGNvbmZpcm1lZCwgZGVhdGhzLCBkZWF0aC5yYXRlLFxuICAgICAgICAgICAgICAgICAgICAgICAgICBuZXcuY29uZmlybWVkLCBuZXcuZGVhdGhzLCBjdXJyZW50LmNvbmZpcm1lZCxyZWNvdmVyZWQpKSAlPiVcbiAgbXV0YXRlKHJlY292ZXIucmF0ZT0oMTAwICogcmVjb3ZlcmVkL2NvbmZpcm1lZCkgJT4lIHJvdW5kKDEpKVxuZGF0YS5sYXRlc3RcblxuZGZfcG9wIDwtIHRibChteV9kYiwgc3FsKFxcc2VsZWN0ICogZnJvbSBwb3B1bGF0aW9uIFxcKSlcbmRmX3BvcCA8LSBhcy5kYXRhLmZyYW1lKGRmX3BvcClcbmRmX3BvcCA8LSByZW5hbWUoZGZfcG9wLFxcY291bnRyeVxcPVxcQ291bnRyeVxcKVxuXG4jIEFkZCBXb3JsZCBQb3B1bGF0aW9uXG53b3JsZF9wb3AgPC0gc3VtKGRmX3BvcCRgUG9wdWxhdGlvbiAoMjAyMClgKVxuZGZfcG9wW25yb3coZGZfcG9wKSArIDEsXSA9IGMoXFxXb3JsZFxcLCB3b3JsZF9wb3ApXG5cbiMgQWRkIE90aGVyIENvdW50cmllcyBQb3B1bGF0aW9uXG50b3BfcG9wIDwtIGZpbHRlcihkZl9wb3AsIGRmX3BvcCRjb3VudHJ5ICVpbiUgdG9wLmNvdW50cmllcyAmIGRmX3BvcCRjb3VudHJ5ICE9IFxcV29ybGRcXClcbnRvcF9wb3AgPC0gc3VtKHRvcF9wb3AkYFBvcHVsYXRpb24gKDIwMjApYCAlPiUgYXMubnVtZXJpYygpKVxub3RoZXJzX3BvcCA8LSAod29ybGRfcG9wIC0gdG9wX3BvcCkgXG5kZl9wb3BbbnJvdyhkZl9wb3ApICsgMSxdID0gYyhcXE90aGVyc1xcLCBvdGhlcnNfcG9wKVxuVmlldyhkZl9wb3ApXG5cbmRhdGEubGF0ZXN0IDwtIG1lcmdlKHggPSBkYXRhLmxhdGVzdCwgeSA9IGRmX3BvcCwgYnkgPSBcXGNvdW50cnlcXCwgYWxsLnggPSBUUlVFKSBcbmRhdGEubGF0ZXN0XG5kYXRhLmxhdGVzdCA8LSByZW5hbWUoZGF0YS5sYXRlc3QsXFxwb3B1bGF0aW9uXFwgPSBcXFBvcHVsYXRpb24gKDIwMjApXFwpXG5kYXRhLmxhdGVzdCRwb3B1bGF0aW9uIDwtIGRhdGEubGF0ZXN0JHBvcHVsYXRpb24gJT4lIGFzLm51bWVyaWMoKVxuZGF0YS5sYXRlc3QgIDwtIGRhdGEubGF0ZXN0ICU+JVxuICBzZWxlY3QoYyhjb3VudHJ5LCBjb25maXJtZWQsIGRlYXRocywgZGVhdGgucmF0ZSxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgbmV3LmNvbmZpcm1lZCwgbmV3LmRlYXRocyxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgY3VycmVudC5jb25maXJtZWQsIHJlY292ZXJlZCwgcmVjb3Zlci5yYXRlLCBwb3B1bGF0aW9uKSkgJT4lXG4gIG11dGF0ZShjb25maXJtLnJhdGUgPSAoMTAwICogY29uZmlybWVkIC8gcG9wdWxhdGlvbikgJT4lIHJvdW5kKDEpKVxuZGF0YS5sYXRlc3RcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+data.latest &lt;- data.latest.all %&gt;% filter(!is.na(country)) %&gt;%
   mutate(country=ifelse(ranking &lt;= k + 1, as.character(country), &#39;Others&#39;)) %&gt;%
   mutate(country=country %&gt;% factor(levels=c(top.countries, &#39;Others&#39;)))
 data.latest %&lt;&gt;% group_by(country) %&gt;%
@@ -577,24 +756,24 @@ data.latest %&lt;&gt;% select(c(country, confirmed, deaths, death.rate,
   mutate(recover.rate=(100 * recovered/confirmed) %&gt;% round(1))
 data.latest
 
-df_pop &lt;- tbl(my_db, sql(&quot;select * from population &quot;))
+df_pop &lt;- tbl(my_db, sql(\select * from population \))
 df_pop &lt;- as.data.frame(df_pop)
-df_pop &lt;- rename(df_pop,&quot;country&quot;=&quot;Country&quot;)
+df_pop &lt;- rename(df_pop,\country\=\Country\)
 
 # Add World Population
 world_pop &lt;- sum(df_pop$`Population (2020)`)
-df_pop[nrow(df_pop) + 1,] = c(&quot;World&quot;, world_pop)
+df_pop[nrow(df_pop) + 1,] = c(\World\, world_pop)
 
 # Add Other Countries Population
-top_pop &lt;- filter(df_pop, df_pop$country %in% top.countries &amp; df_pop$country != &quot;World&quot;)
+top_pop &lt;- filter(df_pop, df_pop$country %in% top.countries &amp; df_pop$country != \World\)
 top_pop &lt;- sum(top_pop$`Population (2020)` %&gt;% as.numeric())
 others_pop &lt;- (world_pop - top_pop) 
-df_pop[nrow(df_pop) + 1,] = c(&quot;Others&quot;, others_pop)
+df_pop[nrow(df_pop) + 1,] = c(\Others\, others_pop)
 View(df_pop)
 
-data.latest &lt;- merge(x = data.latest, y = df_pop, by = &quot;country&quot;, all.x = TRUE) 
+data.latest &lt;- merge(x = data.latest, y = df_pop, by = \country\, all.x = TRUE) 
 data.latest
-data.latest &lt;- rename(data.latest,&quot;population&quot; = &quot;Population (2020)&quot;)
+data.latest &lt;- rename(data.latest,\population\ = \Population (2020)\)
 data.latest$population &lt;- data.latest$population %&gt;% as.numeric()
 data.latest  &lt;- data.latest %&gt;%
   select(c(country, confirmed, deaths, death.rate,
@@ -602,19 +781,42 @@ data.latest  &lt;- data.latest %&gt;%
                           current.confirmed, recovered, recover.rate, population)) %&gt;%
   mutate(confirm.rate = (100 * confirmed / population) %&gt;% round(1))
 data.latest</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YS5sYXRlc3QgJT4lIG11dGF0ZShkZWF0aC5yYXRlPWRlYXRoLnJhdGUgJT4lIGZvcm1hdChuc21hbGw9MSkgJT4lIHBhc3RlMCgnJScpKVxuXG5gYGAifQ== -->
-<pre class="r"><code>data.latest %&gt;% mutate(death.rate=death.rate %&gt;% format(nsmall=1) %&gt;% paste0(&#39;%&#39;))
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZGF0YS5sYXRlc3QgJT4lIG11dGF0ZShkZWF0aC5yYXRlPWRlYXRoLnJhdGUgJT4lIGZvcm1hdChuc21hbGw9MSkgJT4lIHBhc3RlMCgnJScpKVxuXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+data.latest %&gt;% mutate(death.rate=death.rate %&gt;% format(nsmall=1) %&gt;% paste0(&#39;%&#39;))
 </code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMgY29udmVydCBmcm9tIHdpZGUgdG8gbG9uZyBmb3JtYXQsIGZvciBkcmF3aW5nIGFyZWEgcGxvdHNcbmRhdGEubGF0ZXN0LmxvbmcgPC0gZGF0YS5sYXRlc3QgJT4lIGZpbHRlcihjb3VudHJ5IT0nV29ybGQnKSAlPiVcbiAgZ2F0aGVyKGtleT10eXBlLCB2YWx1ZT1jb3VudCwgLWNvdW50cnkpXG4jIyBzZXQgZmFjdG9yIGxldmVscyB0byBzaG93IHRoZW0gd2l0aCBwcm9wZXIgdGV4dCBhbmQgaW4gYSBkZXNpcmFibGUgb3JkZXJcbmRhdGEubGF0ZXN0LmxvbmcgJTw+JSBtdXRhdGUodHlwZT1yZWNvZGVfZmFjdG9yKHR5cGUsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb25maXJtZWQ9J1RvdGFsIENvbmZpcm1lZCcsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBkZWF0aHM9J1RvdGFsIERlYXRocycsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBkZWF0aC5yYXRlPSdEZWF0aCBSYXRlICglKScsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBuZXcuY29uZmlybWVkPSdOZXcgQ29uZmlybWVkIChjb21wYXJlZCB3aXRoIG9uZSBkYXkgYmVmb3JlKScsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBuZXcuZGVhdGhzPSdOZXcgRGVhdGhzIChjb21wYXJlZCB3aXRoIG9uZSBkYXkgYmVmb3JlKScsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjdXJyZW50LmNvbmZpcm1lZD0nQ3VycmVudCBDb25maXJtZWQnLFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcmVjb3Zlci5yYXRlID0gJ1JlY292ZXJlZCBSYXRlKCUpJyxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNvbmZpcm0ucmF0ZSA9ICdDb25maXJtZWQgUmF0ZSglKScpKVxuI1ZpZXcoZGF0YS5sYXRlc3QubG9uZylcbmRhdGEub25lLmRlbSA8LSBmaWx0ZXIoZGF0YS5sYXRlc3QubG9uZyx0eXBlPT0nVG90YWwgQ29uZmlybWVkJ1xuICAgICAgICAgICAgICAgICAgICAgICB8IHR5cGU9PSdUb3RhbCBEZWF0aHMnXG4gICAgICAgICAgICAgICAgICAgICAgIHwgdHlwZT09J0N1cnJlbnQgQ29uZmlybWVkJylcbmRhdGEudHdvLmRlbSA8LSBmaWx0ZXIoZGF0YS5sYXRlc3QubG9uZyx0eXBlPT0nRGVhdGggUmF0ZSAoJSknXG4gICAgICAgICAgICAgICAgICAgICAjICB8IHR5cGU9PSdOZXcgQ29uZmlybWVkIChjb21wYXJlZCB3aXRoIG9uZSBkYXkgYmVmb3JlKSdcbiAgICAgICAgICAgICAgICAgICAgIyAgIHwgdHlwZT09J05ldyBEZWF0aHMgKGNvbXBhcmVkIHdpdGggb25lIGRheSBiZWZvcmUpJ1xuICAgICAgICAgICAgICAgICAgICAgICB8IHR5cGU9PSdSZWNvdmVyZWQgUmF0ZSglKSdcbiAgICAgICAgICAgICAgICAgICAgICAgfCB0eXBlPT0nQ29uZmlybWVkIFJhdGUoJSknKVxuZGF0YS50d28uZGVtXG5gYGAifQ== -->
-<pre class="r"><code>## convert from wide to long format, for drawing area plots
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyMgY29udmVydCBmcm9tIHdpZGUgdG8gbG9uZyBmb3JtYXQsIGZvciBkcmF3aW5nIGFyZWEgcGxvdHNcbmRhdGEubGF0ZXN0LmxvbmcgPC0gZGF0YS5sYXRlc3QgJT4lIGZpbHRlcihjb3VudHJ5IT0nV29ybGQnKSAlPiVcbiAgZ2F0aGVyKGtleT10eXBlLCB2YWx1ZT1jb3VudCwgLWNvdW50cnkpXG4jIyBzZXQgZmFjdG9yIGxldmVscyB0byBzaG93IHRoZW0gd2l0aCBwcm9wZXIgdGV4dCBhbmQgaW4gYSBkZXNpcmFibGUgb3JkZXJcbmRhdGEubGF0ZXN0LmxvbmcgJTw+JSBtdXRhdGUodHlwZT1yZWNvZGVfZmFjdG9yKHR5cGUsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb25maXJtZWQ9J1RvdGFsIENvbmZpcm1lZCcsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBkZWF0aHM9J1RvdGFsIERlYXRocycsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBkZWF0aC5yYXRlPSdEZWF0aCBSYXRlICglKScsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBuZXcuY29uZmlybWVkPSdOZXcgQ29uZmlybWVkIChjb21wYXJlZCB3aXRoIG9uZSBkYXkgYmVmb3JlKScsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBuZXcuZGVhdGhzPSdOZXcgRGVhdGhzIChjb21wYXJlZCB3aXRoIG9uZSBkYXkgYmVmb3JlKScsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjdXJyZW50LmNvbmZpcm1lZD0nQ3VycmVudCBDb25maXJtZWQnLFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcmVjb3Zlci5yYXRlID0gJ1JlY292ZXJlZCBSYXRlKCUpJyxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNvbmZpcm0ucmF0ZSA9ICdDb25maXJtZWQgUmF0ZSglKScpKVxuI1ZpZXcoZGF0YS5sYXRlc3QubG9uZylcbmRhdGEub25lLmRlbSA8LSBmaWx0ZXIoZGF0YS5sYXRlc3QubG9uZyx0eXBlPT0nVG90YWwgQ29uZmlybWVkJ1xuICAgICAgICAgICAgICAgICAgICAgICB8IHR5cGU9PSdUb3RhbCBEZWF0aHMnXG4gICAgICAgICAgICAgICAgICAgICAgIHwgdHlwZT09J0N1cnJlbnQgQ29uZmlybWVkJylcbmRhdGEudHdvLmRlbSA8LSBmaWx0ZXIoZGF0YS5sYXRlc3QubG9uZyx0eXBlPT0nRGVhdGggUmF0ZSAoJSknXG4gICAgICAgICAgICAgICAgICAgICAjICB8IHR5cGU9PSdOZXcgQ29uZmlybWVkIChjb21wYXJlZCB3aXRoIG9uZSBkYXkgYmVmb3JlKSdcbiAgICAgICAgICAgICAgICAgICAgIyAgIHwgdHlwZT09J05ldyBEZWF0aHMgKGNvbXBhcmVkIHdpdGggb25lIGRheSBiZWZvcmUpJ1xuICAgICAgICAgICAgICAgICAgICAgICB8IHR5cGU9PSdSZWNvdmVyZWQgUmF0ZSglKSdcbiAgICAgICAgICAgICAgICAgICAgICAgfCB0eXBlPT0nQ29uZmlybWVkIFJhdGUoJSknKVxuZGF0YS50d28uZGVtXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+## convert from wide to long format, for drawing area plots
 data.latest.long &lt;- data.latest %&gt;% filter(country!=&#39;World&#39;) %&gt;%
   gather(key=type, value=count, -country)
 ## set factor levels to show them with proper text and in a desirable order
@@ -637,13 +839,27 @@ data.two.dem &lt;- filter(data.latest.long,type==&#39;Death Rate (%)&#39;
                        | type==&#39;Recovered Rate(%)&#39;
                        | type==&#39;Confirmed Rate(%)&#39;)
 data.two.dem</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMgYmFyIGNoYXJ0XG5kYXRhLm9uZS5kZW0gJT4lIGdncGxvdChhZXMoeD1jb3VudHJ5LCB5PWNvdW50LCBmaWxsPWNvdW50cnksIGdyb3VwPWNvdW50cnkpKSArXG4gIGdlb21fYmFyKHN0YXQ9J2lkZW50aXR5JykgK1xuICBnZW9tX3RleHQoYWVzKGxhYmVsPWNvdW50LCB5PWNvdW50KSwgc2l6ZT0zLCB2anVzdD0wKSArXG4gIHhsYWIoJycpICsgeWxhYignJykgK1xuICBsYWJzKHRpdGxlPXBhc3RlMCgnVG9wIDIwIENvdW50cmllcyB3aXRoIE1vc3QgQ29uZmlybWVkIENhc2VzIC0gJywgbWF4LmRhdGUudHh0KSkgK1xuICBzY2FsZV9maWxsX2Rpc2NyZXRlKG5hbWU9J0NvdW50cnknLCBsYWJlbHM9YWVzKGNvdW50KSkgK1xuICB0aGVtZShsZWdlbmQudGl0bGU9ZWxlbWVudF9ibGFuaygpLFxuICAgICAgICBsZWdlbmQucG9zaXRpb249J25vbmUnLFxuICAgICAgICBwbG90LnRpdGxlPWVsZW1lbnRfdGV4dChzaXplPTEzKSxcbiAgICAgICAgYXhpcy50ZXh0PWVsZW1lbnRfdGV4dChzaXplPTgpLFxuICAgICAgICBheGlzLnRleHQueD1lbGVtZW50X3RleHQoYW5nbGU9NDUsIGhqdXN0PTEpKSArXG4gIGZhY2V0X3dyYXAofnR5cGUsIG5jb2w9MSwgc2NhbGVzPSdmcmVlX3knKVxuXG5gYGAifQ== -->
-<pre class="r"><code>## bar chart
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyMgYmFyIGNoYXJ0XG5kYXRhLm9uZS5kZW0gJT4lIGdncGxvdChhZXMoeD1jb3VudHJ5LCB5PWNvdW50LCBmaWxsPWNvdW50cnksIGdyb3VwPWNvdW50cnkpKSArXG4gIGdlb21fYmFyKHN0YXQ9J2lkZW50aXR5JykgK1xuICBnZW9tX3RleHQoYWVzKGxhYmVsPWNvdW50LCB5PWNvdW50KSwgc2l6ZT0zLCB2anVzdD0wKSArXG4gIHhsYWIoJycpICsgeWxhYignJykgK1xuICBsYWJzKHRpdGxlPXBhc3RlMCgnVG9wIDIwIENvdW50cmllcyB3aXRoIE1vc3QgQ29uZmlybWVkIENhc2VzIC0gJywgbWF4LmRhdGUudHh0KSkgK1xuICBzY2FsZV9maWxsX2Rpc2NyZXRlKG5hbWU9J0NvdW50cnknLCBsYWJlbHM9YWVzKGNvdW50KSkgK1xuICB0aGVtZShsZWdlbmQudGl0bGU9ZWxlbWVudF9ibGFuaygpLFxuICAgICAgICBsZWdlbmQucG9zaXRpb249J25vbmUnLFxuICAgICAgICBwbG90LnRpdGxlPWVsZW1lbnRfdGV4dChzaXplPTEzKSxcbiAgICAgICAgYXhpcy50ZXh0PWVsZW1lbnRfdGV4dChzaXplPTgpLFxuICAgICAgICBheGlzLnRleHQueD1lbGVtZW50X3RleHQoYW5nbGU9NDUsIGhqdXN0PTEpKSArXG4gIGZhY2V0X3dyYXAofnR5cGUsIG5jb2w9MSwgc2NhbGVzPSdmcmVlX3knKVxuXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+## bar chart
 data.one.dem %&gt;% ggplot(aes(x=country, y=count, fill=country, group=country)) +
   geom_bar(stat=&#39;identity&#39;) +
   geom_text(aes(label=count, y=count), size=3, vjust=0) +
@@ -657,11 +873,20 @@ data.one.dem %&gt;% ggplot(aes(x=country, y=count, fill=country, group=country))
         axis.text.x=element_text(angle=45, hjust=1)) +
   facet_wrap(~type, ncol=1, scales=&#39;free_y&#39;)
 </code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YS50d28uZGVtJGZhY2V0IDwtIGZhY3RvcihkYXRhLnR3by5kZW0kdHlwZSwgbGV2ZWxzID0gYygnQ29uZmlybWVkIFJhdGUoJSknLCAnUmVjb3ZlcmVkIFJhdGUoJSknLCdEZWF0aCBSYXRlICglKScpKVxuZGF0YS50d28uZGVtICU+JSBcbiAgZ2dwbG90KGFlcyh4PWNvdW50cnksIHk9Y291bnQsIGZpbGw9Y291bnRyeSwgZ3JvdXA9Y291bnRyeSkpICtcbiAgZ2VvbV9iYXIoc3RhdD0naWRlbnRpdHknKSArXG4gIGdlb21fdGV4dChhZXMobGFiZWw9Y291bnQsIHk9Y291bnQpLCBzaXplPTQsIHZqdXN0PTApICtcbiAgeGxhYignJykgKyB5bGFiKCcnKSArXG4gIGxhYnModGl0bGU9cGFzdGUwKCdUb3AgMjAgQ291bnRyaWVzIHdpdGggTW9zdCBDb25maXJtZWQgQ2FzZXMgLSAnLCBtYXguZGF0ZS50eHQpKSArXG4gIHNjYWxlX2ZpbGxfZGlzY3JldGUobmFtZT0nQ291bnRyeScsIGxhYmVscz1hZXMoY291bnQpKSArXG4gIHRoZW1lKGxlZ2VuZC50aXRsZT1lbGVtZW50X2JsYW5rKCksXG4gICAgICAgIGxlZ2VuZC5wb3NpdGlvbj0nbm9uZScsXG4gICAgICAgIHBsb3QudGl0bGU9ZWxlbWVudF90ZXh0KHNpemU9MTMpLFxuICAgICAgICBheGlzLnRleHQ9ZWxlbWVudF90ZXh0KHNpemU9MTApLFxuICAgICAgICBheGlzLnRleHQueD1lbGVtZW50X3RleHQoc2l6ZT0xMCxhbmdsZT00NSwgaGp1c3Q9MSkpICtcbiAgZmFjZXRfd3JhcCh+ZmFjZXQsIG5jb2w9MSwgc2NhbGVzPSdmcmVlX3knKVxuYGBgIn0= -->
-<pre class="r"><code>data.two.dem$facet &lt;- factor(data.two.dem$type, levels = c(&#39;Confirmed Rate(%)&#39;, &#39;Recovered Rate(%)&#39;,&#39;Death Rate (%)&#39;))
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZGF0YS50d28uZGVtJGZhY2V0IDwtIGZhY3RvcihkYXRhLnR3by5kZW0kdHlwZSwgbGV2ZWxzID0gYygnQ29uZmlybWVkIFJhdGUoJSknLCAnUmVjb3ZlcmVkIFJhdGUoJSknLCdEZWF0aCBSYXRlICglKScpKVxuZGF0YS50d28uZGVtICU+JSBcbiAgZ2dwbG90KGFlcyh4PWNvdW50cnksIHk9Y291bnQsIGZpbGw9Y291bnRyeSwgZ3JvdXA9Y291bnRyeSkpICtcbiAgZ2VvbV9iYXIoc3RhdD0naWRlbnRpdHknKSArXG4gIGdlb21fdGV4dChhZXMobGFiZWw9Y291bnQsIHk9Y291bnQpLCBzaXplPTQsIHZqdXN0PTApICtcbiAgeGxhYignJykgKyB5bGFiKCcnKSArXG4gIGxhYnModGl0bGU9cGFzdGUwKCdUb3AgMjAgQ291bnRyaWVzIHdpdGggTW9zdCBDb25maXJtZWQgQ2FzZXMgLSAnLCBtYXguZGF0ZS50eHQpKSArXG4gIHNjYWxlX2ZpbGxfZGlzY3JldGUobmFtZT0nQ291bnRyeScsIGxhYmVscz1hZXMoY291bnQpKSArXG4gIHRoZW1lKGxlZ2VuZC50aXRsZT1lbGVtZW50X2JsYW5rKCksXG4gICAgICAgIGxlZ2VuZC5wb3NpdGlvbj0nbm9uZScsXG4gICAgICAgIHBsb3QudGl0bGU9ZWxlbWVudF90ZXh0KHNpemU9MTMpLFxuICAgICAgICBheGlzLnRleHQ9ZWxlbWVudF90ZXh0KHNpemU9MTApLFxuICAgICAgICBheGlzLnRleHQueD1lbGVtZW50X3RleHQoc2l6ZT0xMCxhbmdsZT00NSwgaGp1c3Q9MSkpICtcbiAgZmFjZXRfd3JhcCh+ZmFjZXQsIG5jb2w9MSwgc2NhbGVzPSdmcmVlX3knKVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+data.two.dem$facet &lt;- factor(data.two.dem$type, levels = c(&#39;Confirmed Rate(%)&#39;, &#39;Recovered Rate(%)&#39;,&#39;Death Rate (%)&#39;))
 data.two.dem %&gt;% 
   ggplot(aes(x=country, y=count, fill=country, group=country)) +
   geom_bar(stat=&#39;identity&#39;) +
@@ -675,72 +900,137 @@ data.two.dem %&gt;%
         axis.text=element_text(size=10),
         axis.text.x=element_text(size=10,angle=45, hjust=1)) +
   facet_wrap(~facet, ncol=1, scales=&#39;free_y&#39;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyNHRFBcbmRmX2dkcCA8LSB0YmwobXlfZGIsIHNxbChcInNlbGVjdCAqIGZyb20gZ2RwXCIpKVxuZGZfZ2RwIDwtIGFzLmRhdGEuZnJhbWUoZGZfZ2RwKVxuZGZfZ2RwIDwtIHJlbmFtZShkZl9nZHAsXCJjb3VudHJ5XCI9XCJSZWFsIEdEUCBncm93dGggKEFubnVhbCBwZXJjZW50IGNoYW5nZSlcIilcbmRmX2dkcCA8LSBzZWxlY3QoZGZfZ2RwLGMoXCJjb3VudHJ5XCIsXCIyMDEyXCIsXCIyMDEzXCIsXCIyMDE0XCIsXCIyMDE1XCIsXCIyMDE2XCIsXCIyMDE3XCIsXCIyMDE4XCIsXCIyMDE5XCIsXCIyMDIwXCIsXCIyMDIxXCIpKVxuZGZfZ2RwXG5kZl9nZHAyMDE5IDwtIHRibChteV9kYiwgc3FsKFwic2VsZWN0ICogZnJvbSBnZHAxOVwiKSlcbmRmX2dkcDIwMTkgPC0gYXMuZGF0YS5mcmFtZShkZl9nZHAyMDE5KVxuZGZfZ2RwMjAxOVxuXG5gYGAifQ== -->
-<pre class="r"><code>##GDP
-df_gdp &lt;- tbl(my_db, sql(&quot;select * from gdp&quot;))
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyNHRFBcbmRmX2dkcCA8LSB0YmwobXlfZGIsIHNxbChcXHNlbGVjdCAqIGZyb20gZ2RwXFwpKVxuZGZfZ2RwIDwtIGFzLmRhdGEuZnJhbWUoZGZfZ2RwKVxuZGZfZ2RwIDwtIHJlbmFtZShkZl9nZHAsXFxjb3VudHJ5XFw9XFxSZWFsIEdEUCBncm93dGggKEFubnVhbCBwZXJjZW50IGNoYW5nZSlcXClcbmRmX2dkcCA8LSBzZWxlY3QoZGZfZ2RwLGMoXFxjb3VudHJ5XFwsXFwyMDEyXFwsXFwyMDEzXFwsXFwyMDE0XFwsXFwyMDE1XFwsXFwyMDE2XFwsXFwyMDE3XFwsXFwyMDE4XFwsXFwyMDE5XFwsXFwyMDIwXFwsXFwyMDIxXFwpKVxuZGZfZ2RwXG5kZl9nZHAyMDE5IDwtIHRibChteV9kYiwgc3FsKFxcc2VsZWN0ICogZnJvbSBnZHAxOVxcKSlcbmRmX2dkcDIwMTkgPC0gYXMuZGF0YS5mcmFtZShkZl9nZHAyMDE5KVxuZGZfZ2RwMjAxOVxuXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+##GDP
+df_gdp &lt;- tbl(my_db, sql(\select * from gdp\))
 df_gdp &lt;- as.data.frame(df_gdp)
-df_gdp &lt;- rename(df_gdp,&quot;country&quot;=&quot;Real GDP growth (Annual percent change)&quot;)
-df_gdp &lt;- select(df_gdp,c(&quot;country&quot;,&quot;2012&quot;,&quot;2013&quot;,&quot;2014&quot;,&quot;2015&quot;,&quot;2016&quot;,&quot;2017&quot;,&quot;2018&quot;,&quot;2019&quot;,&quot;2020&quot;,&quot;2021&quot;))
+df_gdp &lt;- rename(df_gdp,\country\=\Real GDP growth (Annual percent change)\)
+df_gdp &lt;- select(df_gdp,c(\country\,\2012\,\2013\,\2014\,\2015\,\2016\,\2017\,\2018\,\2019\,\2020\,\2021\))
 df_gdp
-df_gdp2019 &lt;- tbl(my_db, sql(&quot;select * from gdp19&quot;))
+df_gdp2019 &lt;- tbl(my_db, sql(\select * from gdp19\))
 df_gdp2019 &lt;- as.data.frame(df_gdp2019)
 df_gdp2019
 </code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2hlYWx0aHJhbmtpbmdcbmRmX2hlYWx0IDwtIHRibChteV9kYiwgc3FsKFwic2VsZWN0ICogZnJvbSBoZWFsdGhyYW5raW5nXCIpKVxuZGZfaGVhbHQgPC0gYXMuZGF0YS5mcmFtZShkZl9oZWFsdClcbmRmX2hlYWx0IDwtIHNlbGVjdChkZl9oZWFsdCxjKFwiY291bnRyeVwiLFwiaGVhbHRoQ2FyZUluZGV4XCIpKVxuVmlldyhkZl9oZWFsdClcbmBgYCJ9 -->
-<pre class="r"><code>#healthranking
-df_healt &lt;- tbl(my_db, sql(&quot;select * from healthranking&quot;))
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI2hlYWx0aHJhbmtpbmdcbmRmX2hlYWx0IDwtIHRibChteV9kYiwgc3FsKFxcc2VsZWN0ICogZnJvbSBoZWFsdGhyYW5raW5nXFwpKVxuZGZfaGVhbHQgPC0gYXMuZGF0YS5mcmFtZShkZl9oZWFsdClcbmRmX2hlYWx0IDwtIHNlbGVjdChkZl9oZWFsdCxjKFxcY291bnRyeVxcLFxcaGVhbHRoQ2FyZUluZGV4XFwpKVxuVmlldyhkZl9oZWFsdClcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+#healthranking
+df_healt &lt;- tbl(my_db, sql(\select * from healthranking\))
 df_healt &lt;- as.data.frame(df_healt)
-df_healt &lt;- select(df_healt,c(&quot;country&quot;,&quot;healthCareIndex&quot;))
+df_healt &lt;- select(df_healt,c(\country\,\healthCareIndex\))
 View(df_healt)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI1RvcDIwUG9ybmh1YlxuZGZfcG9ybmh1YiA8LSB0YmwobXlfZGIsIHNxbChcInNlbGVjdCAqIGZyb20gUG9ybmh1YlwiKSlcbmRmX3Bvcm5odWIgPC0gYXMuZGF0YS5mcmFtZShkZl9wb3JuaHViKVxuZGZfcG9ybmh1YlxuYGBgIn0= -->
-<pre class="r"><code>#Top20Pornhub
-df_pornhub &lt;- tbl(my_db, sql(&quot;select * from Pornhub&quot;))
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI1RvcDIwUG9ybmh1YlxuZGZfcG9ybmh1YiA8LSB0YmwobXlfZGIsIHNxbChcXHNlbGVjdCAqIGZyb20gUG9ybmh1YlxcKSlcbmRmX3Bvcm5odWIgPC0gYXMuZGF0YS5mcmFtZShkZl9wb3JuaHViKVxuZGZfcG9ybmh1YlxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+#Top20Pornhub
+df_pornhub &lt;- tbl(my_db, sql(\select * from Pornhub\))
 df_pornhub &lt;- as.data.frame(df_pornhub)
 df_pornhub</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI3RlbXBcbmRmX3RlbXAgPC0gdGJsKG15X2RiLCBzcWwoXCJzZWxlY3QgKiBmcm9tIHdvcmxkX3RlbXBcIikpXG5kZl90ZW1wIDwtIGFzLmRhdGEuZnJhbWUoZGZfdGVtcCkgXG5kZl90ZW1wJENvdW50cnlbZGZfdGVtcCRDb3VudHJ5ID09IFwiVW5pdGVkIFN0YXRlc1wiXSA8LSBcIlVTXCJcblxuZGZfY2l0eSA8LSBzZWxlY3QoZGZfdGVtcCxjKFwiQ291bnRyeVwiLFwiQ2l0eVwiKSkgJT4lXG4gIHJlbmFtZShjb3VudHJ5PUNvdW50cnkpICU+JSBcbiAgcmVuYW1lKGNpdHk9Q2l0eSlcblxubnVtb2ZjaXR5IDwtIGFnZ3JlZ2F0ZShjaXR5IH4gY291bnRyeSwgZGF0YSA9IGRmX2NpdHksIGxlbmd0aClcblxuZGZfdGVtcCA8LSBzZWxlY3QoZGZfdGVtcCxjKFwiQ291bnRyeVwiLFwiQXZnX1llYXJcIikpICU+JVxuICByZW5hbWUoY291bnRyeT1Db3VudHJ5KVxuVmlldyhkZl90ZW1wKVxuXG4jZGZfdGVtcCA8LSBkYXRhLmZyYW1lKGNvdW50cnk9ZGZfdGVtcFssMV0sYXZnPXJvd01lYW5zKGRmX3RlbXBbLC0xXSkpXG5kZl90ZW1wIDwtIGRmX3RlbXAgJTw+JSBncm91cF9ieShjb3VudHJ5KSAlPiUgc3VtbWFyaXNlKGF2Z190ZW1wID0gbWVhbihBdmdfWWVhcixuYS5ybSA9IFRSVUUpJT4lIHJvdW5kKDEpKVxuZGZfdGVtcFxuYGBgIn0= -->
-<pre class="r"><code>#temp
-df_temp &lt;- tbl(my_db, sql(&quot;select * from world_temp&quot;))
-df_temp &lt;- as.data.frame(df_temp) 
-df_temp$Country[df_temp$Country == &quot;United States&quot;] &lt;- &quot;US&quot;
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
 
-df_city &lt;- select(df_temp,c(&quot;Country&quot;,&quot;City&quot;)) %&gt;%
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI3RlbXBcbmRmX3RlbXAgPC0gdGJsKG15X2RiLCBzcWwoXFxzZWxlY3QgKiBmcm9tIHdvcmxkX3RlbXBcXCkpXG5kZl90ZW1wIDwtIGFzLmRhdGEuZnJhbWUoZGZfdGVtcCkgXG5kZl90ZW1wJENvdW50cnlbZGZfdGVtcCRDb3VudHJ5ID09IFxcVW5pdGVkIFN0YXRlc1xcXSA8LSBcXFVTXFxcblxuZGZfY2l0eSA8LSBzZWxlY3QoZGZfdGVtcCxjKFxcQ291bnRyeVxcLFxcQ2l0eVxcKSkgJT4lXG4gIHJlbmFtZShjb3VudHJ5PUNvdW50cnkpICU+JSBcbiAgcmVuYW1lKGNpdHk9Q2l0eSlcblxubnVtb2ZjaXR5IDwtIGFnZ3JlZ2F0ZShjaXR5IH4gY291bnRyeSwgZGF0YSA9IGRmX2NpdHksIGxlbmd0aClcblxuZGZfdGVtcCA8LSBzZWxlY3QoZGZfdGVtcCxjKFxcQ291bnRyeVxcLFxcQXZnX1llYXJcXCkpICU+JVxuICByZW5hbWUoY291bnRyeT1Db3VudHJ5KVxuVmlldyhkZl90ZW1wKVxuXG4jZGZfdGVtcCA8LSBkYXRhLmZyYW1lKGNvdW50cnk9ZGZfdGVtcFssMV0sYXZnPXJvd01lYW5zKGRmX3RlbXBbLC0xXSkpXG5kZl90ZW1wIDwtIGRmX3RlbXAgJTw+JSBncm91cF9ieShjb3VudHJ5KSAlPiUgc3VtbWFyaXNlKGF2Z190ZW1wID0gbWVhbihBdmdfWWVhcixuYS5ybSA9IFRSVUUpJT4lIHJvdW5kKDEpKVxuZGZfdGVtcFxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+#temp
+df_temp &lt;- tbl(my_db, sql(\select * from world_temp\))
+df_temp &lt;- as.data.frame(df_temp) 
+df_temp$Country[df_temp$Country == \United States\] &lt;- \US\
+
+df_city &lt;- select(df_temp,c(\Country\,\City\)) %&gt;%
   rename(country=Country) %&gt;% 
   rename(city=City)
 
 numofcity &lt;- aggregate(city ~ country, data = df_city, length)
 
-df_temp &lt;- select(df_temp,c(&quot;Country&quot;,&quot;Avg_Year&quot;)) %&gt;%
+df_temp &lt;- select(df_temp,c(\Country\,\Avg_Year\)) %&gt;%
   rename(country=Country)
 View(df_temp)
 
 #df_temp &lt;- data.frame(country=df_temp[,1],avg=rowMeans(df_temp[,-1]))
 df_temp &lt;- df_temp %&lt;&gt;% group_by(country) %&gt;% summarise(avg_temp = mean(Avg_Year,na.rm = TRUE)%&gt;% round(1))
 df_temp</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2Rpc3BsYXkuYnJld2VyLmFsbCgpXG5kZl90ZW1wLmFsbCA8LSBkZl90ZW1wICU+JSBtZXJnZShkYXRhLmxhdGVzdC5hbGwpXG5WaWV3KGRmX3RlbXAuYWxsKVxuZGZfdGVtcF90b3AuYWxsIDwtIGRmX3RlbXAuYWxsICU+JSBmaWx0ZXIoY291bnRyeSAlaW4lIHRvcC5jb3VudHJpZXMpICU+JVxuICBtdXRhdGUocmFua2luZyA9IHJhbmtpbmcgLSAxKSAlPiVcbiAgYXJyYW5nZShyYW5raW5nKVxuVmlldyhkZl90ZW1wX3RvcClcbmdfdGVtcF90b3AgPC0gZGZfdGVtcF90b3AgJT4lXG4gIGdncGxvdChhZXMoeCA9IHJlb3JkZXIoY291bnRyeSwgcmFua2luZyksIHkgPSBhdmdfdGVtcCwgZmlsbCA9IGF2Z190ZW1wKSkgK1xuICBsYWJzKHRpdGxlPXBhc3RlMChcIlRlbXBlcmF0dXJlIGluIFRvcCAgMjAgY291bnRyaWVzXCIpLCBzdWJ0aXRsZSA9IFwiQXZlcmFnZSBUZW1wZXJhdHVyZSBpbiBUb3AgMjAgY291bnRyaWVzIHdpdGggbW9zdCBjb25maXJtZWQgY2FzZXMgKMKwQykgKDIwMjApXCIpICtcbiAgc2NhbGVfY29sb3JfZ3JhZGllbnQobG93ID0gXCIjOTNEQkZGXCIsIGhpZ2ggPSBcIiNGRjc3NzFcIikgK1xuICBnZW9tX3RleHQoYWVzKGxhYmVsPWF2Z190ZW1wLCB5PWF2Z190ZW1wKSwgc2l6ZT00LCB2anVzdD0tMC41KSArXG4gIGdlb21fYmFyKHN0YXQgPSBcImlkZW50aXR5XCIsIHBvc2l0aW9uID0gXCJkb2RnZVwiKSArXG4gIHRoZW1lKFxuICAgICAgICBsZWdlbmQudGl0bGU9ZWxlbWVudF9ibGFuaygpLFxuICAgICAgICBsZWdlbmQucG9zaXRpb249J25vbmUnLFxuICAgICAgICBwbG90LnRpdGxlPWVsZW1lbnRfdGV4dChzaXplID0gMTUsIGhqdXN0ID0gMC41KSxcbiAgICAgICAgcGxvdC5zdWJ0aXRsZSA9IGVsZW1lbnRfdGV4dChzaXplID0gMTIsIGhqdXN0ID0gMC41KSxcbiAgICAgICAgYXhpcy50ZXh0PWVsZW1lbnRfdGV4dChzaXplPTgpLFxuICAgICAgICBheGlzLnRleHQueD1lbGVtZW50X3RleHQoc2l6ZSA9IDksIGFuZ2xlPTQ1LCBoanVzdD0xKSkgK1xuICBzY2FsZV94X2Rpc2NyZXRlKG5hbWUgPSBcIkNvdW50cnlcIikgK1xuICBzY2FsZV95X2Rpc2NyZXRlKG5hbWUgPSBcIkF2ZXJhZ2UgVGVtcGVyYXR1cmVcIilcblxuICAgICAgICAgICAjbGFicyh0aXRsZSA9IFwiVGVtcGVyYXR1cmUgaW4gVG9wICAyMCBjb3VudHJpZXNcIiwgc3VidGl0bGUgPSBcIlRlbXBlcmF0dXJlIGluIFRvcCAyMCBjb3VudHJpZXMgd2l0aCBtb3N0IGNvbmZpcm1lZCBjYXNlcyAowrBDKVwiKVxuICAgICAgICAgXG4jZ190ZW1wX3RvcCAgICAgICAgIFxuZ190ZW1wX3RvcCBcbmBgYCJ9 -->
-<pre class="r"><code>#display.brewer.all()
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI2Rpc3BsYXkuYnJld2VyLmFsbCgpXG5kZl90ZW1wLmFsbCA8LSBkZl90ZW1wICU+JSBtZXJnZShkYXRhLmxhdGVzdC5hbGwpXG5WaWV3KGRmX3RlbXAuYWxsKVxuZGZfdGVtcF90b3AuYWxsIDwtIGRmX3RlbXAuYWxsICU+JSBmaWx0ZXIoY291bnRyeSAlaW4lIHRvcC5jb3VudHJpZXMpICU+JVxuICBtdXRhdGUocmFua2luZyA9IHJhbmtpbmcgLSAxKSAlPiVcbiAgYXJyYW5nZShyYW5raW5nKVxuVmlldyhkZl90ZW1wX3RvcClcbmdfdGVtcF90b3AgPC0gZGZfdGVtcF90b3AgJT4lXG4gIGdncGxvdChhZXMoeCA9IHJlb3JkZXIoY291bnRyeSwgcmFua2luZyksIHkgPSBhdmdfdGVtcCwgZmlsbCA9IGF2Z190ZW1wKSkgK1xuICBsYWJzKHRpdGxlPXBhc3RlMChcXFRlbXBlcmF0dXJlIGluIFRvcCAgMjAgY291bnRyaWVzXFwpLCBzdWJ0aXRsZSA9IFxcQXZlcmFnZSBUZW1wZXJhdHVyZSBpbiBUb3AgMjAgY291bnRyaWVzIHdpdGggbW9zdCBjb25maXJtZWQgY2FzZXMgKOC4ouC4kEMpICgyMDIwKVxcKSArXG4gIHNjYWxlX2NvbG9yX2dyYWRpZW50KGxvdyA9IFxcIzkzREJGRlxcLCBoaWdoID0gXFwjRkY3NzcxXFwpICtcbiAgZ2VvbV90ZXh0KGFlcyhsYWJlbD1hdmdfdGVtcCwgeT1hdmdfdGVtcCksIHNpemU9NCwgdmp1c3Q9LTAuNSkgK1xuICBnZW9tX2JhcihzdGF0ID0gXFxpZGVudGl0eVxcLCBwb3NpdGlvbiA9IFxcZG9kZ2VcXCkgK1xuICB0aGVtZShcbiAgICAgICAgbGVnZW5kLnRpdGxlPWVsZW1lbnRfYmxhbmsoKSxcbiAgICAgICAgbGVnZW5kLnBvc2l0aW9uPSdub25lJyxcbiAgICAgICAgcGxvdC50aXRsZT1lbGVtZW50X3RleHQoc2l6ZSA9IDE1LCBoanVzdCA9IDAuNSksXG4gICAgICAgIHBsb3Quc3VidGl0bGUgPSBlbGVtZW50X3RleHQoc2l6ZSA9IDEyLCBoanVzdCA9IDAuNSksXG4gICAgICAgIGF4aXMudGV4dD1lbGVtZW50X3RleHQoc2l6ZT04KSxcbiAgICAgICAgYXhpcy50ZXh0Lng9ZWxlbWVudF90ZXh0KHNpemUgPSA5LCBhbmdsZT00NSwgaGp1c3Q9MSkpICtcbiAgc2NhbGVfeF9kaXNjcmV0ZShuYW1lID0gXFxDb3VudHJ5XFwpICtcbiAgc2NhbGVfeV9kaXNjcmV0ZShuYW1lID0gXFxBdmVyYWdlIFRlbXBlcmF0dXJlXFwpXG5cbiAgICAgICAgICAgI2xhYnModGl0bGUgPSBcXFRlbXBlcmF0dXJlIGluIFRvcCAgMjAgY291bnRyaWVzXFwsIHN1YnRpdGxlID0gXFxUZW1wZXJhdHVyZSBpbiBUb3AgMjAgY291bnRyaWVzIHdpdGggbW9zdCBjb25maXJtZWQgY2FzZXMgKOC4ouC4kEMpXFwpXG4gICAgICAgICBcbiNnX3RlbXBfdG9wICAgICAgICAgXG5nX3RlbXBfdG9wIFxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+#display.brewer.all()
 df_temp.all &lt;- df_temp %&gt;% merge(data.latest.all)
 View(df_temp.all)
 df_temp_top.all &lt;- df_temp.all %&gt;% filter(country %in% top.countries) %&gt;%
@@ -749,10 +1039,10 @@ df_temp_top.all &lt;- df_temp.all %&gt;% filter(country %in% top.countries) %&gt
 View(df_temp_top)
 g_temp_top &lt;- df_temp_top %&gt;%
   ggplot(aes(x = reorder(country, ranking), y = avg_temp, fill = avg_temp)) +
-  labs(title=paste0(&quot;Temperature in Top  20 countries&quot;), subtitle = &quot;Average Temperature in Top 20 countries with most confirmed cases (°C) (2020)&quot;) +
-  scale_color_gradient(low = &quot;#93DBFF&quot;, high = &quot;#FF7771&quot;) +
+  labs(title=paste0(\Temperature in Top  20 countries\), subtitle = \Average Temperature in Top 20 countries with most confirmed cases (ยฐC) (2020)\) +
+  scale_color_gradient(low = \#93DBFF\, high = \#FF7771\) +
   geom_text(aes(label=avg_temp, y=avg_temp), size=4, vjust=-0.5) +
-  geom_bar(stat = &quot;identity&quot;, position = &quot;dodge&quot;) +
+  geom_bar(stat = \identity\, position = \dodge\) +
   theme(
         legend.title=element_blank(),
         legend.position=&#39;none&#39;,
@@ -760,43 +1050,72 @@ g_temp_top &lt;- df_temp_top %&gt;%
         plot.subtitle = element_text(size = 12, hjust = 0.5),
         axis.text=element_text(size=8),
         axis.text.x=element_text(size = 9, angle=45, hjust=1)) +
-  scale_x_discrete(name = &quot;Country&quot;) +
-  scale_y_discrete(name = &quot;Average Temperature&quot;)
+  scale_x_discrete(name = \Country\) +
+  scale_y_discrete(name = \Average Temperature\)
 
-           #labs(title = &quot;Temperature in Top  20 countries&quot;, subtitle = &quot;Temperature in Top 20 countries with most confirmed cases (°C)&quot;)
+           #labs(title = \Temperature in Top  20 countries\, subtitle = \Temperature in Top 20 countries with most confirmed cases (ยฐC)\)
          
 #g_temp_top         
 g_temp_top </code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2RmX2NvbmZcbiNkYXRhLmxhdGVzdC5hbGxcbmxhdC5sb25nIDwtIHJlbmFtZShkZl9jb25mLCBcImNvdW50cnlcIiA9IFwiQ291bnRyeS5SZWdpb25cIiwgXCJjaXR5XCIgPSBcIlByb3ZpbmNlLlN0YXRlXCIpICU+JSBcbiAgc2VsZWN0KFwiY291bnRyeVwiLCBcIkxhdFwiLCBcIkxvbmdcIikgJT4lIFxuICBtZXJnZShkZl90ZW1wLmFsbFtjKFwiY291bnRyeVwiLFwiY29uZmlybWVkXCIsIFwicmVjb3ZlcmVkXCIsIFwiZGVhdGhzXCIsIFwiYXZnX3RlbXBcIiwgXCJyYW5raW5nXCIpXSwgYnkgPSBcImNvdW50cnlcIikgJT4lXG4gIGRpc3RpbmN0KGNvdW50cnksIC5rZWVwX2FsbCA9IFRSVUUpICU+JVxuICBtdXRhdGUocmFua2luZyA9IHJhbmtpbmcgLSAxKSAlPiVcbiAgYXJyYW5nZShyYW5raW5nKVxuVmlldyhsYXQubG9uZylcbmBgYCJ9 -->
-<pre class="r"><code>#df_conf
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI2RmX2NvbmZcbiNkYXRhLmxhdGVzdC5hbGxcbmxhdC5sb25nIDwtIHJlbmFtZShkZl9jb25mLCBcXGNvdW50cnlcXCA9IFxcQ291bnRyeS5SZWdpb25cXCwgXFxjaXR5XFwgPSBcXFByb3ZpbmNlLlN0YXRlXFwpICU+JSBcbiAgc2VsZWN0KFxcY291bnRyeVxcLCBcXExhdFxcLCBcXExvbmdcXCkgJT4lIFxuICBtZXJnZShkZl90ZW1wLmFsbFtjKFxcY291bnRyeVxcLFxcY29uZmlybWVkXFwsIFxccmVjb3ZlcmVkXFwsIFxcZGVhdGhzXFwsIFxcYXZnX3RlbXBcXCwgXFxyYW5raW5nXFwpXSwgYnkgPSBcXGNvdW50cnlcXCkgJT4lXG4gIGRpc3RpbmN0KGNvdW50cnksIC5rZWVwX2FsbCA9IFRSVUUpICU+JVxuICBtdXRhdGUocmFua2luZyA9IHJhbmtpbmcgLSAxKSAlPiVcbiAgYXJyYW5nZShyYW5raW5nKVxuVmlldyhsYXQubG9uZylcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+#df_conf
 #data.latest.all
-lat.long &lt;- rename(df_conf, &quot;country&quot; = &quot;Country.Region&quot;, &quot;city&quot; = &quot;Province.State&quot;) %&gt;% 
-  select(&quot;country&quot;, &quot;Lat&quot;, &quot;Long&quot;) %&gt;% 
-  merge(df_temp.all[c(&quot;country&quot;,&quot;confirmed&quot;, &quot;recovered&quot;, &quot;deaths&quot;, &quot;avg_temp&quot;, &quot;ranking&quot;)], by = &quot;country&quot;) %&gt;%
+lat.long &lt;- rename(df_conf, \country\ = \Country.Region\, \city\ = \Province.State\) %&gt;% 
+  select(\country\, \Lat\, \Long\) %&gt;% 
+  merge(df_temp.all[c(\country\,\confirmed\, \recovered\, \deaths\, \avg_temp\, \ranking\)], by = \country\) %&gt;%
   distinct(country, .keep_all = TRUE) %&gt;%
   mutate(ranking = ranking - 1) %&gt;%
   arrange(ranking)
 View(lat.long)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGFiZWxfd29ybGQgPC0gbGF0LmxvbmcgXG5sYWJlbF93b3JsZCRhdmdfdGVtcCA8LSBhcy5udW1lcmljKGxhYmVsX3dvcmxkWywgbmFtZXMobGFiZWxfd29ybGQpICVpbiUgYyhcImF2Z190ZW1wXCIpXSlcbmxhYmVsX3dvcmxkIDwtIGxhYmVsX3dvcmxkICU+JSAgXG4gIG11dGF0ZSh0eHQ9cGFzdGUwKCc8Yj4nLHJhbmtpbmcsICc8XC9iPicsXG4gICAgICAgICAgICAgICAgICAgICc8YnIvPicsJzxiPicsY291bnRyeSwgJzxcL2I+JyxcbiAgICAgICAgICAgICAgICAgICAgJzxici8+JywgXCJUZW1wZXJhdHVyZTogIFwiLGF2Z190ZW1wLCAnIMKwQycsXG4gICAgICAgICAgICAgICAgICAgICc8YnIvPicsIFwiQ29uZmlybWVkOiAgXCIsIGNvbmZpcm1lZCwgXG4gICAgICAgICAgICAgICAgICAgICc8YnIvPicsIFwiRGVhdGhzOiBcIiwgZGVhdGhzLFxuICAgICAgICAgICAgICAgICAgICAnPGJyLz4nLCBcIlJlY292ZXJlZDogXCIsIHJlY292ZXJlZFxuICAgICAgICAgICAgICAgICAgICApKSBcblxubGFiZWxfd29ybGQkdHh0IDwtIGxhYmVsX3dvcmxkJHR4dCAlPiUgbGFwcGx5KGh0bWx0b29sczo6SFRNTClcbmxhYmVsX3dvcmxkIFxuXG5sYWJlbF90b3AgPC0gbGFiZWxfd29ybGQgJT4lIGZpbHRlcihyYW5raW5nIDwgMjEpXG5sYWJlbF90b3BcbmBgYCJ9 -->
-<pre class="r"><code>label_world &lt;- lat.long 
-label_world$avg_temp &lt;- as.numeric(label_world[, names(label_world) %in% c(&quot;avg_temp&quot;)])
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxubGFiZWxfd29ybGQgPC0gbGF0LmxvbmcgXG5sYWJlbF93b3JsZCRhdmdfdGVtcCA8LSBhcy5udW1lcmljKGxhYmVsX3dvcmxkWywgbmFtZXMobGFiZWxfd29ybGQpICVpbiUgYyhcXGF2Z190ZW1wXFwpXSlcbmxhYmVsX3dvcmxkIDwtIGxhYmVsX3dvcmxkICU+JSAgXG4gIG11dGF0ZSh0eHQ9cGFzdGUwKCc8Yj4nLHJhbmtpbmcsICc8XC9iPicsXG4gICAgICAgICAgICAgICAgICAgICc8YnIvPicsJzxiPicsY291bnRyeSwgJzxcL2I+JyxcbiAgICAgICAgICAgICAgICAgICAgJzxici8+JywgXFxUZW1wZXJhdHVyZTogIFxcLGF2Z190ZW1wLCAnIOC4ouC4kEMnLFxuICAgICAgICAgICAgICAgICAgICAnPGJyLz4nLCBcXENvbmZpcm1lZDogIFxcLCBjb25maXJtZWQsIFxuICAgICAgICAgICAgICAgICAgICAnPGJyLz4nLCBcXERlYXRoczogXFwsIGRlYXRocyxcbiAgICAgICAgICAgICAgICAgICAgJzxici8+JywgXFxSZWNvdmVyZWQ6IFxcLCByZWNvdmVyZWRcbiAgICAgICAgICAgICAgICAgICAgKSkgXG5cbmxhYmVsX3dvcmxkJHR4dCA8LSBsYWJlbF93b3JsZCR0eHQgJT4lIGxhcHBseShodG1sdG9vbHM6OkhUTUwpXG5sYWJlbF93b3JsZCBcblxubGFiZWxfdG9wIDwtIGxhYmVsX3dvcmxkICU+JSBmaWx0ZXIocmFua2luZyA8IDIxKVxubGFiZWxfdG9wXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+label_world &lt;- lat.long 
+label_world$avg_temp &lt;- as.numeric(label_world[, names(label_world) %in% c(\avg_temp\)])
 label_world &lt;- label_world %&gt;%  
   mutate(txt=paste0(&#39;&lt;b&gt;&#39;,ranking, &#39;&lt;/b&gt;&#39;,
                     &#39;&lt;br/&gt;&#39;,&#39;&lt;b&gt;&#39;,country, &#39;&lt;/b&gt;&#39;,
-                    &#39;&lt;br/&gt;&#39;, &quot;Temperature:  &quot;,avg_temp, &#39; °C&#39;,
-                    &#39;&lt;br/&gt;&#39;, &quot;Confirmed:  &quot;, confirmed, 
-                    &#39;&lt;br/&gt;&#39;, &quot;Deaths: &quot;, deaths,
-                    &#39;&lt;br/&gt;&#39;, &quot;Recovered: &quot;, recovered
+                    &#39;&lt;br/&gt;&#39;, \Temperature:  \,avg_temp, &#39; ยฐC&#39;,
+                    &#39;&lt;br/&gt;&#39;, \Confirmed:  \, confirmed, 
+                    &#39;&lt;br/&gt;&#39;, \Deaths: \, deaths,
+                    &#39;&lt;br/&gt;&#39;, \Recovered: \, recovered
                     )) 
 
 label_world$txt &lt;- label_world$txt %&gt;% lapply(htmltools::HTML)
@@ -804,16 +1123,30 @@ label_world
 
 label_top &lt;- label_world %&gt;% filter(ranking &lt; 21)
 label_top</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxud3BhbCA8LSBjb2xvck51bWVyaWMoXCJZbE9yUmRcIiwgbGFiZWxfd29ybGQkYXZnX3RlbXAsIG4gPSA0KVxuXG50b3BJY29uIDwtIG1ha2VJY29uKFwic3Rhci5wbmdcIixcbiAgI2ljb25VcmwgPSBcImh0dHBzOi8vc3RhdGljLnZlY3RlZXp5LmNvbS9zeXN0ZW0vcmVzb3VyY2VzL3ByZXZpZXdzLzAwMS8xODkvMDYzL25vbl8yeC9zdGFyLXJvdW5kZWQtcG5nLnBuZ1wiLFxuICBpY29uV2lkdGggPSAxMCwgaWNvbkhlaWdodCA9IDEwXG4gICNpY29uQW5jaG9yWCA9IDIwLCBpY29uQW5jaG9yWSA9IDIwXG4gIFxuKVxuXG5sYWJlbF93b3JsZCA8LSBsYWJlbF93b3JsZCAlPiUgZmlsdGVyKHJhbmtpbmcgPiAyMCkgXG4gIFxubSA8LSBsZWFmbGV0KHdpZHRoPTEyMDAsIGhlaWdodD04MDApICU+JSBhZGRUaWxlcygpICBcbm0gJTw+JSAgYWRkQ2lyY2xlTWFya2VycyhsYWJlbF93b3JsZCRMb25nLCBsYWJlbF93b3JsZCRMYXQsXG4gICAgICAgICAgICAgICAgICAgICAgICAjIHJhZGl1cz0yK2xvZzIoeCRjb25maXJtZWQpLFxuICAgICAgICAgICAgICAgICAgICAgICAgcmFkaXVzPTEwLCMqbG9nMihtLndvcmxkJGF2Zy50ZW1wKSxcbiAgICAgICAgICAgICAgICAgICAgICAgIHN0cm9rZT1GLFxuICAgICAgICAgICAgICAgICAgICAgICAgI2NvbG9yPSdyZWQnLFxuICAgICAgICAgICAgICAgICAgICAgICAgY29sb3IgPSB3cGFsKGxhYmVsX3dvcmxkJGF2Z190ZW1wKSwgXG4gICAgICAgICAgICAgICAgICAgICAgICBmaWxsT3BhY2l0eT0wLjUsXG4gICAgICAgICAgICAgICAgICAgICAgICAjcG9wdXA9bGFiZWwudG9wJHR4dFxuICAgICAgICAgICAgICAgICAgICAgICAgbGFiZWw9IGxhYmVsX3dvcmxkJHR4dCxcbiAgICAgICAgICAgICAgICAgICAgICAgIGdyb3VwID0gXCJXb3JsZFwiXG4gICAgICAgICAgICAgICAgICAgICAgICApICU+JVxuICBcbiAgYWRkQ2lyY2xlTWFya2VycyhsYWJlbF90b3AkTG9uZywgbGFiZWxfdG9wJExhdCxcbiAgICAgICAgICAgICAgICAgICAgICAgICMgcmFkaXVzPTIrbG9nMih4JGNvbmZpcm1lZCksXG4gICAgICAgICAgICAgICAgICAgICAgICByYWRpdXM9MTAsIypsb2cyKG0ud29ybGQkYXZnLnRlbXApLFxuICAgICAgICAgICAgICAgICAgICAgICAgc3Ryb2tlPUYsXG4gICAgICAgICAgICAgICAgICAgICAgICAjY29sb3I9J3JlZCcsXG4gICAgICAgICAgICAgICAgICAgICAgICBjb2xvciA9IHdwYWwobGFiZWxfdG9wJGF2Z190ZW1wKSwgXG4gICAgICAgICAgICAgICAgICAgICAgICBmaWxsT3BhY2l0eT0wLjUsXG4gICAgICAgICAgICAgICAgICAgICAgICAjcG9wdXA9bGFiZWwudG9wJHR4dFxuICAgICAgICAgICAgICAgICAgICAgICAgbGFiZWw9IGxhYmVsX3RvcCR0eHQsXG4gICAgICAgICAgICAgICAgICAgICAgICBncm91cCA9IFwiVG9wIDIwIENvdW50cmllc1wiXG4gICAgICAgICAgICAgICAgICAgICAgICApICU+JVxuICBcbiAgYWRkTGFiZWxPbmx5TWFya2VycyhsYWJlbF90b3AkTG9uZywgbGFiZWxfdG9wJExhdCwgbGFiZWwgPSBsYWJlbF90b3AkcmFua2luZyxcbiAgICAgICAgICAgICAgICAgICAgICBsYWJlbE9wdGlvbnMgPSBsYWJlbE9wdGlvbnMobm9IaWRlID0gVFJVRSwgdGV4dE9ubHkgPSBUUlVFLCBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZGlyZWN0aW9uID0gXCJoZWFkXCIsIFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBvZmZzZXQgPSBjKDUsNCkpLFxuICAgICAgICAgICAgICAgICAgICAgIGdyb3VwID0gXCJUb3AgMjAgQ291bnRyaWVzXCIpICU+JVxuICBcbiAgYWRkTGVnZW5kKFwiYm90dG9tcmlnaHRcIiwgcGFsID0gd3BhbCwgdmFsdWVzID0gbGFiZWxfd29ybGQkYXZnX3RlbXAsIG9wYWNpdHkgPSAxLFxuICAgICAgICAgICAgbGFiRm9ybWF0ID0gbGFiZWxGb3JtYXQoc3VmZml4ID0gXCIgwrBDXCIpLFxuICAgICAgICAgICAgdGl0bGUgPSBcIlRlbXBlcmF0dXJlXCIpICU+JSBcbiAgXG4gIGFkZExheWVyc0NvbnRyb2woXG4gICAgI2Jhc2VHcm91cHMgPSBjKFwiT1NNIChkZWZhdWx0KVwiLCBcIlRvbmVyXCIsIFwiVG9uZXIgTGl0ZVwiKSxcbiAgICBvdmVybGF5R3JvdXBzID0gYyhcIlRvcCAyMCBDb3VudHJpZXNcIiwgXCJXb3JsZFwiKSxcbiAgICBvcHRpb25zID0gbGF5ZXJzQ29udHJvbE9wdGlvbnMoY29sbGFwc2VkID0gRkFMU0UpXG4gIClcbm1cblxuYGBgIn0= -->
-<pre class="r"><code>wpal &lt;- colorNumeric(&quot;YlOrRd&quot;, label_world$avg_temp, n = 4)
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
 
-topIcon &lt;- makeIcon(&quot;star.png&quot;,
-  #iconUrl = &quot;https://static.vecteezy.com/system/resources/previews/001/189/063/non_2x/star-rounded-png.png&quot;,
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxud3BhbCA8LSBjb2xvck51bWVyaWMoXFxZbE9yUmRcXCwgbGFiZWxfd29ybGQkYXZnX3RlbXAsIG4gPSA0KVxuXG50b3BJY29uIDwtIG1ha2VJY29uKFxcc3Rhci5wbmdcXCxcbiAgI2ljb25VcmwgPSBcXGh0dHBzOi8vc3RhdGljLnZlY3RlZXp5LmNvbS9zeXN0ZW0vcmVzb3VyY2VzL3ByZXZpZXdzLzAwMS8xODkvMDYzL25vbl8yeC9zdGFyLXJvdW5kZWQtcG5nLnBuZ1xcLFxuICBpY29uV2lkdGggPSAxMCwgaWNvbkhlaWdodCA9IDEwXG4gICNpY29uQW5jaG9yWCA9IDIwLCBpY29uQW5jaG9yWSA9IDIwXG4gIFxuKVxuXG5sYWJlbF93b3JsZCA8LSBsYWJlbF93b3JsZCAlPiUgZmlsdGVyKHJhbmtpbmcgPiAyMCkgXG4gIFxubSA8LSBsZWFmbGV0KHdpZHRoPTEyMDAsIGhlaWdodD04MDApICU+JSBhZGRUaWxlcygpICBcbm0gJTw+JSAgYWRkQ2lyY2xlTWFya2VycyhsYWJlbF93b3JsZCRMb25nLCBsYWJlbF93b3JsZCRMYXQsXG4gICAgICAgICAgICAgICAgICAgICAgICAjIHJhZGl1cz0yK2xvZzIoeCRjb25maXJtZWQpLFxuICAgICAgICAgICAgICAgICAgICAgICAgcmFkaXVzPTEwLCMqbG9nMihtLndvcmxkJGF2Zy50ZW1wKSxcbiAgICAgICAgICAgICAgICAgICAgICAgIHN0cm9rZT1GLFxuICAgICAgICAgICAgICAgICAgICAgICAgI2NvbG9yPSdyZWQnLFxuICAgICAgICAgICAgICAgICAgICAgICAgY29sb3IgPSB3cGFsKGxhYmVsX3dvcmxkJGF2Z190ZW1wKSwgXG4gICAgICAgICAgICAgICAgICAgICAgICBmaWxsT3BhY2l0eT0wLjUsXG4gICAgICAgICAgICAgICAgICAgICAgICAjcG9wdXA9bGFiZWwudG9wJHR4dFxuICAgICAgICAgICAgICAgICAgICAgICAgbGFiZWw9IGxhYmVsX3dvcmxkJHR4dCxcbiAgICAgICAgICAgICAgICAgICAgICAgIGdyb3VwID0gXFxXb3JsZFxcXG4gICAgICAgICAgICAgICAgICAgICAgICApICU+JVxuICBcbiAgYWRkQ2lyY2xlTWFya2VycyhsYWJlbF90b3AkTG9uZywgbGFiZWxfdG9wJExhdCxcbiAgICAgICAgICAgICAgICAgICAgICAgICMgcmFkaXVzPTIrbG9nMih4JGNvbmZpcm1lZCksXG4gICAgICAgICAgICAgICAgICAgICAgICByYWRpdXM9MTAsIypsb2cyKG0ud29ybGQkYXZnLnRlbXApLFxuICAgICAgICAgICAgICAgICAgICAgICAgc3Ryb2tlPUYsXG4gICAgICAgICAgICAgICAgICAgICAgICAjY29sb3I9J3JlZCcsXG4gICAgICAgICAgICAgICAgICAgICAgICBjb2xvciA9IHdwYWwobGFiZWxfdG9wJGF2Z190ZW1wKSwgXG4gICAgICAgICAgICAgICAgICAgICAgICBmaWxsT3BhY2l0eT0wLjUsXG4gICAgICAgICAgICAgICAgICAgICAgICAjcG9wdXA9bGFiZWwudG9wJHR4dFxuICAgICAgICAgICAgICAgICAgICAgICAgbGFiZWw9IGxhYmVsX3RvcCR0eHQsXG4gICAgICAgICAgICAgICAgICAgICAgICBncm91cCA9IFxcVG9wIDIwIENvdW50cmllc1xcXG4gICAgICAgICAgICAgICAgICAgICAgICApICU+JVxuICBcbiAgYWRkTGFiZWxPbmx5TWFya2VycyhsYWJlbF90b3AkTG9uZywgbGFiZWxfdG9wJExhdCwgbGFiZWwgPSBsYWJlbF90b3AkcmFua2luZyxcbiAgICAgICAgICAgICAgICAgICAgICBsYWJlbE9wdGlvbnMgPSBsYWJlbE9wdGlvbnMobm9IaWRlID0gVFJVRSwgdGV4dE9ubHkgPSBUUlVFLCBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZGlyZWN0aW9uID0gXFxoZWFkXFwsIFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBvZmZzZXQgPSBjKDUsNCkpLFxuICAgICAgICAgICAgICAgICAgICAgIGdyb3VwID0gXFxUb3AgMjAgQ291bnRyaWVzXFwpICU+JVxuICBcbiAgYWRkTGVnZW5kKFxcYm90dG9tcmlnaHRcXCwgcGFsID0gd3BhbCwgdmFsdWVzID0gbGFiZWxfd29ybGQkYXZnX3RlbXAsIG9wYWNpdHkgPSAxLFxuICAgICAgICAgICAgbGFiRm9ybWF0ID0gbGFiZWxGb3JtYXQoc3VmZml4ID0gXFwg4Lii4LiQQ1xcKSxcbiAgICAgICAgICAgIHRpdGxlID0gXFxUZW1wZXJhdHVyZVxcKSAlPiUgXG4gIFxuICBhZGRMYXllcnNDb250cm9sKFxuICAgICNiYXNlR3JvdXBzID0gYyhcXE9TTSAoZGVmYXVsdClcXCwgXFxUb25lclxcLCBcXFRvbmVyIExpdGVcXCksXG4gICAgb3ZlcmxheUdyb3VwcyA9IGMoXFxUb3AgMjAgQ291bnRyaWVzXFwsIFxcV29ybGRcXCksXG4gICAgb3B0aW9ucyA9IGxheWVyc0NvbnRyb2xPcHRpb25zKGNvbGxhcHNlZCA9IEZBTFNFKVxuICApXG5tXG5cbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+wpal &lt;- colorNumeric(\YlOrRd\, label_world$avg_temp, n = 4)
+
+topIcon &lt;- makeIcon(\star.png\,
+  #iconUrl = \https://static.vecteezy.com/system/resources/previews/001/189/063/non_2x/star-rounded-png.png\,
   iconWidth = 10, iconHeight = 10
   #iconAnchorX = 20, iconAnchorY = 20
   
@@ -831,7 +1164,7 @@ m %&lt;&gt;%  addCircleMarkers(label_world$Long, label_world$Lat,
                         fillOpacity=0.5,
                         #popup=label.top$txt
                         label= label_world$txt,
-                        group = &quot;World&quot;
+                        group = \World\
                         ) %&gt;%
   
   addCircleMarkers(label_top$Long, label_top$Lat,
@@ -843,46 +1176,77 @@ m %&lt;&gt;%  addCircleMarkers(label_world$Long, label_world$Lat,
                         fillOpacity=0.5,
                         #popup=label.top$txt
                         label= label_top$txt,
-                        group = &quot;Top 20 Countries&quot;
+                        group = \Top 20 Countries\
                         ) %&gt;%
   
   addLabelOnlyMarkers(label_top$Long, label_top$Lat, label = label_top$ranking,
                       labelOptions = labelOptions(noHide = TRUE, textOnly = TRUE, 
-                                                  direction = &quot;head&quot;, 
+                                                  direction = \head\, 
                                                   offset = c(5,4)),
-                      group = &quot;Top 20 Countries&quot;) %&gt;%
+                      group = \Top 20 Countries\) %&gt;%
   
-  addLegend(&quot;bottomright&quot;, pal = wpal, values = label_world$avg_temp, opacity = 1,
-            labFormat = labelFormat(suffix = &quot; °C&quot;),
-            title = &quot;Temperature&quot;) %&gt;% 
+  addLegend(\bottomright\, pal = wpal, values = label_world$avg_temp, opacity = 1,
+            labFormat = labelFormat(suffix = \ ยฐC\),
+            title = \Temperature\) %&gt;% 
   
   addLayersControl(
-    #baseGroups = c(&quot;OSM (default)&quot;, &quot;Toner&quot;, &quot;Toner Lite&quot;),
-    overlayGroups = c(&quot;Top 20 Countries&quot;, &quot;World&quot;),
+    #baseGroups = c(\OSM (default)\, \Toner\, \Toner Lite\),
+    overlayGroups = c(\Top 20 Countries\, \World\),
     options = layersControlOptions(collapsed = FALSE)
   )
 m
 </code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI1RvcCAyMCB3aXRoIGdkcFxuZGF0YS5sb25nR0RQIDwtIGRmX2dkcCAlPiUgZ2F0aGVyKGtleT15ZWFyLCB2YWx1ZT1HRFAsIC1jKGNvdW50cnkpKVxuZGF0YS50b3AgPC0gZGF0YS5sYXRlc3QgJT4lIGZpbHRlcihjb3VudHJ5IT0nV29ybGQnJiBjb3VudHJ5IT0nT3RoZXJzJylcbiNkYXRhLnRvcCA8LSBoZWFkKGRhdGEudG9wLDIwKVxuVmlldyhkYXRhLnRvcClcbmRhdGEuZ2RwIDwtIGZpbHRlcihkYXRhLmxvbmdHRFAseWVhcj09JzIwMjAnKVxuVmlldyhkYXRhLmdkcClcbmBgYCJ9 -->
-<pre class="r"><code>#Top 20 with gdp
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI1RvcCAyMCB3aXRoIGdkcFxuZGF0YS5sb25nR0RQIDwtIGRmX2dkcCAlPiUgZ2F0aGVyKGtleT15ZWFyLCB2YWx1ZT1HRFAsIC1jKGNvdW50cnkpKVxuZGF0YS50b3AgPC0gZGF0YS5sYXRlc3QgJT4lIGZpbHRlcihjb3VudHJ5IT0nV29ybGQnJiBjb3VudHJ5IT0nT3RoZXJzJylcbiNkYXRhLnRvcCA8LSBoZWFkKGRhdGEudG9wLDIwKVxuVmlldyhkYXRhLnRvcClcbmRhdGEuZ2RwIDwtIGZpbHRlcihkYXRhLmxvbmdHRFAseWVhcj09JzIwMjAnKVxuVmlldyhkYXRhLmdkcClcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+#Top 20 with gdp
 data.longGDP &lt;- df_gdp %&gt;% gather(key=year, value=GDP, -c(country))
 data.top &lt;- data.latest %&gt;% filter(country!=&#39;World&#39;&amp; country!=&#39;Others&#39;)
 #data.top &lt;- head(data.top,20)
 View(data.top)
 data.gdp &lt;- filter(data.longGDP,year==&#39;2020&#39;)
 View(data.gdp)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI3JhbmsgR0RQXG5kYXRhLnRvcC5oaWdodCA8LSBkYXRhLmdkcCAlPiUgc2VsZWN0KGNvdW50cnksIHllYXIsR0RQKSAlPiVcbiAgbXV0YXRlKHJhbmtpbmcgPSBkZW5zZV9yYW5rKGRlc2MoR0RQKSkpXG4jZGF0YS50b3AuaGlnaHRcblxuayA8LSAyMFxuXG50b3AuZ2RwIDwtIGRhdGEudG9wLmhpZ2h0ICU+JSBcbiAgZmlsdGVyKHJhbmtpbmcgPCBrKSAlPiUgXG4gIGFycmFuZ2UocmFua2luZylcblxuXG5kYXRhLnRvcC5sb3cgPC0gZGF0YS5nZHAgJT4lIHNlbGVjdChjb3VudHJ5LCB5ZWFyLEdEUCkgJT4lXG4gIG11dGF0ZShyYW5raW5nID0gZGVuc2VfcmFuayhHRFApKVxubG93LmdkcC5sb25nIDwtIGRhdGEudG9wLmxvdyAlPiUgXG4gIGZpbHRlcihyYW5raW5nIDwgaykgJT4lIFxuICBhcnJhbmdlKHJhbmtpbmcpXG5WaWV3KGxvdy5nZHAubG9uZylcblxuXG50b3AuZ2RwXG5sb3cuZ2RwXG5gYGAifQ== -->
-<pre class="r"><code>#rank GDP
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI3JhbmsgR0RQXG5kYXRhLnRvcC5oaWdodCA8LSBkYXRhLmdkcCAlPiUgc2VsZWN0KGNvdW50cnksIHllYXIsR0RQKSAlPiVcbiAgbXV0YXRlKHJhbmtpbmcgPSBkZW5zZV9yYW5rKGRlc2MoR0RQKSkpXG4jZGF0YS50b3AuaGlnaHRcblxuayA8LSAyMFxuXG50b3AuZ2RwIDwtIGRhdGEudG9wLmhpZ2h0ICU+JSBcbiAgZmlsdGVyKHJhbmtpbmcgPCBrKSAlPiUgXG4gIGFycmFuZ2UocmFua2luZylcblxuXG5kYXRhLnRvcC5sb3cgPC0gZGF0YS5nZHAgJT4lIHNlbGVjdChjb3VudHJ5LCB5ZWFyLEdEUCkgJT4lXG4gIG11dGF0ZShyYW5raW5nID0gZGVuc2VfcmFuayhHRFApKVxubG93LmdkcC5sb25nIDwtIGRhdGEudG9wLmxvdyAlPiUgXG4gIGZpbHRlcihyYW5raW5nIDwgaykgJT4lIFxuICBhcnJhbmdlKHJhbmtpbmcpXG5WaWV3KGxvdy5nZHAubG9uZylcblxuXG50b3AuZ2RwXG5sb3cuZ2RwXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+#rank GDP
 data.top.hight &lt;- data.gdp %&gt;% select(country, year,GDP) %&gt;%
   mutate(ranking = dense_rank(desc(GDP)))
 #data.top.hight
@@ -904,26 +1268,40 @@ View(low.gdp.long)
 
 top.gdp
 low.gdp</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG53b3JsZC5nZHAgPC0gZGZfZ2RwICU+JSBmaWx0ZXIoY291bnRyeSA9PSBcIldvcmxkXCIpICU+JVxuICBnYXRoZXIoa2V5ID0gWWVhciwgdmFsdWUgPSBHRFAsIC1jb3VudHJ5KVxud29ybGQuZ2RwXG5cbndvcmxkLmdkcCRncm91cCA8LSBjdXQod29ybGQuZ2RwJEdEUCwgYygtSW5mLDAsIEluZiksIGxhYmVscyA9IGMoXCItXCIsXCIrXCIpKVxuXG5nIDwtIGdncGxvdCh3b3JsZC5nZHAsIGFlcyh4ID0gWWVhciwgeSA9IEdEUCwgZmlsbCA9IGdyb3VwKSkgK1xuICAgIGdlb21fdGV4dChhZXMobGFiZWw9R0RQLCB5ID0gR0RQKSwgc2l6ZT0zLCB2anVzdD0tMSkgK1xuICAgIGxhYnModGl0bGU9cGFzdGUwKFwiUmVhbCBHRFAgZ3Jvd3RoIChBbm51YWwgcGVyY2VudCBjaGFuZ2UpIG9mIFdvcmxkIGZyb20gMjAxMi0yMDIxXCIpKStcbiAgICBnZW9tX2JhcihzdGF0ID0gXCJpZGVudGl0eVwiKStcbiAgICBzY2FsZV9maWxsX21hbnVhbCh2YWx1ZXMgPSBjKFwiLVwiID0gXCJyZWRcIixcIitcIiA9IFwibGltZWdyZWVuXCIpKStcbiAgICB0aGVtZV9idygpICsgdGhlbWUobGVnZW5kLnBvc2l0aW9uID0gXCJub25lXCIpK1xuICAgIHhsYWIoXCJcIikrXG4gICAgdGhlbWUoI2xlZ2VuZC50aXRsZT1lbGVtZW50X2JsYW5rKCksXG4gICAgcGxvdC50aXRsZSA9IGVsZW1lbnRfdGV4dChzaXplPTcpLFxuICAgIGF4aXMudGV4dD1lbGVtZW50X3RleHQoc2l6ZT04KSlcblxuZ1xuXG5nbHkud29ybGQuZ2RwIDwtIGdncGxvdGx5KGcpXG5nbHkud29ybGQuZ2RwXG5gYGAifQ== -->
-<pre class="r"><code>
-world.gdp &lt;- df_gdp %&gt;% filter(country == &quot;World&quot;) %&gt;%
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuXG53b3JsZC5nZHAgPC0gZGZfZ2RwICU+JSBmaWx0ZXIoY291bnRyeSA9PSBcXFdvcmxkXFwpICU+JVxuICBnYXRoZXIoa2V5ID0gWWVhciwgdmFsdWUgPSBHRFAsIC1jb3VudHJ5KVxud29ybGQuZ2RwXG5cbndvcmxkLmdkcCRncm91cCA8LSBjdXQod29ybGQuZ2RwJEdEUCwgYygtSW5mLDAsIEluZiksIGxhYmVscyA9IGMoXFwtXFwsXFwrXFwpKVxuXG5nIDwtIGdncGxvdCh3b3JsZC5nZHAsIGFlcyh4ID0gWWVhciwgeSA9IEdEUCwgZmlsbCA9IGdyb3VwKSkgK1xuICAgIGdlb21fdGV4dChhZXMobGFiZWw9R0RQLCB5ID0gR0RQKSwgc2l6ZT0zLCB2anVzdD0tMSkgK1xuICAgIGxhYnModGl0bGU9cGFzdGUwKFxcUmVhbCBHRFAgZ3Jvd3RoIChBbm51YWwgcGVyY2VudCBjaGFuZ2UpIG9mIFdvcmxkIGZyb20gMjAxMi0yMDIxXFwpKStcbiAgICBnZW9tX2JhcihzdGF0ID0gXFxpZGVudGl0eVxcKStcbiAgICBzY2FsZV9maWxsX21hbnVhbCh2YWx1ZXMgPSBjKFxcLVxcID0gXFxyZWRcXCxcXCtcXCA9IFxcbGltZWdyZWVuXFwpKStcbiAgICB0aGVtZV9idygpICsgdGhlbWUobGVnZW5kLnBvc2l0aW9uID0gXFxub25lXFwpK1xuICAgIHhsYWIoXFxcXCkrXG4gICAgdGhlbWUoI2xlZ2VuZC50aXRsZT1lbGVtZW50X2JsYW5rKCksXG4gICAgcGxvdC50aXRsZSA9IGVsZW1lbnRfdGV4dChzaXplPTcpLFxuICAgIGF4aXMudGV4dD1lbGVtZW50X3RleHQoc2l6ZT04KSlcblxuZ1xuXG5nbHkud29ybGQuZ2RwIDwtIGdncGxvdGx5KGcpXG5nbHkud29ybGQuZ2RwXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+
+world.gdp &lt;- df_gdp %&gt;% filter(country == \World\) %&gt;%
   gather(key = Year, value = GDP, -country)
 world.gdp
 
-world.gdp$group &lt;- cut(world.gdp$GDP, c(-Inf,0, Inf), labels = c(&quot;-&quot;,&quot;+&quot;))
+world.gdp$group &lt;- cut(world.gdp$GDP, c(-Inf,0, Inf), labels = c(\-\,\+\))
 
 g &lt;- ggplot(world.gdp, aes(x = Year, y = GDP, fill = group)) +
     geom_text(aes(label=GDP, y = GDP), size=3, vjust=-1) +
-    labs(title=paste0(&quot;Real GDP growth (Annual percent change) of World from 2012-2021&quot;))+
-    geom_bar(stat = &quot;identity&quot;)+
-    scale_fill_manual(values = c(&quot;-&quot; = &quot;red&quot;,&quot;+&quot; = &quot;limegreen&quot;))+
-    theme_bw() + theme(legend.position = &quot;none&quot;)+
-    xlab(&quot;&quot;)+
+    labs(title=paste0(\Real GDP growth (Annual percent change) of World from 2012-2021\))+
+    geom_bar(stat = \identity\)+
+    scale_fill_manual(values = c(\-\ = \red\,\+\ = \limegreen\))+
+    theme_bw() + theme(legend.position = \none\)+
+    xlab(\\)+
     theme(#legend.title=element_blank(),
     plot.title = element_text(size=7),
     axis.text=element_text(size=8))
@@ -932,39 +1310,63 @@ g
 
 gly.world.gdp &lt;- ggplotly(g)
 gly.world.gdp</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2RwLnRvcDIwIDwtIGRmX2dkcDIwMTkgJT4lXG4gIHNlbGVjdChjKFwicmFua1wiLCBcImNvdW50cnlcIiwgXCJHRFAgKG1pbGxpb25zIG9mIFVTIGRvbGxhcnMpXCIpKSAlPiVcbiAgbWVyZ2UoZGF0YS5sYXRlc3QuYWxsICU+JSBcbiAgICAgICAgICBzZWxlY3QoY291bnRyeSwgcmFua2luZywgY29uZmlybWVkLCByZWNvdmVyZWQsIGRlYXRocykgJT4lIFxuICAgICAgICAgIGZpbHRlcihjb3VudHJ5ICVpbiUgdG9wLmNvdW50cmllcyAmIGNvdW50cnkgIT0gXCJXb3JsZFwiKSwgYnkgPSBcImNvdW50cnlcIikgJT4lXG4gIGFycmFuZ2UocmFua2luZykgJT4lIFxuICBtdXRhdGUocmFua2luZyA9IHJhbmtpbmcgLSAxKSBcbmdkcC50b3AyMCAlPD4lIHJlbmFtZShcIkdEUFwiID0gXCJHRFAgKG1pbGxpb25zIG9mIFVTIGRvbGxhcnMpXCIpXG5nZHAudG9wMjBcblxuZyA8LSBnZ3Bsb3QoZ2RwLnRvcDIwLCBhZXMoeCA9IEdEUCwgeSA9IHJlb3JkZXIoY291bnRyeSwgLXJhbmtpbmcpKSkgK1xuICBnZW9tX2hpc3RvZ3JhbShzdGF0ID0gXCJpZGVudGl0eVwiLCBhZXMoZmlsbCA9IEdEUCkpKyBcbiAgc2NhbGVfZmlsbF9ncmFkaWVudChcIkdEUFwiLCBsb3cgPSBcIiNGRjQwMzhcIiwgaGlnaCA9IFwiIzUwRTk1MlwiKSArIFxuICBsYWJzKHRpdGxlPXBhc3RlMChcIkdEUCAgb2YgVG9wIDIwIENvdW50cmllcyBpbiAyMDE5IChtaWxsaW9ucyBvZiBVUyBkb2xsYXJzKVwiKSkgK1xuICBnZW9tX3RleHQoYWVzKGxhYmVsPUdEUCwgeCA9IEdEUCksIHNpemU9My41LCBoanVzdD0tMC4yKSArXG4gIHhsYWIoXCJHRFAgKG1pbGxpb25zIG9mIFVTIGRvbGxhcnMpXCIpICtcbiAgeWxhYihcIlwiKSArXG4gIHRoZW1lKGxlZ2VuZC50aXRsZT1lbGVtZW50X2JsYW5rKCkpXG5nXG5cbmdseS50b3AuZ2RwIDwtIGdncGxvdGx5KGcpXG5nbHkudG9wLmdkcFxuYGBgIn0= -->
-<pre class="r"><code>gdp.top20 &lt;- df_gdp2019 %&gt;%
-  select(c(&quot;rank&quot;, &quot;country&quot;, &quot;GDP (millions of US dollars)&quot;)) %&gt;%
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZ2RwLnRvcDIwIDwtIGRmX2dkcDIwMTkgJT4lXG4gIHNlbGVjdChjKFxccmFua1xcLCBcXGNvdW50cnlcXCwgXFxHRFAgKG1pbGxpb25zIG9mIFVTIGRvbGxhcnMpXFwpKSAlPiVcbiAgbWVyZ2UoZGF0YS5sYXRlc3QuYWxsICU+JSBcbiAgICAgICAgICBzZWxlY3QoY291bnRyeSwgcmFua2luZywgY29uZmlybWVkLCByZWNvdmVyZWQsIGRlYXRocykgJT4lIFxuICAgICAgICAgIGZpbHRlcihjb3VudHJ5ICVpbiUgdG9wLmNvdW50cmllcyAmIGNvdW50cnkgIT0gXFxXb3JsZFxcKSwgYnkgPSBcXGNvdW50cnlcXCkgJT4lXG4gIGFycmFuZ2UocmFua2luZykgJT4lIFxuICBtdXRhdGUocmFua2luZyA9IHJhbmtpbmcgLSAxKSBcbmdkcC50b3AyMCAlPD4lIHJlbmFtZShcXEdEUFxcID0gXFxHRFAgKG1pbGxpb25zIG9mIFVTIGRvbGxhcnMpXFwpXG5nZHAudG9wMjBcblxuZyA8LSBnZ3Bsb3QoZ2RwLnRvcDIwLCBhZXMoeCA9IEdEUCwgeSA9IHJlb3JkZXIoY291bnRyeSwgLXJhbmtpbmcpKSkgK1xuICBnZW9tX2hpc3RvZ3JhbShzdGF0ID0gXFxpZGVudGl0eVxcLCBhZXMoZmlsbCA9IEdEUCkpKyBcbiAgc2NhbGVfZmlsbF9ncmFkaWVudChcXEdEUFxcLCBsb3cgPSBcXCNGRjQwMzhcXCwgaGlnaCA9IFxcIzUwRTk1MlxcKSArIFxuICBsYWJzKHRpdGxlPXBhc3RlMChcXEdEUCAgb2YgVG9wIDIwIENvdW50cmllcyBpbiAyMDE5IChtaWxsaW9ucyBvZiBVUyBkb2xsYXJzKVxcKSkgK1xuICBnZW9tX3RleHQoYWVzKGxhYmVsPUdEUCwgeCA9IEdEUCksIHNpemU9My41LCBoanVzdD0tMC4yKSArXG4gIHhsYWIoXFxHRFAgKG1pbGxpb25zIG9mIFVTIGRvbGxhcnMpXFwpICtcbiAgeWxhYihcXFxcKSArXG4gIHRoZW1lKGxlZ2VuZC50aXRsZT1lbGVtZW50X2JsYW5rKCkpXG5nXG5cbmdseS50b3AuZ2RwIDwtIGdncGxvdGx5KGcpXG5nbHkudG9wLmdkcFxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+gdp.top20 &lt;- df_gdp2019 %&gt;%
+  select(c(\rank\, \country\, \GDP (millions of US dollars)\)) %&gt;%
   merge(data.latest.all %&gt;% 
           select(country, ranking, confirmed, recovered, deaths) %&gt;% 
-          filter(country %in% top.countries &amp; country != &quot;World&quot;), by = &quot;country&quot;) %&gt;%
+          filter(country %in% top.countries &amp; country != \World\), by = \country\) %&gt;%
   arrange(ranking) %&gt;% 
   mutate(ranking = ranking - 1) 
-gdp.top20 %&lt;&gt;% rename(&quot;GDP&quot; = &quot;GDP (millions of US dollars)&quot;)
+gdp.top20 %&lt;&gt;% rename(\GDP\ = \GDP (millions of US dollars)\)
 gdp.top20
 
 g &lt;- ggplot(gdp.top20, aes(x = GDP, y = reorder(country, -ranking))) +
-  geom_histogram(stat = &quot;identity&quot;, aes(fill = GDP))+ 
-  scale_fill_gradient(&quot;GDP&quot;, low = &quot;#FF4038&quot;, high = &quot;#50E952&quot;) + 
-  labs(title=paste0(&quot;GDP  of Top 20 Countries in 2019 (millions of US dollars)&quot;)) +
+  geom_histogram(stat = \identity\, aes(fill = GDP))+ 
+  scale_fill_gradient(\GDP\, low = \#FF4038\, high = \#50E952\) + 
+  labs(title=paste0(\GDP  of Top 20 Countries in 2019 (millions of US dollars)\)) +
   geom_text(aes(label=GDP, x = GDP), size=3.5, hjust=-0.2) +
-  xlab(&quot;GDP (millions of US dollars)&quot;) +
-  ylab(&quot;&quot;) +
+  xlab(\GDP (millions of US dollars)\) +
+  ylab(\\) +
   theme(legend.title=element_blank())
 g
 
 gly.top.gdp &lt;- ggplotly(g)
 gly.top.gdp</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGZfc2FycyA8LSB0YmwobXlfZGIsIHNxbChcInNlbGVjdCAqIGZyb20gc2Fyc18yMDAzXCIpKVxuZGZfc2FycyA8LSBhcy5kYXRhLmZyYW1lKGRmX3NhcnMpXG5kZl9zYXJzXG5cbmRhdGVzLnMgPC0gZGZfc2Fyc1ssMV0lPiUgbWR5KClcbnJhbmdlKGRhdGVzLnMpXG5taW4uZGF0ZS5zIDwtIG1pbihkYXRlcy5zKVxubWF4LmRhdGUucyA8LSBtYXgoZGF0ZXMucylcbm1pbi5kYXRlLnR4dC5zIDwtIG1pbi5kYXRlLnMgJT4lIGZvcm1hdCgnJWQgJWIgJVknKVxubWF4LmRhdGUudHh0LnMgPC0gbWF4LmRhdGUucyAlPiUgZm9ybWF0KCclZCAlYiAlWScpXG5cbmBgYCJ9 -->
-<pre class="r"><code>df_sars &lt;- tbl(my_db, sql(&quot;select * from sars_2003&quot;))
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZGZfc2FycyA8LSB0YmwobXlfZGIsIHNxbChcXHNlbGVjdCAqIGZyb20gc2Fyc18yMDAzXFwpKVxuZGZfc2FycyA8LSBhcy5kYXRhLmZyYW1lKGRmX3NhcnMpXG5kZl9zYXJzXG5cbmRhdGVzLnMgPC0gZGZfc2Fyc1ssMV0lPiUgbWR5KClcbnJhbmdlKGRhdGVzLnMpXG5taW4uZGF0ZS5zIDwtIG1pbihkYXRlcy5zKVxubWF4LmRhdGUucyA8LSBtYXgoZGF0ZXMucylcbm1pbi5kYXRlLnR4dC5zIDwtIG1pbi5kYXRlLnMgJT4lIGZvcm1hdCgnJWQgJWIgJVknKVxubWF4LmRhdGUudHh0LnMgPC0gbWF4LmRhdGUucyAlPiUgZm9ybWF0KCclZCAlYiAlWScpXG5cbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+df_sars &lt;- tbl(my_db, sql(\select * from sars_2003\))
 df_sars &lt;- as.data.frame(df_sars)
 df_sars
 
@@ -975,14 +1377,28 @@ max.date.s &lt;- max(dates.s)
 min.date.txt.s &lt;- min.date.s %&gt;% format(&#39;%d %b %Y&#39;)
 max.date.txt.s &lt;- max.date.s %&gt;% format(&#39;%d %b %Y&#39;)
 </code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBjbGVhbiBkYXRhIFNhcnMgXG5kYXRhLnNhcnMgPC0gZGZfc2FycyAlPiUgcmVuYW1lKGMoXCJkYXRlXCIgPSBcIkRhdGVcIiwgXCJjb25maXJtZWRcIiA9IFwiQ3VtdWxhdGl2ZV9udW1iZXJcIiAgLFwiZGVhdGhzXCIgPSBcIk51bWJlcl9kZWF0aHNcIiwgXCJyZWNvdmVyZWRcIiA9IFwiTnVtYmVyX3JlY292ZXJlZFwiKSkgJT4lXG4gIG11dGF0ZShkYXRlID0gZGF0ZSAlPiUgbWR5KCkpICU+JVxuICBncm91cF9ieShjb3VudHJ5LCBkYXRlKSAlPiUgYXMuZGF0YS5mcmFtZSgpIFxuVmlldyhkYXRhLnNhcnMpXG5cblxuIyBBZGQgV29ybGQncyBTYXJzIGNhc2VzIFxud29ybGQuc2FycyA8LSBkYXRhLnNhcnMgJT4lIGdyb3VwX2J5KGRhdGUpICU+JSBcbiAgc3VtbWFyaXNlKGNvdW50cnk9J1dvcmxkJyxcbiAgICAgICAgICAgIGNvbmZpcm1lZCA9IHN1bShjb25maXJtZWQsIG5hLnJtPVQpLFxuICAgICAgICAgICAgZGVhdGhzID0gc3VtKGRlYXRocywgbmEucm09VCksXG4gICAgICAgICAgICByZWNvdmVyZWQgPSBzdW0ocmVjb3ZlcmVkLCBuYS5ybT1UKSlcblxuZGF0YS5zYXJzICU8PiUgcmJpbmQod29ybGQuc2FycylcbmRhdGEuc2FycyAlPD4lIG11dGF0ZShjdXJyZW50LmNvbmZpcm1lZCA9IGNvbmZpcm1lZCAtIGRlYXRocyAtIHJlY292ZXJlZClcbiNWaWV3KHdvcmxkLnNhcnMpIFxuI1ZpZXcoZGF0YS5zYXJzKSBcbmBgYCJ9 -->
-<pre class="r"><code># clean data Sars 
-data.sars &lt;- df_sars %&gt;% rename(c(&quot;date&quot; = &quot;Date&quot;, &quot;confirmed&quot; = &quot;Cumulative_number&quot;  ,&quot;deaths&quot; = &quot;Number_deaths&quot;, &quot;recovered&quot; = &quot;Number_recovered&quot;)) %&gt;%
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyBjbGVhbiBkYXRhIFNhcnMgXG5kYXRhLnNhcnMgPC0gZGZfc2FycyAlPiUgcmVuYW1lKGMoXFxkYXRlXFwgPSBcXERhdGVcXCwgXFxjb25maXJtZWRcXCA9IFxcQ3VtdWxhdGl2ZV9udW1iZXJcXCAgLFxcZGVhdGhzXFwgPSBcXE51bWJlcl9kZWF0aHNcXCwgXFxyZWNvdmVyZWRcXCA9IFxcTnVtYmVyX3JlY292ZXJlZFxcKSkgJT4lXG4gIG11dGF0ZShkYXRlID0gZGF0ZSAlPiUgbWR5KCkpICU+JVxuICBncm91cF9ieShjb3VudHJ5LCBkYXRlKSAlPiUgYXMuZGF0YS5mcmFtZSgpIFxuVmlldyhkYXRhLnNhcnMpXG5cblxuIyBBZGQgV29ybGQncyBTYXJzIGNhc2VzIFxud29ybGQuc2FycyA8LSBkYXRhLnNhcnMgJT4lIGdyb3VwX2J5KGRhdGUpICU+JSBcbiAgc3VtbWFyaXNlKGNvdW50cnk9J1dvcmxkJyxcbiAgICAgICAgICAgIGNvbmZpcm1lZCA9IHN1bShjb25maXJtZWQsIG5hLnJtPVQpLFxuICAgICAgICAgICAgZGVhdGhzID0gc3VtKGRlYXRocywgbmEucm09VCksXG4gICAgICAgICAgICByZWNvdmVyZWQgPSBzdW0ocmVjb3ZlcmVkLCBuYS5ybT1UKSlcblxuZGF0YS5zYXJzICU8PiUgcmJpbmQod29ybGQuc2FycylcbmRhdGEuc2FycyAlPD4lIG11dGF0ZShjdXJyZW50LmNvbmZpcm1lZCA9IGNvbmZpcm1lZCAtIGRlYXRocyAtIHJlY292ZXJlZClcbiNWaWV3KHdvcmxkLnNhcnMpIFxuI1ZpZXcoZGF0YS5zYXJzKSBcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+# clean data Sars 
+data.sars &lt;- df_sars %&gt;% rename(c(\date\ = \Date\, \confirmed\ = \Cumulative_number\  ,\deaths\ = \Number_deaths\, \recovered\ = \Number_recovered\)) %&gt;%
   mutate(date = date %&gt;% mdy()) %&gt;%
   group_by(country, date) %&gt;% as.data.frame() 
 View(data.sars)
@@ -999,13 +1415,27 @@ data.sars %&lt;&gt;% rbind(world.sars)
 data.sars %&lt;&gt;% mutate(current.confirmed = confirmed - deaths - recovered)
 #View(world.sars) 
 #View(data.sars) </code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI3JhdGVcbmRhdGEuc2FycyAlPD4lIGFycmFuZ2UoY291bnRyeSwgZGF0ZSlcbm4gPC0gbnJvdyhkYXRhLnNhcnMpXG5kYXkxLnNhcnMgPC0gbWluKGRhdGEuc2FycyRkYXRlKVxuZGF0YS5zYXJzICU8PiUgbXV0YXRlKG5ldy5jb25maXJtZWQgPSBpZmVsc2UoZGF0ZSA9PSBkYXkxLnNhcnMsIE5BLCBjb25maXJtZWQgLSBsYWcoY29uZmlybWVkLCBuPTEpKSxcbiAgICAgICAgICAgICAgICAgbmV3LmRlYXRocyA9IGlmZWxzZShkYXRlID09IGRheTEuc2FycywgTkEsIGRlYXRocyAtIGxhZyhkZWF0aHMsIG49MSkpLFxuICAgICAgICAgICAgICAgICBuZXcucmVjb3ZlcmVkID0gaWZlbHNlKGRhdGUgPT0gZGF5MS5zYXJzLCBOQSwgcmVjb3ZlcmVkIC0gbGFnKHJlY292ZXJlZCwgbj0xKSkpXG5kYXRhLnNhcnMgJTw+JSBtdXRhdGUobmV3LmNvbmZpcm1lZCA9IGlmZWxzZShuZXcuY29uZmlybWVkIDwgMCwgMCwgbmV3LmNvbmZpcm1lZCksXG4gICAgICAgICAgICAgICAgIG5ldy5kZWF0aHMgPSBpZmVsc2UobmV3LmRlYXRocyA8IDAsIDAsIG5ldy5kZWF0aHMpLFxuICAgICAgICAgICAgICAgICBuZXcucmVjb3ZlcmVkID0gaWZlbHNlKG5ldy5yZWNvdmVyZWQgPCAwLCAwLCBuZXcucmVjb3ZlcmVkKSlcbiMjIGRlYXRoIHJhdGUgYmFzZWQgb24gdG90YWwgZGVhdGhzIGFuZCByZWNvdmVyZWQgY2FzZXNcbmRhdGEuc2FycyAlPD4lIG11dGF0ZShyYXRlLnVwcGVyID0gKDEwMCAqIGRlYXRocyAvIChkZWF0aHMgKyByZWNvdmVyZWQpKSAlPiUgcm91bmQoMSksXG4gICAgICAgICAgICAgICAgIHJhdGUudXBwZXIgPSBpZmVsc2UoaXMubmFuKHJhdGUudXBwZXIpLCAwLCByYXRlLnVwcGVyKSlcblxuIyMgbG93ZXIgYm91bmQ6IGRlYXRoIHJhdGUgYmFzZWQgb24gdG90YWwgY29uZmlybWVkIGNhc2VzXG5kYXRhLnNhcnMgJTw+JSBtdXRhdGUocmF0ZS5sb3dlciA9ICgxMDAgKiBkZWF0aHMgLyBjb25maXJtZWQpICU+JSByb3VuZCgxKSxcbiAgICAgICAgICAgICAgICAgcmF0ZS5sb3dlciA9IGlmZWxzZShpcy5uYW4ocmF0ZS5sb3dlciksIDAsIHJhdGUubG93ZXIpKVxuXG4jIyBkZWF0aCByYXRlIGJhc2VkIG9uIHRoZSBudW1iZXIgb2YgZGVhdGgvcmVjb3ZlcmVkIG9uIGV2ZXJ5IHNpbmdsZSBkYXlcbmRhdGEuc2FycyAlPD4lIG11dGF0ZShyYXRlLmRhaWx5ID0gKDEwMCAqIG5ldy5kZWF0aHMgLyAobmV3LmRlYXRocyArIG5ldy5yZWNvdmVyZWQpKSAlPiUgcm91bmQoMSksXG4gICAgICAgICAgICAgICAgIHJhdGUuZGFpbHkgPSBpZmVsc2UoaXMubmFuKHJhdGUuZGFpbHkpLCAwLCByYXRlLmRhaWx5KSlcblxuVmlldyhkYXRhLnNhcnMpXG5gYGAifQ== -->
-<pre class="r"><code>#rate
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI3JhdGVcbmRhdGEuc2FycyAlPD4lIGFycmFuZ2UoY291bnRyeSwgZGF0ZSlcbm4gPC0gbnJvdyhkYXRhLnNhcnMpXG5kYXkxLnNhcnMgPC0gbWluKGRhdGEuc2FycyRkYXRlKVxuZGF0YS5zYXJzICU8PiUgbXV0YXRlKG5ldy5jb25maXJtZWQgPSBpZmVsc2UoZGF0ZSA9PSBkYXkxLnNhcnMsIE5BLCBjb25maXJtZWQgLSBsYWcoY29uZmlybWVkLCBuPTEpKSxcbiAgICAgICAgICAgICAgICAgbmV3LmRlYXRocyA9IGlmZWxzZShkYXRlID09IGRheTEuc2FycywgTkEsIGRlYXRocyAtIGxhZyhkZWF0aHMsIG49MSkpLFxuICAgICAgICAgICAgICAgICBuZXcucmVjb3ZlcmVkID0gaWZlbHNlKGRhdGUgPT0gZGF5MS5zYXJzLCBOQSwgcmVjb3ZlcmVkIC0gbGFnKHJlY292ZXJlZCwgbj0xKSkpXG5kYXRhLnNhcnMgJTw+JSBtdXRhdGUobmV3LmNvbmZpcm1lZCA9IGlmZWxzZShuZXcuY29uZmlybWVkIDwgMCwgMCwgbmV3LmNvbmZpcm1lZCksXG4gICAgICAgICAgICAgICAgIG5ldy5kZWF0aHMgPSBpZmVsc2UobmV3LmRlYXRocyA8IDAsIDAsIG5ldy5kZWF0aHMpLFxuICAgICAgICAgICAgICAgICBuZXcucmVjb3ZlcmVkID0gaWZlbHNlKG5ldy5yZWNvdmVyZWQgPCAwLCAwLCBuZXcucmVjb3ZlcmVkKSlcbiMjIGRlYXRoIHJhdGUgYmFzZWQgb24gdG90YWwgZGVhdGhzIGFuZCByZWNvdmVyZWQgY2FzZXNcbmRhdGEuc2FycyAlPD4lIG11dGF0ZShyYXRlLnVwcGVyID0gKDEwMCAqIGRlYXRocyAvIChkZWF0aHMgKyByZWNvdmVyZWQpKSAlPiUgcm91bmQoMSksXG4gICAgICAgICAgICAgICAgIHJhdGUudXBwZXIgPSBpZmVsc2UoaXMubmFuKHJhdGUudXBwZXIpLCAwLCByYXRlLnVwcGVyKSlcblxuIyMgbG93ZXIgYm91bmQ6IGRlYXRoIHJhdGUgYmFzZWQgb24gdG90YWwgY29uZmlybWVkIGNhc2VzXG5kYXRhLnNhcnMgJTw+JSBtdXRhdGUocmF0ZS5sb3dlciA9ICgxMDAgKiBkZWF0aHMgLyBjb25maXJtZWQpICU+JSByb3VuZCgxKSxcbiAgICAgICAgICAgICAgICAgcmF0ZS5sb3dlciA9IGlmZWxzZShpcy5uYW4ocmF0ZS5sb3dlciksIDAsIHJhdGUubG93ZXIpKVxuXG4jIyBkZWF0aCByYXRlIGJhc2VkIG9uIHRoZSBudW1iZXIgb2YgZGVhdGgvcmVjb3ZlcmVkIG9uIGV2ZXJ5IHNpbmdsZSBkYXlcbmRhdGEuc2FycyAlPD4lIG11dGF0ZShyYXRlLmRhaWx5ID0gKDEwMCAqIG5ldy5kZWF0aHMgLyAobmV3LmRlYXRocyArIG5ldy5yZWNvdmVyZWQpKSAlPiUgcm91bmQoMSksXG4gICAgICAgICAgICAgICAgIHJhdGUuZGFpbHkgPSBpZmVsc2UoaXMubmFuKHJhdGUuZGFpbHkpLCAwLCByYXRlLmRhaWx5KSlcblxuVmlldyhkYXRhLnNhcnMpXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+#rate
 data.sars %&lt;&gt;% arrange(country, date)
 n &lt;- nrow(data.sars)
 day1.sars &lt;- min(data.sars$date)
@@ -1028,13 +1458,27 @@ data.sars %&lt;&gt;% mutate(rate.daily = (100 * new.deaths / (new.deaths + new.r
                  rate.daily = ifelse(is.nan(rate.daily), 0, rate.daily))
 
 View(data.sars)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMgY29udmVydCBmcm9tIHdpZGUgdG8gbG9uZyBmb3JtYXRcbmRhdGEuc2Fycy5sb25nIDwtIGRhdGEuc2FycyAlPiVcbiAgc2VsZWN0KGMoY291bnRyeSwgZGF0ZSwgY29uZmlybWVkLCBjdXJyZW50LmNvbmZpcm1lZCwgcmVjb3ZlcmVkLCBkZWF0aHMpKSAlPiVcbiAgZ2F0aGVyKGtleT10eXBlLCB2YWx1ZT1jb3VudCwgLWMoY291bnRyeSwgZGF0ZSkpXG4jIyBzZXQgZmFjdG9yIGxldmVscyB0byBzaG93IHRoZW0gaW4gYSBkZXNpcmFibGUgb3JkZXJcbmRhdGEuc2Fycy5sb25nICU8PiUgbXV0YXRlKHR5cGU9cmVjb2RlX2ZhY3Rvcih0eXBlLCBjb25maXJtZWQ9J1RvdGFsIENvbmZpcm1lZCcsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGN1cnJlbnQuY29uZmlybWVkPSdDdXJyZW50IENvbmZpcm1lZCcsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHJlY292ZXJlZD0nUmVjb3ZlcmVkJyxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZGVhdGhzPSdEZWF0aHMnKSlcblZpZXcoZGF0YS5zYXJzLmxvbmcpXG5cbiMgV29ybGQgc2FycycgbG9uZyBkYXRhIFxud29ybGQuc2Fycy5sb25nIDwtIGRhdGEuc2Fycy5sb25nICU+JVxuICBmaWx0ZXIoY291bnRyeSA9PSBcIldvcmxkXCIpXG5WaWV3KHdvcmxkLnNhcnMubG9uZylcblxuZyA8LSBnZ3Bsb3Qod29ybGQuc2Fycy5sb25nLCBhZXMoZGF0ZSwgY291bnQsIGNvbG9yID0gdHlwZSkpICtcbiAgZ2VvbV9saW5lKCkrXG4gIGxhYnModGl0bGUgPSBcIk51bWJlciBvZiBDYXNlcyBXb3JsZHdpZGU6IFNBUnNcIikrXG4gIHhsYWIoXCJcIikrXG4gIHlsYWIoXCJcIilcbmdcblxuZ2x5LmcgPC0gZ2dwbG90bHkoZylcbmdseS5nXG5nbHkucGxvdDJcbmBgYCJ9 -->
-<pre class="r"><code>## convert from wide to long format
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyMgY29udmVydCBmcm9tIHdpZGUgdG8gbG9uZyBmb3JtYXRcbmRhdGEuc2Fycy5sb25nIDwtIGRhdGEuc2FycyAlPiVcbiAgc2VsZWN0KGMoY291bnRyeSwgZGF0ZSwgY29uZmlybWVkLCBjdXJyZW50LmNvbmZpcm1lZCwgcmVjb3ZlcmVkLCBkZWF0aHMpKSAlPiVcbiAgZ2F0aGVyKGtleT10eXBlLCB2YWx1ZT1jb3VudCwgLWMoY291bnRyeSwgZGF0ZSkpXG4jIyBzZXQgZmFjdG9yIGxldmVscyB0byBzaG93IHRoZW0gaW4gYSBkZXNpcmFibGUgb3JkZXJcbmRhdGEuc2Fycy5sb25nICU8PiUgbXV0YXRlKHR5cGU9cmVjb2RlX2ZhY3Rvcih0eXBlLCBjb25maXJtZWQ9J1RvdGFsIENvbmZpcm1lZCcsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGN1cnJlbnQuY29uZmlybWVkPSdDdXJyZW50IENvbmZpcm1lZCcsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHJlY292ZXJlZD0nUmVjb3ZlcmVkJyxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZGVhdGhzPSdEZWF0aHMnKSlcblZpZXcoZGF0YS5zYXJzLmxvbmcpXG5cbiMgV29ybGQgc2FycycgbG9uZyBkYXRhIFxud29ybGQuc2Fycy5sb25nIDwtIGRhdGEuc2Fycy5sb25nICU+JVxuICBmaWx0ZXIoY291bnRyeSA9PSBcXFdvcmxkXFwpXG5WaWV3KHdvcmxkLnNhcnMubG9uZylcblxuZyA8LSBnZ3Bsb3Qod29ybGQuc2Fycy5sb25nLCBhZXMoZGF0ZSwgY291bnQsIGNvbG9yID0gdHlwZSkpICtcbiAgZ2VvbV9saW5lKCkrXG4gIGxhYnModGl0bGUgPSBcXE51bWJlciBvZiBDYXNlcyBXb3JsZHdpZGU6IFNBUnNcXCkrXG4gIHhsYWIoXFxcXCkrXG4gIHlsYWIoXFxcXClcbmdcblxuZ2x5LmcgPC0gZ2dwbG90bHkoZylcbmdseS5nXG5nbHkucGxvdDJcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+## convert from wide to long format
 data.sars.long &lt;- data.sars %&gt;%
   select(c(country, date, confirmed, current.confirmed, recovered, deaths)) %&gt;%
   gather(key=type, value=count, -c(country, date))
@@ -1047,26 +1491,41 @@ View(data.sars.long)
 
 # World sars&#39; long data 
 world.sars.long &lt;- data.sars.long %&gt;%
-  filter(country == &quot;World&quot;)
+  filter(country == \World\)
 View(world.sars.long)
 
 g &lt;- ggplot(world.sars.long, aes(date, count, color = type)) +
   geom_line()+
-  labs(title = &quot;Number of Cases Worldwide: SARs&quot;)+
-  xlab(&quot;&quot;)+
-  ylab(&quot;&quot;)
+  labs(title = \Number of Cases Worldwide: SARs\)+
+  xlab(\\)+
+  ylab(\\)
 g
 
 gly.g &lt;- ggplotly(g)
 gly.g
 gly.plot2</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMgQ3VycmVudCBDb25maXJtZWQgQ2FzZXNcbmRhdGEuc2Fycy53b3JsZCA8LSBkYXRhLnNhcnMgJT4lIGZpbHRlcihjb3VudHJ5PT0nV29ybGQnKVxuVmlldyhkYXRhLnNhcnMud29ybGQpXG5uIDwtIG5yb3coZGF0YS5zYXJzLndvcmxkKVxuVmlldyhkYXRhLnNhcnMud29ybGQpXG5wbG90MSA8LSBnZ3Bsb3QoZGF0YS5zYXJzLndvcmxkLCBhZXMoeD1kYXRlLCB5PWN1cnJlbnQuY29uZmlybWVkKSkgK1xuICBnZW9tX3BvaW50KCkgKyBnZW9tX3Ntb290aCgpICtcbiAgeGxhYignJykgKyB5bGFiKCdDb3VudCcpICsgbGFicyh0aXRsZT0nQ3VycmVudCBDb25maXJtZWQgQ2FzZXMnKSArXG4gIHRoZW1lKGF4aXMudGV4dC54PWVsZW1lbnRfdGV4dChhbmdsZT00NSwgaGp1c3Q9MSkpXG5wbG90MiA8LSBnZ3Bsb3QoZGF0YS53b3JsZCwgYWVzKHg9ZGF0ZSwgeT1uZXcuY29uZmlybWVkKSkgK1xuICBnZW9tX3BvaW50KCkgKyBnZW9tX3Ntb290aCgpICtcbiAgeGxhYignJykgKyB5bGFiKCdDb3VudCcpICsgbGFicyh0aXRsZT0nRGFpbHkgTmV3IENvbmZpcm1lZCBDYXNlcycpICtcbiAgdGhlbWUoYXhpcy50ZXh0Lng9ZWxlbWVudF90ZXh0KGFuZ2xlPTQ1LCBoanVzdD0xKSlcbiMjIHNob3cgdHdvIHBsb3RzIHNpZGUgYnkgc2lkZVxuZ3JpZC5hcnJhbmdlKHBsb3QxLCBwbG90MiwgbmNvbD0yKVxuYGBgIn0= -->
-<pre class="r"><code>## Current Confirmed Cases
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyMgQ3VycmVudCBDb25maXJtZWQgQ2FzZXNcbmRhdGEuc2Fycy53b3JsZCA8LSBkYXRhLnNhcnMgJT4lIGZpbHRlcihjb3VudHJ5PT0nV29ybGQnKVxuVmlldyhkYXRhLnNhcnMud29ybGQpXG5uIDwtIG5yb3coZGF0YS5zYXJzLndvcmxkKVxuVmlldyhkYXRhLnNhcnMud29ybGQpXG5wbG90MSA8LSBnZ3Bsb3QoZGF0YS5zYXJzLndvcmxkLCBhZXMoeD1kYXRlLCB5PWN1cnJlbnQuY29uZmlybWVkKSkgK1xuICBnZW9tX3BvaW50KCkgKyBnZW9tX3Ntb290aCgpICtcbiAgeGxhYignJykgKyB5bGFiKCdDb3VudCcpICsgbGFicyh0aXRsZT0nQ3VycmVudCBDb25maXJtZWQgQ2FzZXMnKSArXG4gIHRoZW1lKGF4aXMudGV4dC54PWVsZW1lbnRfdGV4dChhbmdsZT00NSwgaGp1c3Q9MSkpXG5wbG90MiA8LSBnZ3Bsb3QoZGF0YS53b3JsZCwgYWVzKHg9ZGF0ZSwgeT1uZXcuY29uZmlybWVkKSkgK1xuICBnZW9tX3BvaW50KCkgKyBnZW9tX3Ntb290aCgpICtcbiAgeGxhYignJykgKyB5bGFiKCdDb3VudCcpICsgbGFicyh0aXRsZT0nRGFpbHkgTmV3IENvbmZpcm1lZCBDYXNlcycpICtcbiAgdGhlbWUoYXhpcy50ZXh0Lng9ZWxlbWVudF90ZXh0KGFuZ2xlPTQ1LCBoanVzdD0xKSlcbiMjIHNob3cgdHdvIHBsb3RzIHNpZGUgYnkgc2lkZVxuZ3JpZC5hcnJhbmdlKHBsb3QxLCBwbG90MiwgbmNvbD0yKVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+## Current Confirmed Cases
 data.sars.world &lt;- data.sars %&gt;% filter(country==&#39;World&#39;)
 View(data.sars.world)
 n &lt;- nrow(data.sars.world)
@@ -1081,11 +1540,20 @@ plot2 &lt;- ggplot(data.world, aes(x=date, y=new.confirmed)) +
   theme(axis.text.x=element_text(angle=45, hjust=1))
 ## show two plots side by side
 grid.arrange(plot1, plot2, ncol=2)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMgYSBzY2F0dGVyIHBsb3Qgd2l0aCBhIHNtb290aGVkIGxpbmUgYW5kIHZlcnRpY2FsIHgtYXhpcyBsYWJlbHNcbnBsb3QxIDwtIGdncGxvdChkYXRhLnNhcnMud29ybGQsIGFlcyh4PWRhdGUsIHk9ZGVhdGhzKSkgK1xuICBnZW9tX3BvaW50KCkgKyBnZW9tX3Ntb290aCgpICtcbiAgeGxhYignJykgKyB5bGFiKCdDb3VudCcpICsgbGFicyh0aXRsZT0nQWNjdW11bGF0aXZlIERlYXRocycpICtcbiAgdGhlbWUoYXhpcy50ZXh0Lng9ZWxlbWVudF90ZXh0KGFuZ2xlPTQ1LCBoanVzdD0xKSlcbnBsb3QyIDwtIGdncGxvdChkYXRhLnNhcnMud29ybGQsIGFlcyh4PWRhdGUsIHk9cmVjb3ZlcmVkKSkgK1xuICBnZW9tX3BvaW50KCkgKyBnZW9tX3Ntb290aCgpICtcbiAgeGxhYignJykgKyB5bGFiKCdDb3VudCcpICsgbGFicyh0aXRsZT0nQWNjdW11bGF0aXZlIFJlY292ZXJlZCBDYXNlcycpICtcbiAgdGhlbWUoYXhpcy50ZXh0Lng9ZWxlbWVudF90ZXh0KGFuZ2xlPTQ1LCBoanVzdD0xKSlcbnBsb3QzIDwtIGdncGxvdChkYXRhLnNhcnMud29ybGQsIGFlcyh4PWRhdGUsIHk9bmV3LmRlYXRocykpICtcbiAgZ2VvbV9wb2ludCgpICsgZ2VvbV9zbW9vdGgoKSArXG4gIHhsYWIoJycpICsgeWxhYignQ291bnQnKSArIGxhYnModGl0bGU9J05ldyBEZWF0aHMnKSArXG4gIHRoZW1lKGF4aXMudGV4dC54PWVsZW1lbnRfdGV4dChhbmdsZT00NSwgaGp1c3Q9MSkpXG5wbG90NCA8LSBnZ3Bsb3QoZGF0YS5zYXJzLndvcmxkLCBhZXMoeD1kYXRlLCB5PW5ldy5yZWNvdmVyZWQpKSArXG4gIGdlb21fcG9pbnQoKSArIGdlb21fc21vb3RoKCkgK1xuICB4bGFiKCcnKSArIHlsYWIoJ0NvdW50JykgKyBsYWJzKHRpdGxlPSdOZXcgUmVjb3ZlcmVkIENhc2VzJykgK1xuICB0aGVtZShheGlzLnRleHQueD1lbGVtZW50X3RleHQoYW5nbGU9NDUsIGhqdXN0PTEpKVxuIyMgc2hvdyBmb3VyIHBsb3RzIHRvZ2V0aGVyLCB3aXRoIDIgcGxvdHMgaW4gZWFjaCByb3dcbmdyaWQuYXJyYW5nZShwbG90MSwgcGxvdDIsIHBsb3QzLCBwbG90NCwgbnJvdz0yKVxuYGBgIn0= -->
-<pre class="r"><code>## a scatter plot with a smoothed line and vertical x-axis labels
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyMgYSBzY2F0dGVyIHBsb3Qgd2l0aCBhIHNtb290aGVkIGxpbmUgYW5kIHZlcnRpY2FsIHgtYXhpcyBsYWJlbHNcbnBsb3QxIDwtIGdncGxvdChkYXRhLnNhcnMud29ybGQsIGFlcyh4PWRhdGUsIHk9ZGVhdGhzKSkgK1xuICBnZW9tX3BvaW50KCkgKyBnZW9tX3Ntb290aCgpICtcbiAgeGxhYignJykgKyB5bGFiKCdDb3VudCcpICsgbGFicyh0aXRsZT0nQWNjdW11bGF0aXZlIERlYXRocycpICtcbiAgdGhlbWUoYXhpcy50ZXh0Lng9ZWxlbWVudF90ZXh0KGFuZ2xlPTQ1LCBoanVzdD0xKSlcbnBsb3QyIDwtIGdncGxvdChkYXRhLnNhcnMud29ybGQsIGFlcyh4PWRhdGUsIHk9cmVjb3ZlcmVkKSkgK1xuICBnZW9tX3BvaW50KCkgKyBnZW9tX3Ntb290aCgpICtcbiAgeGxhYignJykgKyB5bGFiKCdDb3VudCcpICsgbGFicyh0aXRsZT0nQWNjdW11bGF0aXZlIFJlY292ZXJlZCBDYXNlcycpICtcbiAgdGhlbWUoYXhpcy50ZXh0Lng9ZWxlbWVudF90ZXh0KGFuZ2xlPTQ1LCBoanVzdD0xKSlcbnBsb3QzIDwtIGdncGxvdChkYXRhLnNhcnMud29ybGQsIGFlcyh4PWRhdGUsIHk9bmV3LmRlYXRocykpICtcbiAgZ2VvbV9wb2ludCgpICsgZ2VvbV9zbW9vdGgoKSArXG4gIHhsYWIoJycpICsgeWxhYignQ291bnQnKSArIGxhYnModGl0bGU9J05ldyBEZWF0aHMnKSArXG4gIHRoZW1lKGF4aXMudGV4dC54PWVsZW1lbnRfdGV4dChhbmdsZT00NSwgaGp1c3Q9MSkpXG5wbG90NCA8LSBnZ3Bsb3QoZGF0YS5zYXJzLndvcmxkLCBhZXMoeD1kYXRlLCB5PW5ldy5yZWNvdmVyZWQpKSArXG4gIGdlb21fcG9pbnQoKSArIGdlb21fc21vb3RoKCkgK1xuICB4bGFiKCcnKSArIHlsYWIoJ0NvdW50JykgKyBsYWJzKHRpdGxlPSdOZXcgUmVjb3ZlcmVkIENhc2VzJykgK1xuICB0aGVtZShheGlzLnRleHQueD1lbGVtZW50X3RleHQoYW5nbGU9NDUsIGhqdXN0PTEpKVxuIyMgc2hvdyBmb3VyIHBsb3RzIHRvZ2V0aGVyLCB3aXRoIDIgcGxvdHMgaW4gZWFjaCByb3dcbmdyaWQuYXJyYW5nZShwbG90MSwgcGxvdDIsIHBsb3QzLCBwbG90NCwgbnJvdz0yKVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+## a scatter plot with a smoothed line and vertical x-axis labels
 plot1 &lt;- ggplot(data.sars.world, aes(x=date, y=deaths)) +
   geom_point() + geom_smooth() +
   xlab(&#39;&#39;) + ylab(&#39;Count&#39;) + labs(title=&#39;Accumulative Deaths&#39;) +
@@ -1104,18 +1572,32 @@ plot4 &lt;- ggplot(data.sars.world, aes(x=date, y=new.recovered)) +
   theme(axis.text.x=element_text(angle=45, hjust=1))
 ## show four plots together, with 2 plots in each row
 grid.arrange(plot1, plot2, plot3, plot4, nrow=2)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2RmX3RoYWkgPC0gdGJsKG15X2RiLCBzcWwoXCJzZWxlY3QgKiBmcm9tIGNvdmlkX3RoYWlsYW5kX3VwZGF0ZWRcIikpXG4jZGZfdGhhaSA8LSBhcy5kYXRhLmZyYW1lKGRmX3RoYWkpXG5cbmRmX3RoYWkgPC0gcmVhZF9jc3YoXCJEOi80RC0yL1Byb2plY3QgMi9EYXRhL2NvdmlkX3RoYWlsYW5kX3VwZGF0ZWQuY3N2XCIpXG5TeXMuc2V0bG9jYWxlKFwiTENfQ1RZUEVcIiwgXCJUaGFpXCIpXG5vcHRpb25zKGVuY29kaW5nID0gXCJVVEYtOFwiKVxuI1ZpZXcoZGZfdGhhaSlcblxuZGF0ZXMudGggPC0gZGZfdGhhaVssMl0lPiUgbWR5KClcbnJhbmdlKGRhdGVzLnRoKVxubWluLmRhdGUudGggPC0gbWluKGRhdGVzLnRoKVxubWF4LmRhdGUudGggPC0gbWF4KGRhdGVzLnRoKVxubWluLmRhdGUudHh0LnRoIDwtIG1pbi5kYXRlLnRoICU+JSBmb3JtYXQoJyVkICViICVZJylcbm1heC5kYXRlLnR4dC50aCA8LSBtYXguZGF0ZS50aCAlPiUgZm9ybWF0KCclZCAlYiAlWScpXG5cbmRmX3RoYWkkYW5ub3VuY2VfZGF0ZSA8LSBtZHkoZGZfdGhhaSRhbm5vdW5jZV9kYXRlKVxuZGZfdGhhaSRub3RpZmljYXRpb25fZGF0ZSA8LSBtZHkoZGZfdGhhaSRub3RpZmljYXRpb25fZGF0ZSlcbmRmX3RoYWlcblxuZGZfdGhhaSA8LSBkZl90aGFpICU+JSBzZWxlY3QoIU5vLikgJT4lIFxuICBncm91cF9ieShhbm5vdW5jZV9kYXRlKVxuZGZfdGhhaVxuYGBgIn0= -->
-<pre class="r"><code>#df_thai &lt;- tbl(my_db, sql(&quot;select * from covid_thailand_updated&quot;))
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI2RmX3RoYWkgPC0gdGJsKG15X2RiLCBzcWwoXFxzZWxlY3QgKiBmcm9tIGNvdmlkX3RoYWlsYW5kX3VwZGF0ZWRcXCkpXG4jZGZfdGhhaSA8LSBhcy5kYXRhLmZyYW1lKGRmX3RoYWkpXG5cbmRmX3RoYWkgPC0gcmVhZF9jc3YoXFxEOi80RC0yL1Byb2plY3QgMi9EYXRhL2NvdmlkX3RoYWlsYW5kX3VwZGF0ZWQuY3N2XFwpXG5TeXMuc2V0bG9jYWxlKFxcTENfQ1RZUEVcXCwgXFxUaGFpXFwpXG5vcHRpb25zKGVuY29kaW5nID0gXFxVVEYtOFxcKVxuI1ZpZXcoZGZfdGhhaSlcblxuZGF0ZXMudGggPC0gZGZfdGhhaVssMl0lPiUgbWR5KClcbnJhbmdlKGRhdGVzLnRoKVxubWluLmRhdGUudGggPC0gbWluKGRhdGVzLnRoKVxubWF4LmRhdGUudGggPC0gbWF4KGRhdGVzLnRoKVxubWluLmRhdGUudHh0LnRoIDwtIG1pbi5kYXRlLnRoICU+JSBmb3JtYXQoJyVkICViICVZJylcbm1heC5kYXRlLnR4dC50aCA8LSBtYXguZGF0ZS50aCAlPiUgZm9ybWF0KCclZCAlYiAlWScpXG5cbmRmX3RoYWkkYW5ub3VuY2VfZGF0ZSA8LSBtZHkoZGZfdGhhaSRhbm5vdW5jZV9kYXRlKVxuZGZfdGhhaSRub3RpZmljYXRpb25fZGF0ZSA8LSBtZHkoZGZfdGhhaSRub3RpZmljYXRpb25fZGF0ZSlcbmRmX3RoYWlcblxuZGZfdGhhaSA8LSBkZl90aGFpICU+JSBzZWxlY3QoIU5vLikgJT4lIFxuICBncm91cF9ieShhbm5vdW5jZV9kYXRlKVxuZGZfdGhhaVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+#df_thai &lt;- tbl(my_db, sql(\select * from covid_thailand_updated\))
 #df_thai &lt;- as.data.frame(df_thai)
 
-df_thai &lt;- read_csv(&quot;D:/4D-2/Project 2/Data/covid_thailand_updated.csv&quot;)
-Sys.setlocale(&quot;LC_CTYPE&quot;, &quot;Thai&quot;)
-options(encoding = &quot;UTF-8&quot;)
+df_thai &lt;- read_csv(\D:/4D-2/Project 2/Data/covid_thailand_updated.csv\)
+Sys.setlocale(\LC_CTYPE\, \Thai\)
+options(encoding = \UTF-8\)
 #View(df_thai)
 
 dates.th &lt;- df_thai[,2]%&gt;% mdy()
@@ -1132,11 +1614,20 @@ df_thai
 df_thai &lt;- df_thai %&gt;% select(!No.) %&gt;% 
   group_by(announce_date)
 df_thai</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBUb3RhbCBjb25maXJtZWQgY2FzZXMgaW4gVGhhaWxhbmRcbmRhdGEudGhhaS5jb3VudCA8LSBkZl90aGFpICU+JVxuICBzZWxlY3QoYW5ub3VuY2VfZGF0ZSkgJT4lXG4gIHN1bW1hcmlzZShjb21maXJtZWQgPSBuKCkpICAlPiUgYXMuZGF0YS5mcmFtZSgpXG5kYXRhLnRoYWkuY291bnRcblxuZGF0YS50aGFpLmNvdW50JGN1bXVsYXRpdmVfY29uZmlybWVkIDwtIGN1bXN1bShkYXRhLnRoYWkuY291bnRbLCAyXSlcbmRhdGEudGhhaS5jb3VudCBcblxuZy50aCA8LSBnZ3Bsb3QoZGF0YS50aGFpLmNvdW50KSArIFxuICBnZW9tX2xpbmUoYWVzKHggPSBhbm5vdW5jZV9kYXRlLCB5ID0gY3VtdWxhdGl2ZV9jb25maXJtZWQpKSArXG4gIGxhYnModGl0bGUgPSBcIlRoYWkgQ29uZmlybWVkIENhc2VzIChKYW4gMjAyMCAtIEphbiAyMDIxKVwiKSArXG4gIHhsYWIoXCJEYXRlIChBbm5vdW5jZSBEYXRlKVwiKSArIFxuICB5bGFiKFwiQ29uZmlybWVkIENhc2VzXCIpXG5cbmcudGhcblxuZ2x5LnRoIDwtIGdncGxvdGx5KGcudGgpXG5nbHkudGhcbmBgYCJ9 -->
-<pre class="r"><code># Total confirmed cases in Thailand
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyBUb3RhbCBjb25maXJtZWQgY2FzZXMgaW4gVGhhaWxhbmRcbmRhdGEudGhhaS5jb3VudCA8LSBkZl90aGFpICU+JVxuICBzZWxlY3QoYW5ub3VuY2VfZGF0ZSkgJT4lXG4gIHN1bW1hcmlzZShjb21maXJtZWQgPSBuKCkpICAlPiUgYXMuZGF0YS5mcmFtZSgpXG5kYXRhLnRoYWkuY291bnRcblxuZGF0YS50aGFpLmNvdW50JGN1bXVsYXRpdmVfY29uZmlybWVkIDwtIGN1bXN1bShkYXRhLnRoYWkuY291bnRbLCAyXSlcbmRhdGEudGhhaS5jb3VudCBcblxuZy50aCA8LSBnZ3Bsb3QoZGF0YS50aGFpLmNvdW50KSArIFxuICBnZW9tX2xpbmUoYWVzKHggPSBhbm5vdW5jZV9kYXRlLCB5ID0gY3VtdWxhdGl2ZV9jb25maXJtZWQpKSArXG4gIGxhYnModGl0bGUgPSBcXFRoYWkgQ29uZmlybWVkIENhc2VzIChKYW4gMjAyMCAtIEphbiAyMDIxKVxcKSArXG4gIHhsYWIoXFxEYXRlIChBbm5vdW5jZSBEYXRlKVxcKSArIFxuICB5bGFiKFxcQ29uZmlybWVkIENhc2VzXFwpXG5cbmcudGhcblxuZ2x5LnRoIDwtIGdncGxvdGx5KGcudGgpXG5nbHkudGhcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+# Total confirmed cases in Thailand
 data.thai.count &lt;- df_thai %&gt;%
   select(announce_date) %&gt;%
   summarise(comfirmed = n())  %&gt;% as.data.frame()
@@ -1147,21 +1638,35 @@ data.thai.count
 
 g.th &lt;- ggplot(data.thai.count) + 
   geom_line(aes(x = announce_date, y = cumulative_confirmed)) +
-  labs(title = &quot;Thai Confirmed Cases (Jan 2020 - Jan 2021)&quot;) +
-  xlab(&quot;Date (Announce Date)&quot;) + 
-  ylab(&quot;Confirmed Cases&quot;)
+  labs(title = \Thai Confirmed Cases (Jan 2020 - Jan 2021)\) +
+  xlab(\Date (Announce Date)\) + 
+  ylab(\Confirmed Cases\)
 
 g.th
 
 gly.th &lt;- ggplotly(g.th)
 gly.th</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBDb25maXJtZWQgY2FzZXMgZGl2aWRlZCBieSBzZXggKGdlbmRlcilcbmRhdGEudGhhaS5nZW5kZXIgPC0gZGZfdGhhaSAlPiVcbiAgZ3JvdXBfYnkoc2V4KSAlPiVcbiAgc3VtbWFyaXNlKGNvdW50ID0gbigpKSAlPiVcbiAgbXV0YXRlKHBlcmNlbnQgPSAoY291bnQgLyBzdW0oY291bnQpICogMTAwKSAlPiUgcm91bmQoMikpICU+JVxuICAjbXV0YXRlKHBvcyA9IGN1bXN1bShwZXJjZW50KSAtIDAuNSpwZXJjZW50KSAlPiVcbiAgYXJyYW5nZShkZXNjKHBlcmNlbnQpKVxuZGF0YS50aGFpLmdlbmRlclxuXG5kYXRhLnRoYWkuZ2VuZGVyJHNleCA8LSBmYWN0b3IoZGF0YS50aGFpLmdlbmRlciRzZXgsIGxldmVscyA9IGFzLmNoYXJhY3RlcihkYXRhLnRoYWkuZ2VuZGVyJHNleCkpXG5kYXRhLnRoYWkuZ2VuZGVyJHNleFxuXG5nLnRoLmdlbmRlciA8LSBkYXRhLnRoYWkuZ2VuZGVyICU+JSBcbiAgZ2dwbG90KGFlcyh4ID0gXCJcIiwgeSA9IHBlcmNlbnQsIGZpbGwgPSBzZXgpKSArXG4gIGdlb21fYmFyKHN0YXQgPSBcImlkZW50aXR5XCIsIHdpZHRoID0gMSkgK1xuICBjb29yZF9wb2xhcihcInlcIikgK1xuICB0aGVtZV92b2lkKCkgK1xuICBnZW9tX3RleHQoYWVzKGxhYmVsID0gcGFzdGUwKHBlcmNlbnQsIFwiJVwiKSksIGNvbG9yID0gXCJ3aGl0ZVwiLCBzaXplID0gNSwgcG9zaXRpb24gPSBwb3NpdGlvbl9zdGFjayh2anVzdCA9IDAuNSkpICtcbiAgZ3VpZGVzKGZpbGwgPSBndWlkZV9sZWdlbmQocmV2ZXJzZSA9IFRSVUUpKSBcblxuZy50aC5nZW5kZXJcblxuYGBgIn0= -->
-<pre class="r"><code># Confirmed cases divided by sex (gender)
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyBDb25maXJtZWQgY2FzZXMgZGl2aWRlZCBieSBzZXggKGdlbmRlcilcbmRhdGEudGhhaS5nZW5kZXIgPC0gZGZfdGhhaSAlPiVcbiAgZ3JvdXBfYnkoc2V4KSAlPiVcbiAgc3VtbWFyaXNlKGNvdW50ID0gbigpKSAlPiVcbiAgbXV0YXRlKHBlcmNlbnQgPSAoY291bnQgLyBzdW0oY291bnQpICogMTAwKSAlPiUgcm91bmQoMikpICU+JVxuICAjbXV0YXRlKHBvcyA9IGN1bXN1bShwZXJjZW50KSAtIDAuNSpwZXJjZW50KSAlPiVcbiAgYXJyYW5nZShkZXNjKHBlcmNlbnQpKVxuZGF0YS50aGFpLmdlbmRlclxuXG5kYXRhLnRoYWkuZ2VuZGVyJHNleCA8LSBmYWN0b3IoZGF0YS50aGFpLmdlbmRlciRzZXgsIGxldmVscyA9IGFzLmNoYXJhY3RlcihkYXRhLnRoYWkuZ2VuZGVyJHNleCkpXG5kYXRhLnRoYWkuZ2VuZGVyJHNleFxuXG5nLnRoLmdlbmRlciA8LSBkYXRhLnRoYWkuZ2VuZGVyICU+JSBcbiAgZ2dwbG90KGFlcyh4ID0gXFxcXCwgeSA9IHBlcmNlbnQsIGZpbGwgPSBzZXgpKSArXG4gIGdlb21fYmFyKHN0YXQgPSBcXGlkZW50aXR5XFwsIHdpZHRoID0gMSkgK1xuICBjb29yZF9wb2xhcihcXHlcXCkgK1xuICB0aGVtZV92b2lkKCkgK1xuICBnZW9tX3RleHQoYWVzKGxhYmVsID0gcGFzdGUwKHBlcmNlbnQsIFxcJVxcKSksIGNvbG9yID0gXFx3aGl0ZVxcLCBzaXplID0gNSwgcG9zaXRpb24gPSBwb3NpdGlvbl9zdGFjayh2anVzdCA9IDAuNSkpICtcbiAgZ3VpZGVzKGZpbGwgPSBndWlkZV9sZWdlbmQocmV2ZXJzZSA9IFRSVUUpKSBcblxuZy50aC5nZW5kZXJcblxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+# Confirmed cases divided by sex (gender)
 data.thai.gender &lt;- df_thai %&gt;%
   group_by(sex) %&gt;%
   summarise(count = n()) %&gt;%
@@ -1174,75 +1679,117 @@ data.thai.gender$sex &lt;- factor(data.thai.gender$sex, levels = as.character(da
 data.thai.gender$sex
 
 g.th.gender &lt;- data.thai.gender %&gt;% 
-  ggplot(aes(x = &quot;&quot;, y = percent, fill = sex)) +
-  geom_bar(stat = &quot;identity&quot;, width = 1) +
-  coord_polar(&quot;y&quot;) +
+  ggplot(aes(x = \\, y = percent, fill = sex)) +
+  geom_bar(stat = \identity\, width = 1) +
+  coord_polar(\y\) +
   theme_void() +
-  geom_text(aes(label = paste0(percent, &quot;%&quot;)), color = &quot;white&quot;, size = 5, position = position_stack(vjust = 0.5)) +
+  geom_text(aes(label = paste0(percent, \%\)), color = \white\, size = 5, position = position_stack(vjust = 0.5)) +
   guides(fill = guide_legend(reverse = TRUE)) 
 
 g.th.gender
 </code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBDb25maXJtZWQgY2FzZXMgZGl2aWRlZCBieSBhZ2VcbmRhdGEudGhhaS5hZ2UgPC0gZGZfdGhhaSAlPiVcbiAgZ3JvdXBfYnkoYWdlKSAlPiVcbiAgc3VtbWFyaXNlKGNvdW50ID0gbigpKSAlPiVcbiAgYXJyYW5nZShkZXNjKGNvdW50KSlcbmRhdGEudGhhaS5hZ2VcbmBgYCJ9 -->
-<pre class="r"><code># Confirmed cases divided by age
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyBDb25maXJtZWQgY2FzZXMgZGl2aWRlZCBieSBhZ2VcbmRhdGEudGhhaS5hZ2UgPC0gZGZfdGhhaSAlPiVcbiAgZ3JvdXBfYnkoYWdlKSAlPiVcbiAgc3VtbWFyaXNlKGNvdW50ID0gbigpKSAlPiVcbiAgYXJyYW5nZShkZXNjKGNvdW50KSlcbmRhdGEudGhhaS5hZ2VcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+# Confirmed cases divided by age
 data.thai.age &lt;- df_thai %&gt;%
   group_by(age) %&gt;%
   summarise(count = n()) %&gt;%
   arrange(desc(count))
 data.thai.age</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBDb25maXJtZWQgY2FzZXMgZGl2aWRlZCBieSBuYXRpb25hbGl0eVxuZGF0YS50aGFpLm5hdGlvbmFsaXR5IDwtIGRmX3RoYWkgJT4lXG4gIGdyb3VwX2J5KG5hdGlvbmFsaXR5KSAlPiVcbiAgc3VtbWFyaXNlKGNvdW50ID0gbigpKSAlPiVcbiAgYXJyYW5nZShkZXNjKGNvdW50KSlcbmRhdGEudGhhaS5uYXRpb25hbGl0eVxuYGBgIn0= -->
-<pre class="r"><code># Confirmed cases divided by nationality
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyBDb25maXJtZWQgY2FzZXMgZGl2aWRlZCBieSBuYXRpb25hbGl0eVxuZGF0YS50aGFpLm5hdGlvbmFsaXR5IDwtIGRmX3RoYWkgJT4lXG4gIGdyb3VwX2J5KG5hdGlvbmFsaXR5KSAlPiVcbiAgc3VtbWFyaXNlKGNvdW50ID0gbigpKSAlPiVcbiAgYXJyYW5nZShkZXNjKGNvdW50KSlcbmRhdGEudGhhaS5uYXRpb25hbGl0eVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+# Confirmed cases divided by nationality
 data.thai.nationality &lt;- df_thai %&gt;%
   group_by(nationality) %&gt;%
   summarise(count = n()) %&gt;%
   arrange(desc(count))
 data.thai.nationality</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBEYXRhIGluIFVTXG5kZl91cyA8LSB0YmwobXlfZGIsIHNxbChcInNlbGVjdCAqIGZyb20gY292aWR1c1wiKSlcbmRmX3VzIDwtIGFzLmRhdGEuZnJhbWUoZGZfdXMpXG5cbmRmX3VzX3BvcCA8LSB0YmwobXlfZGIsIHNxbChcInNlbGVjdCAqIGZyb20gZGF0YV9wb3B1bGF0aW9uXCIpKSBcbmRmX3VzX3BvcCA8LSBhcy5kYXRhLmZyYW1lKGRmX3VzX3BvcClcblxuZGZfdXNfZ2VuZGVyIDwtIHRibChteV9kYiwgc3FsKFwic2VsZWN0ICogZnJvbSBkYXRhX2dlbmRlclwiKSkgXG5kZl91c19nZW5kZXIgPC0gYXMuZGF0YS5mcmFtZShkZl91c19nZW5kZXIpXG5cbmRmX3VzX2V0aG5pYyA8LSB0YmwobXlfZGIsIHNxbChcInNlbGVjdCAqIGZyb20gZGF0YV9ldGhuaWNcIikpIFxuZGZfdXNfZXRobmljIDwtIGFzLmRhdGEuZnJhbWUoZGZfdXNfZXRobmljKVxuXG5kZl91c19sb2NrZG93biA8LSB0YmwobXlfZGIsIHNxbChcInNlbGVjdCAqIGZyb20gZGF0YV9sb2NrZG93blwiKSkgXG5kZl91c19sb2NrZG93biA8LSBhcy5kYXRhLmZyYW1lKGRmX3VzX2xvY2tkb3duKVxuXG5kZl91c19oZWFsdGggPC0gdGJsKG15X2RiLCBzcWwoXCJzZWxlY3QgKiBmcm9tIGRhdGFfaGVhbHRoXCIpKSBcbmRmX3VzX2hlYWx0aCA8LSBhcy5kYXRhLmZyYW1lKGRmX3VzX2hlYWx0aClcblxuZGZfdXNfdGVzdGluZyA8LSB0YmwobXlfZGIsIHNxbChcInNlbGVjdCAqIGZyb20gZGF0YV90ZXN0aW5nXCIpKSBcbmRmX3VzX3Rlc3RpbmcgPC0gYXMuZGF0YS5mcmFtZShkZl91c190ZXN0aW5nKVxuXG5kZl91c19sYXRsb25nIDwtIHRibChteV9kYiwgc3FsKFwic2VsZWN0ICogZnJvbSB1c19sYXRsb25nXCIpKVxuZGZfdXNfbGF0bG9uZyA8LSBhcy5kYXRhLmZyYW1lKGRmX3VzX2xhdGxvbmcpXG5cbiNWaWV3KGRmX3VzX2xhdGxvbmcpXG5cbmRhdGEudXMgPC0gZGZfdXMgJT4lIHNlbGVjdChkYXRlLCBzdGF0ZSwgY2FzZXMsIGRlYXRocykgJT4lXG4gIG11dGF0ZShkYXRlID0gZGF0ZSAlPiUgbWR5KCkpICU+JVxuICByZW5hbWUoXCJjb25maXJtZWRcIiA9IFwiY2FzZXNcIilcbiNkYXRhLnVzXG5cbmRhdGVzLnVzIDwtIGRhdGEudXNbLDFdXG5yYW5nZShkYXRlcy51cylcbm1pbi5kYXRlLnVzIDwtIG1pbihkYXRlcy51cylcbm1heC5kYXRlLnVzIDwtIG1heChkYXRlcy51cylcbm1pbi5kYXRlLnR4dC51cyA8LSBtaW4uZGF0ZS51cyAlPiUgZm9ybWF0KCclZCAlYiAlWScpXG5tYXguZGF0ZS50eHQudXMgPC0gbWF4LmRhdGUudXMgJT4lIGZvcm1hdCgnJWQgJWIgJVknKVxuZGF5MS51cyA8LSBtaW4oZGF0YS51cyRkYXRlKVxuXG5kYXRhLnVzLnRvdGFsIDwtIGRhdGEudXMgJT4lIGdyb3VwX2J5KGRhdGUpICU+JVxuICBzdW1tYXJpc2Uoc3RhdGU9J1VTJyxcbiAgICAgICAgICAgIGNvbmZpcm1lZCA9IHN1bShjb25maXJtZWQsIG5hLnJtPVQpLFxuICAgICAgICAgICAgZGVhdGhzID0gc3VtKGRlYXRocywgbmEucm09VCkpXG4jVmlldyhkYXRhLnVzLnRvdGFsKVxuZGF0YS51cyAlPD4lIHJiaW5kKGRhdGEudXMudG90YWwpXG5WaWV3KGRhdGEudXMpXG5cbmRhdGEudXMubG9uZyA8LSBkYXRhLnVzICU+JSBcbiAgZ2F0aGVyKGtleSA9IHR5cGUsIHZhbHVlID0gY291bnQsIC1jKGRhdGUsIHN0YXRlKSkgXG4jZGF0YS51cy5sb25nXG5cbnVzLnRvdGFsIDwtIGRhdGEudXMudG90YWwgJT4lXG4gIG11dGF0ZShuZXcuY29uZmlybWVkID0gaWZlbHNlKGRhdGUgPT0gZGF5MSwgMCwgY29uZmlybWVkIC0gbGFnKGNvbmZpcm1lZCwgbj0xKSksXG4gICAgICAgICAgICAgICAgbmV3LmRlYXRocyA9IGlmZWxzZShkYXRlID09IGRheTEsIDAsIGRlYXRocyAtIGxhZyhkZWF0aHMsIG49MSkpKVxuXG51cy50b3RhbCAlPD4lIG11dGF0ZShuZXcuY29uZmlybWVkID0gaWZlbHNlKG5ldy5jb25maXJtZWQgPCAwLCAwLCBuZXcuY29uZmlybWVkKSxcbiAgICAgICAgICAgICAgICAgbmV3LmRlYXRocyA9IGlmZWxzZShuZXcuZGVhdGhzIDwgMCwgMCwgbmV3LmRlYXRocykpXG51cy50b3RhbFxuXG51cy50b3RhbC5sb25nIDwtIHVzLnRvdGFsICU+JSBcbiAgZ2F0aGVyKGtleSA9IHR5cGUsIHZhbHVlID0gY291bnQsIC1jKGRhdGUsIHN0YXRlKSlcblxuVmlldyh1cy50b3RhbC5sb25nKVxuXG5cbmBgYCJ9 -->
-<pre class="r"><code># Data in US
-df_us &lt;- tbl(my_db, sql(&quot;select * from covidus&quot;))
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyBEYXRhIGluIFVTXG5kZl91cyA8LSB0YmwobXlfZGIsIHNxbChcXHNlbGVjdCAqIGZyb20gY292aWR1c1xcKSlcbmRmX3VzIDwtIGFzLmRhdGEuZnJhbWUoZGZfdXMpXG5cbmRmX3VzX3BvcCA8LSB0YmwobXlfZGIsIHNxbChcXHNlbGVjdCAqIGZyb20gZGF0YV9wb3B1bGF0aW9uXFwpKSBcbmRmX3VzX3BvcCA8LSBhcy5kYXRhLmZyYW1lKGRmX3VzX3BvcClcblxuZGZfdXNfZ2VuZGVyIDwtIHRibChteV9kYiwgc3FsKFxcc2VsZWN0ICogZnJvbSBkYXRhX2dlbmRlclxcKSkgXG5kZl91c19nZW5kZXIgPC0gYXMuZGF0YS5mcmFtZShkZl91c19nZW5kZXIpXG5cbmRmX3VzX2V0aG5pYyA8LSB0YmwobXlfZGIsIHNxbChcXHNlbGVjdCAqIGZyb20gZGF0YV9ldGhuaWNcXCkpIFxuZGZfdXNfZXRobmljIDwtIGFzLmRhdGEuZnJhbWUoZGZfdXNfZXRobmljKVxuXG5kZl91c19sb2NrZG93biA8LSB0YmwobXlfZGIsIHNxbChcXHNlbGVjdCAqIGZyb20gZGF0YV9sb2NrZG93blxcKSkgXG5kZl91c19sb2NrZG93biA8LSBhcy5kYXRhLmZyYW1lKGRmX3VzX2xvY2tkb3duKVxuXG5kZl91c19oZWFsdGggPC0gdGJsKG15X2RiLCBzcWwoXFxzZWxlY3QgKiBmcm9tIGRhdGFfaGVhbHRoXFwpKSBcbmRmX3VzX2hlYWx0aCA8LSBhcy5kYXRhLmZyYW1lKGRmX3VzX2hlYWx0aClcblxuZGZfdXNfdGVzdGluZyA8LSB0YmwobXlfZGIsIHNxbChcXHNlbGVjdCAqIGZyb20gZGF0YV90ZXN0aW5nXFwpKSBcbmRmX3VzX3Rlc3RpbmcgPC0gYXMuZGF0YS5mcmFtZShkZl91c190ZXN0aW5nKVxuXG5kZl91c19sYXRsb25nIDwtIHRibChteV9kYiwgc3FsKFxcc2VsZWN0ICogZnJvbSB1c19sYXRsb25nXFwpKVxuZGZfdXNfbGF0bG9uZyA8LSBhcy5kYXRhLmZyYW1lKGRmX3VzX2xhdGxvbmcpXG5cbiNWaWV3KGRmX3VzX2xhdGxvbmcpXG5cbmRhdGEudXMgPC0gZGZfdXMgJT4lIHNlbGVjdChkYXRlLCBzdGF0ZSwgY2FzZXMsIGRlYXRocykgJT4lXG4gIG11dGF0ZShkYXRlID0gZGF0ZSAlPiUgbWR5KCkpICU+JVxuICByZW5hbWUoXFxjb25maXJtZWRcXCA9IFxcY2FzZXNcXClcbiNkYXRhLnVzXG5cbmRhdGVzLnVzIDwtIGRhdGEudXNbLDFdXG5yYW5nZShkYXRlcy51cylcbm1pbi5kYXRlLnVzIDwtIG1pbihkYXRlcy51cylcbm1heC5kYXRlLnVzIDwtIG1heChkYXRlcy51cylcbm1pbi5kYXRlLnR4dC51cyA8LSBtaW4uZGF0ZS51cyAlPiUgZm9ybWF0KCclZCAlYiAlWScpXG5tYXguZGF0ZS50eHQudXMgPC0gbWF4LmRhdGUudXMgJT4lIGZvcm1hdCgnJWQgJWIgJVknKVxuZGF5MS51cyA8LSBtaW4oZGF0YS51cyRkYXRlKVxuXG5kYXRhLnVzLnRvdGFsIDwtIGRhdGEudXMgJT4lIGdyb3VwX2J5KGRhdGUpICU+JVxuICBzdW1tYXJpc2Uoc3RhdGU9J1VTJyxcbiAgICAgICAgICAgIGNvbmZpcm1lZCA9IHN1bShjb25maXJtZWQsIG5hLnJtPVQpLFxuICAgICAgICAgICAgZGVhdGhzID0gc3VtKGRlYXRocywgbmEucm09VCkpXG4jVmlldyhkYXRhLnVzLnRvdGFsKVxuZGF0YS51cyAlPD4lIHJiaW5kKGRhdGEudXMudG90YWwpXG5WaWV3KGRhdGEudXMpXG5cbmRhdGEudXMubG9uZyA8LSBkYXRhLnVzICU+JSBcbiAgZ2F0aGVyKGtleSA9IHR5cGUsIHZhbHVlID0gY291bnQsIC1jKGRhdGUsIHN0YXRlKSkgXG4jZGF0YS51cy5sb25nXG5cbnVzLnRvdGFsIDwtIGRhdGEudXMudG90YWwgJT4lXG4gIG11dGF0ZShuZXcuY29uZmlybWVkID0gaWZlbHNlKGRhdGUgPT0gZGF5MSwgMCwgY29uZmlybWVkIC0gbGFnKGNvbmZpcm1lZCwgbj0xKSksXG4gICAgICAgICAgICAgICAgbmV3LmRlYXRocyA9IGlmZWxzZShkYXRlID09IGRheTEsIDAsIGRlYXRocyAtIGxhZyhkZWF0aHMsIG49MSkpKVxuXG51cy50b3RhbCAlPD4lIG11dGF0ZShuZXcuY29uZmlybWVkID0gaWZlbHNlKG5ldy5jb25maXJtZWQgPCAwLCAwLCBuZXcuY29uZmlybWVkKSxcbiAgICAgICAgICAgICAgICAgbmV3LmRlYXRocyA9IGlmZWxzZShuZXcuZGVhdGhzIDwgMCwgMCwgbmV3LmRlYXRocykpXG51cy50b3RhbFxuXG51cy50b3RhbC5sb25nIDwtIHVzLnRvdGFsICU+JSBcbiAgZ2F0aGVyKGtleSA9IHR5cGUsIHZhbHVlID0gY291bnQsIC1jKGRhdGUsIHN0YXRlKSlcblxuVmlldyh1cy50b3RhbC5sb25nKVxuXG5cbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+# Data in US
+df_us &lt;- tbl(my_db, sql(\select * from covidus\))
 df_us &lt;- as.data.frame(df_us)
 
-df_us_pop &lt;- tbl(my_db, sql(&quot;select * from data_population&quot;)) 
+df_us_pop &lt;- tbl(my_db, sql(\select * from data_population\)) 
 df_us_pop &lt;- as.data.frame(df_us_pop)
 
-df_us_gender &lt;- tbl(my_db, sql(&quot;select * from data_gender&quot;)) 
+df_us_gender &lt;- tbl(my_db, sql(\select * from data_gender\)) 
 df_us_gender &lt;- as.data.frame(df_us_gender)
 
-df_us_ethnic &lt;- tbl(my_db, sql(&quot;select * from data_ethnic&quot;)) 
+df_us_ethnic &lt;- tbl(my_db, sql(\select * from data_ethnic\)) 
 df_us_ethnic &lt;- as.data.frame(df_us_ethnic)
 
-df_us_lockdown &lt;- tbl(my_db, sql(&quot;select * from data_lockdown&quot;)) 
+df_us_lockdown &lt;- tbl(my_db, sql(\select * from data_lockdown\)) 
 df_us_lockdown &lt;- as.data.frame(df_us_lockdown)
 
-df_us_health &lt;- tbl(my_db, sql(&quot;select * from data_health&quot;)) 
+df_us_health &lt;- tbl(my_db, sql(\select * from data_health\)) 
 df_us_health &lt;- as.data.frame(df_us_health)
 
-df_us_testing &lt;- tbl(my_db, sql(&quot;select * from data_testing&quot;)) 
+df_us_testing &lt;- tbl(my_db, sql(\select * from data_testing\)) 
 df_us_testing &lt;- as.data.frame(df_us_testing)
 
-df_us_latlong &lt;- tbl(my_db, sql(&quot;select * from us_latlong&quot;))
+df_us_latlong &lt;- tbl(my_db, sql(\select * from us_latlong\))
 df_us_latlong &lt;- as.data.frame(df_us_latlong)
 
 #View(df_us_latlong)
 
 data.us &lt;- df_us %&gt;% select(date, state, cases, deaths) %&gt;%
   mutate(date = date %&gt;% mdy()) %&gt;%
-  rename(&quot;confirmed&quot; = &quot;cases&quot;)
+  rename(\confirmed\ = \cases\)
 #data.us
 
 dates.us &lt;- data.us[,1]
@@ -1278,27 +1825,41 @@ us.total.long &lt;- us.total %&gt;%
 
 View(us.total.long)
 </code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZzEgPC0gZGF0YS51cy5sb25nICU+JSBmaWx0ZXIoc3RhdGUgPT0gXCJVU1wiKSAlPiVcbiAgZ2dwbG90KGFlcyh4ID0gZGF0ZSwgeSA9IGNvdW50KSkgK1xuICBnZW9tX2FyZWEoYWVzKGZpbGw9dHlwZSksIGFscGhhPTAuNSkgK1xuICBsYWJzKHRpdGxlID0gcGFzdGUwKFwiQ3VtdWxhdGl2ZSBjYXNlcyBpbiBVUyA6IFwiLCBtaW4uZGF0ZS50eHQudXMsICctJywgbWF4LmRhdGUudHh0LnVzLCBcIiAoTG9nIFNjYWxlKVwiKSkgICtcbiAgc2NhbGVfeV9jb250aW51b3VzKHRyYW5zPSdsb2cxMCcpK1xuICBzY2FsZV9maWxsX21hbnVhbCh2YWx1ZXM9YygncmVkJywgJ2JsYWNrJykpK1xuICB5bGFiKFwiXCIpXG5cbmcyIDwtIHVzLnRvdGFsLmxvbmcgJT4lXG4gIGZpbHRlcih0eXBlICVpbiUgYyhcIm5ldy5jb25maXJtZWRcIikpICU+JVxuICBnZ3Bsb3QoYWVzKHggPSBkYXRlLCB5ID0gY291bnQsIGNvbG9yID0gdHlwZSkpICsgXG4gIGdlb21fbGluZSgpICsgXG4gIGxhYnModGl0bGUgPSBwYXN0ZTAoXCJEYWlseSBjb25maXJtZWQgY2FzZXMgaW4gVVMgOiBcIiwgbWluLmRhdGUudHh0LnVzLCAnLScsIG1heC5kYXRlLnR4dC51cykpICtcbiAgeGxhYihcIkRhdGVcIikgK1xuICB5bGFiKFwiQ29uZmlybWVkIGNhc2VzXCIpXG5cbmdseS51czEgPC0gZ2dwbG90bHkoZzEpXG5nbHkudXMyIDwtIGdncGxvdGx5KGcyKVxuXG5nbHkudXMxXG5nbHkudXMyXG5cbmBgYCJ9 -->
-<pre class="r"><code>g1 &lt;- data.us.long %&gt;% filter(state == &quot;US&quot;) %&gt;%
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZzEgPC0gZGF0YS51cy5sb25nICU+JSBmaWx0ZXIoc3RhdGUgPT0gXFxVU1xcKSAlPiVcbiAgZ2dwbG90KGFlcyh4ID0gZGF0ZSwgeSA9IGNvdW50KSkgK1xuICBnZW9tX2FyZWEoYWVzKGZpbGw9dHlwZSksIGFscGhhPTAuNSkgK1xuICBsYWJzKHRpdGxlID0gcGFzdGUwKFxcQ3VtdWxhdGl2ZSBjYXNlcyBpbiBVUyA6IFxcLCBtaW4uZGF0ZS50eHQudXMsICctJywgbWF4LmRhdGUudHh0LnVzLCBcXCAoTG9nIFNjYWxlKVxcKSkgICtcbiAgc2NhbGVfeV9jb250aW51b3VzKHRyYW5zPSdsb2cxMCcpK1xuICBzY2FsZV9maWxsX21hbnVhbCh2YWx1ZXM9YygncmVkJywgJ2JsYWNrJykpK1xuICB5bGFiKFxcXFwpXG5cbmcyIDwtIHVzLnRvdGFsLmxvbmcgJT4lXG4gIGZpbHRlcih0eXBlICVpbiUgYyhcXG5ldy5jb25maXJtZWRcXCkpICU+JVxuICBnZ3Bsb3QoYWVzKHggPSBkYXRlLCB5ID0gY291bnQsIGNvbG9yID0gdHlwZSkpICsgXG4gIGdlb21fbGluZSgpICsgXG4gIGxhYnModGl0bGUgPSBwYXN0ZTAoXFxEYWlseSBjb25maXJtZWQgY2FzZXMgaW4gVVMgOiBcXCwgbWluLmRhdGUudHh0LnVzLCAnLScsIG1heC5kYXRlLnR4dC51cykpICtcbiAgeGxhYihcXERhdGVcXCkgK1xuICB5bGFiKFxcQ29uZmlybWVkIGNhc2VzXFwpXG5cbmdseS51czEgPC0gZ2dwbG90bHkoZzEpXG5nbHkudXMyIDwtIGdncGxvdGx5KGcyKVxuXG5nbHkudXMxXG5nbHkudXMyXG5cbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+g1 &lt;- data.us.long %&gt;% filter(state == \US\) %&gt;%
   ggplot(aes(x = date, y = count)) +
   geom_area(aes(fill=type), alpha=0.5) +
-  labs(title = paste0(&quot;Cumulative cases in US : &quot;, min.date.txt.us, &#39;-&#39;, max.date.txt.us, &quot; (Log Scale)&quot;))  +
+  labs(title = paste0(\Cumulative cases in US : \, min.date.txt.us, &#39;-&#39;, max.date.txt.us, \ (Log Scale)\))  +
   scale_y_continuous(trans=&#39;log10&#39;)+
   scale_fill_manual(values=c(&#39;red&#39;, &#39;black&#39;))+
-  ylab(&quot;&quot;)
+  ylab(\\)
 
 g2 &lt;- us.total.long %&gt;%
-  filter(type %in% c(&quot;new.confirmed&quot;)) %&gt;%
+  filter(type %in% c(\new.confirmed\)) %&gt;%
   ggplot(aes(x = date, y = count, color = type)) + 
   geom_line() + 
-  labs(title = paste0(&quot;Daily confirmed cases in US : &quot;, min.date.txt.us, &#39;-&#39;, max.date.txt.us)) +
-  xlab(&quot;Date&quot;) +
-  ylab(&quot;Confirmed cases&quot;)
+  labs(title = paste0(\Daily confirmed cases in US : \, min.date.txt.us, &#39;-&#39;, max.date.txt.us)) +
+  xlab(\Date\) +
+  ylab(\Confirmed cases\)
 
 gly.us1 &lt;- ggplotly(g1)
 gly.us2 &lt;- ggplotly(g2)
@@ -1306,13 +1867,29 @@ gly.us2 &lt;- ggplotly(g2)
 gly.us1
 gly.us2
 </code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5kYXRhLnVzICU8PiUgbXV0YXRlKG5ldy5jb25maXJtZWQgPSBpZmVsc2UoZGF0ZSA9PSBkYXkxLCBOQSwgY29uZmlybWVkIC0gbGFnKGNvbmZpcm1lZCwgbj0xKSksXG4gICAgICAgICAgICAgICAgIG5ldy5kZWF0aHMgPSBpZmVsc2UoZGF0ZSA9PSBkYXkxLCBOQSwgZGVhdGhzIC0gbGFnKGRlYXRocywgbj0xKSkpXG5cbmRhdGEudXMgJTw+JSBtdXRhdGUobmV3LmNvbmZpcm1lZCA9IGlmZWxzZShuZXcuY29uZmlybWVkIDwgMCwgMCwgbmV3LmNvbmZpcm1lZCksXG4gICAgICAgICAgICAgICAgIG5ldy5kZWF0aHMgPSBpZmVsc2UobmV3LmRlYXRocyA8IDAsIDAsIG5ldy5kZWF0aHMpKVxuVmlldyhkYXRhLnVzKVxuXG4jZGF0YS51cy5kYWlseSA8LSBkYXRhLnVzICU+JSBmaWx0ZXIoc3RhdGUgPT0gXCJVU1wiKVxuI1ZpZXcoZGF0YS51cy5kYWlseSlcblxuZGF0YS51cy5wb3AgPC0gZGZfdXNfcG9wICU+JSBzZWxlY3QoU3RhdGUsIFBvcHVsYXRpb24pICU+JVxuICByZW5hbWUoXCJzdGF0ZVwiID0gXCJTdGF0ZVwiKSBcbiNkYXRhLnVzLnBvcFxuXG5kYXRhLnVzLmdlbmRlciA8LSBkZl91c19nZW5kZXIgJT4lIHNlbGVjdChTdGF0ZSwgTWFsZSwgRmVtYWxlKSAlPiVcbiAgcmVuYW1lKFwic3RhdGVcIiA9IFwiU3RhdGVcIikgXG5kYXRhLnVzLmdlbmRlclxuXG5kYXRhLnVzLmxhdGVzdCA8LSBkYXRhLnVzICU+JVxuICBmaWx0ZXIoZGF0ZSA9PSBtYXguZGF0ZS51cykgJT4lIFxuICBtZXJnZShkYXRhLnVzLnBvcCwgYnkgPSBcInN0YXRlXCIsIGFsbC54ID0gVCkgJT4lXG4gIG1lcmdlKGRhdGEudXMuZ2VuZGVyLCBieSA9IFwic3RhdGVcIiwgYWxsLnggPSBUKVxuI1ZpZXcoZGF0YS51cy5sYXRlc3QpXG5cbmRhdGEudXMubGF0ZXN0JFBvcHVsYXRpb25bZGF0YS51cy5sYXRlc3Qkc3RhdGUgPT0gXCJVU1wiXSA8LSBzdW0oZGF0YS51cy5wb3AkUG9wdWxhdGlvbilcbmRhdGEudXMubGF0ZXN0ICU8PiUgbXV0YXRlKHJhbmtpbmcgPSBkZW5zZV9yYW5rKGRlc2MoY29uZmlybWVkKSksXG4gICAgICAgICAgICAgICAgICAgICAgICAgICBjb25maXJtZWQucmF0ZSA9ICgxMDAgKiBjb25maXJtZWQgLyBQb3B1bGF0aW9uKSAlPiUgcm91bmQoMiksXG4gICAgICAgICAgICAgICAgICAgICAgICAgICBkZWF0aC5yYXRlID0gKDEwMCAqIGRlYXRocyAvIGNvbmZpcm1lZCkgJT4lIHJvdW5kKDIpLFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgTWFsZS5jb25maXJtZWQgPSAoTWFsZSAqIGNvbmZpcm1lZCkgJT4lIHJvdW5kKDApLFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgRmVtYWxlLmNvbmZpcm1lZCA9IEZlbWFsZSAqIGNvbmZpcm1lZCAlPiUgcm91bmQoMCksXG4gICAgICAgICAgICAgICAgICAgICAgICAgICBNYWxlLmRlYXRocyA9IE1hbGUgKiBkZWF0aHMsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICBGZW1hbGUuZGVhdGhzID0gRmVtYWxlICogZGVhdGhzKSAlPiVcbiAgYXJyYW5nZShyYW5raW5nKSBcblxudG9wLnVzIDwtIGRhdGEudXMubGF0ZXN0WywxXVxudG9wLnVzXG5cblxuZGF0YS51cy5sYXRlc3RcblxuXG5gYGAifQ== -->
-<pre class="r"><code>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuXG5kYXRhLnVzICU8PiUgbXV0YXRlKG5ldy5jb25maXJtZWQgPSBpZmVsc2UoZGF0ZSA9PSBkYXkxLCBOQSwgY29uZmlybWVkIC0gbGFnKGNvbmZpcm1lZCwgbj0xKSksXG4gICAgICAgICAgICAgICAgIG5ldy5kZWF0aHMgPSBpZmVsc2UoZGF0ZSA9PSBkYXkxLCBOQSwgZGVhdGhzIC0gbGFnKGRlYXRocywgbj0xKSkpXG5cbmRhdGEudXMgJTw+JSBtdXRhdGUobmV3LmNvbmZpcm1lZCA9IGlmZWxzZShuZXcuY29uZmlybWVkIDwgMCwgMCwgbmV3LmNvbmZpcm1lZCksXG4gICAgICAgICAgICAgICAgIG5ldy5kZWF0aHMgPSBpZmVsc2UobmV3LmRlYXRocyA8IDAsIDAsIG5ldy5kZWF0aHMpKVxuVmlldyhkYXRhLnVzKVxuXG4jZGF0YS51cy5kYWlseSA8LSBkYXRhLnVzICU+JSBmaWx0ZXIoc3RhdGUgPT0gXFxVU1xcKVxuI1ZpZXcoZGF0YS51cy5kYWlseSlcblxuZGF0YS51cy5wb3AgPC0gZGZfdXNfcG9wICU+JSBzZWxlY3QoU3RhdGUsIFBvcHVsYXRpb24pICU+JVxuICByZW5hbWUoXFxzdGF0ZVxcID0gXFxTdGF0ZVxcKSBcbiNkYXRhLnVzLnBvcFxuXG5kYXRhLnVzLmdlbmRlciA8LSBkZl91c19nZW5kZXIgJT4lIHNlbGVjdChTdGF0ZSwgTWFsZSwgRmVtYWxlKSAlPiVcbiAgcmVuYW1lKFxcc3RhdGVcXCA9IFxcU3RhdGVcXCkgXG5kYXRhLnVzLmdlbmRlclxuXG5kYXRhLnVzLmxhdGVzdCA8LSBkYXRhLnVzICU+JVxuICBmaWx0ZXIoZGF0ZSA9PSBtYXguZGF0ZS51cykgJT4lIFxuICBtZXJnZShkYXRhLnVzLnBvcCwgYnkgPSBcXHN0YXRlXFwsIGFsbC54ID0gVCkgJT4lXG4gIG1lcmdlKGRhdGEudXMuZ2VuZGVyLCBieSA9IFxcc3RhdGVcXCwgYWxsLnggPSBUKVxuI1ZpZXcoZGF0YS51cy5sYXRlc3QpXG5cbmRhdGEudXMubGF0ZXN0JFBvcHVsYXRpb25bZGF0YS51cy5sYXRlc3Qkc3RhdGUgPT0gXFxVU1xcXSA8LSBzdW0oZGF0YS51cy5wb3AkUG9wdWxhdGlvbilcbmRhdGEudXMubGF0ZXN0ICU8PiUgbXV0YXRlKHJhbmtpbmcgPSBkZW5zZV9yYW5rKGRlc2MoY29uZmlybWVkKSksXG4gICAgICAgICAgICAgICAgICAgICAgICAgICBjb25maXJtZWQucmF0ZSA9ICgxMDAgKiBjb25maXJtZWQgLyBQb3B1bGF0aW9uKSAlPiUgcm91bmQoMiksXG4gICAgICAgICAgICAgICAgICAgICAgICAgICBkZWF0aC5yYXRlID0gKDEwMCAqIGRlYXRocyAvIGNvbmZpcm1lZCkgJT4lIHJvdW5kKDIpLFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgTWFsZS5jb25maXJtZWQgPSAoTWFsZSAqIGNvbmZpcm1lZCkgJT4lIHJvdW5kKDApLFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgRmVtYWxlLmNvbmZpcm1lZCA9IEZlbWFsZSAqIGNvbmZpcm1lZCAlPiUgcm91bmQoMCksXG4gICAgICAgICAgICAgICAgICAgICAgICAgICBNYWxlLmRlYXRocyA9IE1hbGUgKiBkZWF0aHMsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICBGZW1hbGUuZGVhdGhzID0gRmVtYWxlICogZGVhdGhzKSAlPiVcbiAgYXJyYW5nZShyYW5raW5nKSBcblxudG9wLnVzIDwtIGRhdGEudXMubGF0ZXN0WywxXVxudG9wLnVzXG5cblxuZGF0YS51cy5sYXRlc3RcblxuXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+
 data.us %&lt;&gt;% mutate(new.confirmed = ifelse(date == day1, NA, confirmed - lag(confirmed, n=1)),
                  new.deaths = ifelse(date == day1, NA, deaths - lag(deaths, n=1)))
 
@@ -1320,24 +1897,24 @@ data.us %&lt;&gt;% mutate(new.confirmed = ifelse(new.confirmed &lt; 0, 0, new.co
                  new.deaths = ifelse(new.deaths &lt; 0, 0, new.deaths))
 View(data.us)
 
-#data.us.daily &lt;- data.us %&gt;% filter(state == &quot;US&quot;)
+#data.us.daily &lt;- data.us %&gt;% filter(state == \US\)
 #View(data.us.daily)
 
 data.us.pop &lt;- df_us_pop %&gt;% select(State, Population) %&gt;%
-  rename(&quot;state&quot; = &quot;State&quot;) 
+  rename(\state\ = \State\) 
 #data.us.pop
 
 data.us.gender &lt;- df_us_gender %&gt;% select(State, Male, Female) %&gt;%
-  rename(&quot;state&quot; = &quot;State&quot;) 
+  rename(\state\ = \State\) 
 data.us.gender
 
 data.us.latest &lt;- data.us %&gt;%
   filter(date == max.date.us) %&gt;% 
-  merge(data.us.pop, by = &quot;state&quot;, all.x = T) %&gt;%
-  merge(data.us.gender, by = &quot;state&quot;, all.x = T)
+  merge(data.us.pop, by = \state\, all.x = T) %&gt;%
+  merge(data.us.gender, by = \state\, all.x = T)
 #View(data.us.latest)
 
-data.us.latest$Population[data.us.latest$state == &quot;US&quot;] &lt;- sum(data.us.pop$Population)
+data.us.latest$Population[data.us.latest$state == \US\] &lt;- sum(data.us.pop$Population)
 data.us.latest %&lt;&gt;% mutate(ranking = dense_rank(desc(confirmed)),
                            confirmed.rate = (100 * confirmed / Population) %&gt;% round(2),
                            death.rate = (100 * deaths / confirmed) %&gt;% round(2),
@@ -1353,13 +1930,27 @@ top.us
 
 data.us.latest
 </code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBMaXN0IG9mIHRvcCAyMCBzdGF0ZVxuayA8LSAyMFxuZGF0YS51cy50b3AgPC0gZGF0YS51cy5sYXRlc3QgJT4lXG4gIGZpbHRlcihyYW5raW5nIDw9IGsrMSkgJT4lIFxuICBhcnJhbmdlKHJhbmtpbmcpIFxuXG51cy5zdGF0ZS50b3AgPC0gZGF0YS51cy50b3AgJT4lIHB1bGwoc3RhdGUpICU+JSBhcy5jaGFyYWN0ZXIoKVxudXMuc3RhdGUudG9wICAlPiUgc2V0ZGlmZignVVMnKSAlPiUgcHJpbnQoKVxuXG4jIGNvbmZpcm1lZCByYXRlICYgZGVhdGggcmF0ZSBvZiB0b3AgMjAgc3RhdGVcbmcucmF0ZSA8LSBkYXRhLnVzLmxhdGVzdCAlPiUgZmlsdGVyKHN0YXRlICVpbiUgdXMuc3RhdGUudG9wICYgc3RhdGUgIT0gXCJVU1wiKSAlPiVcbiAgc2VsZWN0KHN0YXRlLCBjb25maXJtZWQucmF0ZSwgZGVhdGgucmF0ZSwgcmFua2luZykgJT4lXG4gIGdhdGhlcihrZXkgPSBUeXBlLCB2YWx1ZSA9IFBlcmNlbnQsIC1jKHN0YXRlLCByYW5raW5nKSkgJT4lXG4gIGdncGxvdChhZXMoeD1yZW9yZGVyKHN0YXRlLCAtZGVzYyhyYW5raW5nKSksIHk9UGVyY2VudCwgZmlsbCA9IFBlcmNlbnQpKSArXG4gIGdlb21fYmFyKHN0YXQ9J2lkZW50aXR5JykgK1xuICBzY2FsZV9maWxsX2dyYWRpZW50KGxvdyA9IFwiI2ViYmM2MlwiLCBoaWdoID0gXCIjYjQyMDA2XCIpICtcbiAgZ2VvbV90ZXh0KGFlcyhsYWJlbD1QZXJjZW50LCB5PVBlcmNlbnQpLCBzaXplPTMsIHZqdXN0PTApICtcbiAgeGxhYignJykgKyB5bGFiKCcnKSArXG4gIGxhYnModGl0bGU9cGFzdGUwKCdDb25maXJtZWQgUmF0ZSAmIERlYXRoIFJhdGUgb2YgVG9wIDIwIFN0YXRlIGluIFVTJykpICtcbiAgI3NjYWxlX2ZpbGxfY29udGludW91cyhuYW1lPSdTdGF0ZScsIGxhYmVscz1hZXMoUGVyY2VudCkpICtcbiAgdGhlbWUobGVnZW5kLnRpdGxlPWVsZW1lbnRfYmxhbmsoKSxcbiAgICAgICAgbGVnZW5kLnBvc2l0aW9uPSdub25lJyxcbiAgICAgICAgcGxvdC50aXRsZT1lbGVtZW50X3RleHQoc2l6ZT0xMyksXG4gICAgICAgIGF4aXMudGV4dD1lbGVtZW50X3RleHQoc2l6ZT04KSxcbiAgICAgICAgYXhpcy50ZXh0Lng9ZWxlbWVudF90ZXh0KGFuZ2xlPTQ1LCBoanVzdD0xKSkgK1xuICBmYWNldF93cmFwKH5UeXBlLCBuY29sPTEsIHNjYWxlcz0nZnJlZV95JykgXG5cbmcucmF0ZVxuYGBgIn0= -->
-<pre class="r"><code># List of top 20 state
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyBMaXN0IG9mIHRvcCAyMCBzdGF0ZVxuayA8LSAyMFxuZGF0YS51cy50b3AgPC0gZGF0YS51cy5sYXRlc3QgJT4lXG4gIGZpbHRlcihyYW5raW5nIDw9IGsrMSkgJT4lIFxuICBhcnJhbmdlKHJhbmtpbmcpIFxuXG51cy5zdGF0ZS50b3AgPC0gZGF0YS51cy50b3AgJT4lIHB1bGwoc3RhdGUpICU+JSBhcy5jaGFyYWN0ZXIoKVxudXMuc3RhdGUudG9wICAlPiUgc2V0ZGlmZignVVMnKSAlPiUgcHJpbnQoKVxuXG4jIGNvbmZpcm1lZCByYXRlICYgZGVhdGggcmF0ZSBvZiB0b3AgMjAgc3RhdGVcbmcucmF0ZSA8LSBkYXRhLnVzLmxhdGVzdCAlPiUgZmlsdGVyKHN0YXRlICVpbiUgdXMuc3RhdGUudG9wICYgc3RhdGUgIT0gXFxVU1xcKSAlPiVcbiAgc2VsZWN0KHN0YXRlLCBjb25maXJtZWQucmF0ZSwgZGVhdGgucmF0ZSwgcmFua2luZykgJT4lXG4gIGdhdGhlcihrZXkgPSBUeXBlLCB2YWx1ZSA9IFBlcmNlbnQsIC1jKHN0YXRlLCByYW5raW5nKSkgJT4lXG4gIGdncGxvdChhZXMoeD1yZW9yZGVyKHN0YXRlLCAtZGVzYyhyYW5raW5nKSksIHk9UGVyY2VudCwgZmlsbCA9IFBlcmNlbnQpKSArXG4gIGdlb21fYmFyKHN0YXQ9J2lkZW50aXR5JykgK1xuICBzY2FsZV9maWxsX2dyYWRpZW50KGxvdyA9IFxcI2ViYmM2MlxcLCBoaWdoID0gXFwjYjQyMDA2XFwpICtcbiAgZ2VvbV90ZXh0KGFlcyhsYWJlbD1QZXJjZW50LCB5PVBlcmNlbnQpLCBzaXplPTMsIHZqdXN0PTApICtcbiAgeGxhYignJykgKyB5bGFiKCcnKSArXG4gIGxhYnModGl0bGU9cGFzdGUwKCdDb25maXJtZWQgUmF0ZSAmIERlYXRoIFJhdGUgb2YgVG9wIDIwIFN0YXRlIGluIFVTJykpICtcbiAgI3NjYWxlX2ZpbGxfY29udGludW91cyhuYW1lPSdTdGF0ZScsIGxhYmVscz1hZXMoUGVyY2VudCkpICtcbiAgdGhlbWUobGVnZW5kLnRpdGxlPWVsZW1lbnRfYmxhbmsoKSxcbiAgICAgICAgbGVnZW5kLnBvc2l0aW9uPSdub25lJyxcbiAgICAgICAgcGxvdC50aXRsZT1lbGVtZW50X3RleHQoc2l6ZT0xMyksXG4gICAgICAgIGF4aXMudGV4dD1lbGVtZW50X3RleHQoc2l6ZT04KSxcbiAgICAgICAgYXhpcy50ZXh0Lng9ZWxlbWVudF90ZXh0KGFuZ2xlPTQ1LCBoanVzdD0xKSkgK1xuICBmYWNldF93cmFwKH5UeXBlLCBuY29sPTEsIHNjYWxlcz0nZnJlZV95JykgXG5cbmcucmF0ZVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+# List of top 20 state
 k &lt;- 20
 data.us.top &lt;- data.us.latest %&gt;%
   filter(ranking &lt;= k+1) %&gt;% 
@@ -1369,12 +1960,12 @@ us.state.top &lt;- data.us.top %&gt;% pull(state) %&gt;% as.character()
 us.state.top  %&gt;% setdiff(&#39;US&#39;) %&gt;% print()
 
 # confirmed rate &amp; death rate of top 20 state
-g.rate &lt;- data.us.latest %&gt;% filter(state %in% us.state.top &amp; state != &quot;US&quot;) %&gt;%
+g.rate &lt;- data.us.latest %&gt;% filter(state %in% us.state.top &amp; state != \US\) %&gt;%
   select(state, confirmed.rate, death.rate, ranking) %&gt;%
   gather(key = Type, value = Percent, -c(state, ranking)) %&gt;%
   ggplot(aes(x=reorder(state, -desc(ranking)), y=Percent, fill = Percent)) +
   geom_bar(stat=&#39;identity&#39;) +
-  scale_fill_gradient(low = &quot;#ebbc62&quot;, high = &quot;#b42006&quot;) +
+  scale_fill_gradient(low = \#ebbc62\, high = \#b42006\) +
   geom_text(aes(label=Percent, y=Percent), size=3, vjust=0) +
   xlab(&#39;&#39;) + ylab(&#39;&#39;) +
   labs(title=paste0(&#39;Confirmed Rate &amp; Death Rate of Top 20 State in US&#39;)) +
@@ -1387,30 +1978,45 @@ g.rate &lt;- data.us.latest %&gt;% filter(state %in% us.state.top &amp; state !=
   facet_wrap(~Type, ncol=1, scales=&#39;free_y&#39;) 
 
 g.rate</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudXMuY29uZmlybWVkLm51bSA8LSBkYXRhLnVzLnRvcCRjb25maXJtZWRbZGF0YS51cy50b3Akc3RhdGUgPT0gXCJVU1wiXSAlPiUgYXMubnVtZXJpYygpXG51cy5jb25maXJtZWQubnVtXG5cbmRhdGEudXMudG9wICU8PiUgbXV0YXRlKGNvbmZpcm1lZC5wZXIudXMgPSAoY29uZmlybWVkICogMTAwIC8gdXMuY29uZmlybWVkLm51bSkgJT4lIHJvdW5kKDEpKVxuZGF0YS51cy50b3BcblxuZy51cy50b3AxIDwtIGRhdGEudXMudG9wICU+JVxuICBmaWx0ZXIoc3RhdGUgIT0gXCJVU1wiKSAlPiVcbiAgc2VsZWN0KHN0YXRlLCBjb25maXJtZWQsIGNvbmZpcm1lZC5wZXIudXMsIHJhbmtpbmcpICU+JVxuICBnYXRoZXIoa2V5ID0gVHlwZSwgdmFsdWUgPSBjb3VudCwgLWMoc3RhdGUsIHJhbmtpbmcsIGNvbmZpcm1lZC5wZXIudXMpKSAlPiVcbiAgXG4gIGdncGxvdChhZXMoZmlsbCA9IGNvdW50LCB5ID0gY291bnQsIHggPSByZW9yZGVyKHN0YXRlLCAtZGVzYyhyYW5raW5nKSkpKSArIFxuICBnZW9tX2Jhcihwb3NpdGlvbiA9IFwiZG9kZ2VcIiwgc3RhdCA9IFwiaWRlbnRpdHlcIikgK1xuICBsYWJzKHRpdGxlID0gXCIyMCBzdGF0ZSBpbiBVUyB3aXRoIG1vc3QgY29uZmlybWVkIGNhc2VzXCIpICtcbiAgc2NhbGVfZmlsbF9ncmFkaWVudChsb3cgPSBcIiNlYmJjNjJcIiwgaGlnaCA9IFwiI2I0MjAwNlwiKSArXG4gIHhsYWIoXCJcIikgKyBcbiAgeWxhYihcIkNvbmZpcm1lZCBDYXNlc1wiKSArXG4gIGdlb21fdGV4dChhZXMobGFiZWw9cGFzdGUwKGNvbmZpcm1lZC5wZXIudXMsIFwiJVwiKSksIHNpemU9Mywgdmp1c3Q9LTAuNSkgK1xuICB0aGVtZShheGlzLnRleHQueCA9IGVsZW1lbnRfdGV4dChhbmdsZSA9IDkwLHZqdXN0ID0gMC41KSkrXG4gIHRoZW1lKFxuICAgIGF4aXMubGluZSA9IGVsZW1lbnRfYmxhbmsoKSxcbiAgICBheGlzLnRpY2tzID0gZWxlbWVudF9ibGFuaygpLFxuICAgIHBhbmVsLmdyaWQubWlub3IgPSBlbGVtZW50X2JsYW5rKCksXG4gICAgcGFuZWwuZ3JpZC5tYWpvciA9IGVsZW1lbnRfYmxhbmsoKSxcbiAgICBwYW5lbC5ib3JkZXIgPSBlbGVtZW50X2JsYW5rKCksXG4gICAgcGFuZWwuYmFja2dyb3VuZCA9IGVsZW1lbnRfYmxhbmsoKSxcbiAgICAjbGVnZW5kLnBvc2l0aW9uID0gXCJub25lXCJcbiAgKVxuXG5nLnVzLnRvcDFcblxuZ2x5LnVzLnRvcDEgPC0gZ2dwbG90bHkoZy51cy50b3AxKVxuZ2x5LnVzLnRvcDFcblxuYGBgIn0= -->
-<pre class="r"><code>us.confirmed.num &lt;- data.us.top$confirmed[data.us.top$state == &quot;US&quot;] %&gt;% as.numeric()
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxudXMuY29uZmlybWVkLm51bSA8LSBkYXRhLnVzLnRvcCRjb25maXJtZWRbZGF0YS51cy50b3Akc3RhdGUgPT0gXFxVU1xcXSAlPiUgYXMubnVtZXJpYygpXG51cy5jb25maXJtZWQubnVtXG5cbmRhdGEudXMudG9wICU8PiUgbXV0YXRlKGNvbmZpcm1lZC5wZXIudXMgPSAoY29uZmlybWVkICogMTAwIC8gdXMuY29uZmlybWVkLm51bSkgJT4lIHJvdW5kKDEpKVxuZGF0YS51cy50b3BcblxuZy51cy50b3AxIDwtIGRhdGEudXMudG9wICU+JVxuICBmaWx0ZXIoc3RhdGUgIT0gXFxVU1xcKSAlPiVcbiAgc2VsZWN0KHN0YXRlLCBjb25maXJtZWQsIGNvbmZpcm1lZC5wZXIudXMsIHJhbmtpbmcpICU+JVxuICBnYXRoZXIoa2V5ID0gVHlwZSwgdmFsdWUgPSBjb3VudCwgLWMoc3RhdGUsIHJhbmtpbmcsIGNvbmZpcm1lZC5wZXIudXMpKSAlPiVcbiAgXG4gIGdncGxvdChhZXMoZmlsbCA9IGNvdW50LCB5ID0gY291bnQsIHggPSByZW9yZGVyKHN0YXRlLCAtZGVzYyhyYW5raW5nKSkpKSArIFxuICBnZW9tX2Jhcihwb3NpdGlvbiA9IFxcZG9kZ2VcXCwgc3RhdCA9IFxcaWRlbnRpdHlcXCkgK1xuICBsYWJzKHRpdGxlID0gXFwyMCBzdGF0ZSBpbiBVUyB3aXRoIG1vc3QgY29uZmlybWVkIGNhc2VzXFwpICtcbiAgc2NhbGVfZmlsbF9ncmFkaWVudChsb3cgPSBcXCNlYmJjNjJcXCwgaGlnaCA9IFxcI2I0MjAwNlxcKSArXG4gIHhsYWIoXFxcXCkgKyBcbiAgeWxhYihcXENvbmZpcm1lZCBDYXNlc1xcKSArXG4gIGdlb21fdGV4dChhZXMobGFiZWw9cGFzdGUwKGNvbmZpcm1lZC5wZXIudXMsIFxcJVxcKSksIHNpemU9Mywgdmp1c3Q9LTAuNSkgK1xuICB0aGVtZShheGlzLnRleHQueCA9IGVsZW1lbnRfdGV4dChhbmdsZSA9IDkwLHZqdXN0ID0gMC41KSkrXG4gIHRoZW1lKFxuICAgIGF4aXMubGluZSA9IGVsZW1lbnRfYmxhbmsoKSxcbiAgICBheGlzLnRpY2tzID0gZWxlbWVudF9ibGFuaygpLFxuICAgIHBhbmVsLmdyaWQubWlub3IgPSBlbGVtZW50X2JsYW5rKCksXG4gICAgcGFuZWwuZ3JpZC5tYWpvciA9IGVsZW1lbnRfYmxhbmsoKSxcbiAgICBwYW5lbC5ib3JkZXIgPSBlbGVtZW50X2JsYW5rKCksXG4gICAgcGFuZWwuYmFja2dyb3VuZCA9IGVsZW1lbnRfYmxhbmsoKSxcbiAgICAjbGVnZW5kLnBvc2l0aW9uID0gXFxub25lXFxcbiAgKVxuXG5nLnVzLnRvcDFcblxuZ2x5LnVzLnRvcDEgPC0gZ2dwbG90bHkoZy51cy50b3AxKVxuZ2x5LnVzLnRvcDFcblxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+us.confirmed.num &lt;- data.us.top$confirmed[data.us.top$state == \US\] %&gt;% as.numeric()
 us.confirmed.num
 
 data.us.top %&lt;&gt;% mutate(confirmed.per.us = (confirmed * 100 / us.confirmed.num) %&gt;% round(1))
 data.us.top
 
 g.us.top1 &lt;- data.us.top %&gt;%
-  filter(state != &quot;US&quot;) %&gt;%
+  filter(state != \US\) %&gt;%
   select(state, confirmed, confirmed.per.us, ranking) %&gt;%
   gather(key = Type, value = count, -c(state, ranking, confirmed.per.us)) %&gt;%
   
   ggplot(aes(fill = count, y = count, x = reorder(state, -desc(ranking)))) + 
-  geom_bar(position = &quot;dodge&quot;, stat = &quot;identity&quot;) +
-  labs(title = &quot;20 state in US with most confirmed cases&quot;) +
-  scale_fill_gradient(low = &quot;#ebbc62&quot;, high = &quot;#b42006&quot;) +
-  xlab(&quot;&quot;) + 
-  ylab(&quot;Confirmed Cases&quot;) +
-  geom_text(aes(label=paste0(confirmed.per.us, &quot;%&quot;)), size=3, vjust=-0.5) +
+  geom_bar(position = \dodge\, stat = \identity\) +
+  labs(title = \20 state in US with most confirmed cases\) +
+  scale_fill_gradient(low = \#ebbc62\, high = \#b42006\) +
+  xlab(\\) + 
+  ylab(\Confirmed Cases\) +
+  geom_text(aes(label=paste0(confirmed.per.us, \%\)), size=3, vjust=-0.5) +
   theme(axis.text.x = element_text(angle = 90,vjust = 0.5))+
   theme(
     axis.line = element_blank(),
@@ -1419,7 +2025,7 @@ g.us.top1 &lt;- data.us.top %&gt;%
     panel.grid.major = element_blank(),
     panel.border = element_blank(),
     panel.background = element_blank(),
-    #legend.position = &quot;none&quot;
+    #legend.position = \none\
   )
 
 g.us.top1
@@ -1427,24 +2033,38 @@ g.us.top1
 gly.us.top1 &lt;- ggplotly(g.us.top1)
 gly.us.top1
 </code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YS51cy5sYXRsb25nIDwtIGRmX3VzX2xhdGxvbmcgJT4lXG4gIHJlbmFtZShcImxhdFwiID0gXCJsYXRpdHVkZVwiLCBcImxvbmdcIiA9IFwibG9uZ2l0dWRlXCIpXG5cbiNsYWJlbF93b3JsZCA8LSBsYXQubG9uZyBcbiNsYWJlbF93b3JsZCRhdmdfdGVtcCA8LSBhcy5udW1lcmljKGxhYmVsX3dvcmxkWywgbmFtZXMobGFiZWxfd29ybGQpICVpbiUgYyhcImF2Z190ZW1wXCIpXSlcbiNsYWJlbF93b3JsZCA8LSBsYWJlbF93b3JsZCAlPiUgIFxuIyAgbXV0YXRlKHR4dD1wYXN0ZTAoJzxiPicscmFua2luZywgJzxcL2I+JyxcbiMgICAgICAgICAgICAgICAgICAgICc8YnIvPicsJzxiPicsY291bnRyeSwgJzxcL2I+JyxcbiMgICAgICAgICAgICAgICAgICAgICc8YnIvPicsIFwiVGVtcGVyYXR1cmU6ICBcIixhdmdfdGVtcCwgJyDCsEMnLFxuIyAgICAgICAgICAgICAgICAgICAgJzxici8+JywgXCJDb25maXJtZWQ6ICBcIiwgY29uZmlybWVkLCBcbiMgICAgICAgICAgICAgICAgICAgICc8YnIvPicsIFwiRGVhdGhzOiBcIiwgZGVhdGhzLFxuIyAgICAgICAgICAgICAgICAgICAgJzxici8+JywgXCJSZWNvdmVyZWQ6IFwiLCByZWNvdmVyZWRcbiMgICAgICAgICAgICAgICAgICAgICkpIFxuXG4jbGFiZWxfd29ybGQkdHh0IDwtIGxhYmVsX3dvcmxkJHR4dCAlPiUgbGFwcGx5KGh0bWx0b29sczo6SFRNTClcbiNsYWJlbF93b3JsZFxuXG5tYXAudXMgPC0gZGF0YS51cy5sYXRlc3QgJT4lXG4gIHNlbGVjdChzdGF0ZSwgY29uZmlybWVkLCBjb25maXJtZWQucmF0ZSwgZGVhdGhzLCBkZWF0aC5yYXRlLCByYW5raW5nKSAlPiVcbiAgbWVyZ2UoZGF0YS51cy5sYXRsb25nKSAlPiVcbiAgbXV0YXRlKClcbm1hcC51c1xuYGBgIn0= -->
-<pre class="r"><code>data.us.latlong &lt;- df_us_latlong %&gt;%
-  rename(&quot;lat&quot; = &quot;latitude&quot;, &quot;long&quot; = &quot;longitude&quot;)
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZGF0YS51cy5sYXRsb25nIDwtIGRmX3VzX2xhdGxvbmcgJT4lXG4gIHJlbmFtZShcXGxhdFxcID0gXFxsYXRpdHVkZVxcLCBcXGxvbmdcXCA9IFxcbG9uZ2l0dWRlXFwpXG5cbiNsYWJlbF93b3JsZCA8LSBsYXQubG9uZyBcbiNsYWJlbF93b3JsZCRhdmdfdGVtcCA8LSBhcy5udW1lcmljKGxhYmVsX3dvcmxkWywgbmFtZXMobGFiZWxfd29ybGQpICVpbiUgYyhcXGF2Z190ZW1wXFwpXSlcbiNsYWJlbF93b3JsZCA8LSBsYWJlbF93b3JsZCAlPiUgIFxuIyAgbXV0YXRlKHR4dD1wYXN0ZTAoJzxiPicscmFua2luZywgJzxcL2I+JyxcbiMgICAgICAgICAgICAgICAgICAgICc8YnIvPicsJzxiPicsY291bnRyeSwgJzxcL2I+JyxcbiMgICAgICAgICAgICAgICAgICAgICc8YnIvPicsIFxcVGVtcGVyYXR1cmU6ICBcXCxhdmdfdGVtcCwgJyDguKLguJBDJyxcbiMgICAgICAgICAgICAgICAgICAgICc8YnIvPicsIFxcQ29uZmlybWVkOiAgXFwsIGNvbmZpcm1lZCwgXG4jICAgICAgICAgICAgICAgICAgICAnPGJyLz4nLCBcXERlYXRoczogXFwsIGRlYXRocyxcbiMgICAgICAgICAgICAgICAgICAgICc8YnIvPicsIFxcUmVjb3ZlcmVkOiBcXCwgcmVjb3ZlcmVkXG4jICAgICAgICAgICAgICAgICAgICApKSBcblxuI2xhYmVsX3dvcmxkJHR4dCA8LSBsYWJlbF93b3JsZCR0eHQgJT4lIGxhcHBseShodG1sdG9vbHM6OkhUTUwpXG4jbGFiZWxfd29ybGRcblxubWFwLnVzIDwtIGRhdGEudXMubGF0ZXN0ICU+JVxuICBzZWxlY3Qoc3RhdGUsIGNvbmZpcm1lZCwgY29uZmlybWVkLnJhdGUsIGRlYXRocywgZGVhdGgucmF0ZSwgcmFua2luZykgJT4lXG4gIG1lcmdlKGRhdGEudXMubGF0bG9uZykgJT4lXG4gIG11dGF0ZSgpXG5tYXAudXNcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+data.us.latlong &lt;- df_us_latlong %&gt;%
+  rename(\lat\ = \latitude\, \long\ = \longitude\)
 
 #label_world &lt;- lat.long 
-#label_world$avg_temp &lt;- as.numeric(label_world[, names(label_world) %in% c(&quot;avg_temp&quot;)])
+#label_world$avg_temp &lt;- as.numeric(label_world[, names(label_world) %in% c(\avg_temp\)])
 #label_world &lt;- label_world %&gt;%  
 #  mutate(txt=paste0(&#39;&lt;b&gt;&#39;,ranking, &#39;&lt;/b&gt;&#39;,
 #                    &#39;&lt;br/&gt;&#39;,&#39;&lt;b&gt;&#39;,country, &#39;&lt;/b&gt;&#39;,
-#                    &#39;&lt;br/&gt;&#39;, &quot;Temperature:  &quot;,avg_temp, &#39; °C&#39;,
-#                    &#39;&lt;br/&gt;&#39;, &quot;Confirmed:  &quot;, confirmed, 
-#                    &#39;&lt;br/&gt;&#39;, &quot;Deaths: &quot;, deaths,
-#                    &#39;&lt;br/&gt;&#39;, &quot;Recovered: &quot;, recovered
+#                    &#39;&lt;br/&gt;&#39;, \Temperature:  \,avg_temp, &#39; ยฐC&#39;,
+#                    &#39;&lt;br/&gt;&#39;, \Confirmed:  \, confirmed, 
+#                    &#39;&lt;br/&gt;&#39;, \Deaths: \, deaths,
+#                    &#39;&lt;br/&gt;&#39;, \Recovered: \, recovered
 #                    )) 
 
 #label_world$txt &lt;- label_world$txt %&gt;% lapply(htmltools::HTML)
@@ -1455,25 +2075,41 @@ map.us &lt;- data.us.latest %&gt;%
   merge(data.us.latlong) %&gt;%
   mutate()
 map.us</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWVyZ2NvdW50cnkgPSBmdW5jdGlvbihkYXRhMSxkYXRhMil7XG4gIGRhdGEgPC0gbWVyZ2UoeCA9IGRhdGExLCB5ID0gZGF0YTIsIGJ5ID0gXCJjb3VudHJ5XCIsIGFsbC54ID0gVFJVRSkgXG4gIHJldHVybihkYXRhKVxufVxuZGF0YS50b3Aud29ybGQgPC0gbWVyZ2UoeCA9IGRhdGEudG9wLCB5ID0gZGZfZ2RwMjAxOSwgYnkgPSBcImNvdW50cnlcIiwgYWxsLnggPSBUUlVFKSAlPiUgXG4gIHNlbGVjdCgtYyhjb2RlLHJhbmssbmV3LmNvbmZpcm1lZCxuZXcuZGVhdGhzLGN1cnJlbnQuY29uZmlybWVkLHBvcHVsYXRpb24pKSAlPiUgXG4gIHJlbmFtZShHRFA9XCJHRFAgKG1pbGxpb25zIG9mIFVTIGRvbGxhcnMpXCIpXG5cbmRhdGEudG9wLndvcmxkIDwtIG1lcmdlKHggPSBkYXRhLnRvcC53b3JsZCwgeSA9IGRmX2hlYWx0LCBieSA9IFwiY291bnRyeVwiLCBhbGwueCA9IFRSVUUpICU+JVxuICByZW5hbWUoaGVhbHRoY2FyZT1cImhlYWx0aENhcmVJbmRleFwiKVxuXG5kYXRhLnRvcC53b3JsZCA8LSBtZXJnZSh4ID0gZGF0YS50b3Aud29ybGQsIHkgPSBkZl9wb3JuaHViLCBieSA9IFwiY291bnRyeVwiLCBhbGwueCA9IFRSVUUpICU+JVxuICByZW5hbWUoUG9ybmh1YiA9IFwiUG9ybmh1YkluZGV4KCUpXCIpXG5cbmRhdGEudG9wLndvcmxkIDwtIG1lcmdjb3VudHJ5KGRhdGEudG9wLndvcmxkLCBkZl90ZW1wKVxuaW5kZXggPC0gaXMubmEoZGF0YS50b3Aud29ybGQpXG5kYXRhLnRvcC53b3JsZFtpbmRleF0gPC0gMFxuZGF0YS50b3Aud29ybGRcbiNWaWV3KGRhdGEudG9wLndvcmxkKVxuXG5ub3JtYWxpemUgPSBmdW5jdGlvbihkYXRhKXtcbiAgI3JldHVybiAoKGRhdGEgLSBtaW4oZGF0YSxuYS5ybSA9IFRSVUUpKS8obWF4KGRhdGEsbmEucm0gPSBUUlVFKSAtIG1pbihkYXRhLG5hLnJtID0gVFJVRSkpKVxuICB6IDwtIHNjYWxlKGRhdGEpO1xuICB0YW5oKHovMilcbn1cblxubm9ybV9kYXRhID0gYXMuZGF0YS5mcmFtZShhcHBseShkYXRhLnRvcC53b3JsZFssMjoxMl0sMixub3JtYWxpemUpKVxuY29ycl9kYXRhIDwtIG5vcm1fZGF0YVxubm9ybV9kYXRhJGNvdW50cnkgPC0gYyhcIkFyZ2VudGluYVwiLFwiQmFuZ2xhZGVzaFwiLFwiQnJhemlsXCIsXCJDaGlsZVwiLFwiQ29sb21iaWFcIixcIkZyYW5jZVwiLFwiR2VybWFueVwiLFwiSW5kaWFcIixcIklyYW5cIixcIkl0YWx5XCIsXCJNZXhpY29cIixcIlBha2lzdGFuXCIsXCJQZXJ1XCIsXCJSdXNzaWFcIixcInNhdWRpIEFyYWJpYVwiLFwiU291dGggQWZyaWNhXCIsXCJTcGFpblwiLFwiVHVya2V5XCIsXCJVbml0ZWQgS2luZ2RvbVwiLFwiVVNcIilcblZpZXcobm9ybV9kYXRhKVxubm9ybV9kYXRhX3Bsb3QgPC0gc2VsZWN0KG5vcm1fZGF0YSxcImNvdW50cnlcIixcImNvbmZpcm0ucmF0ZVwiLFwiZGVhdGgucmF0ZVwiLFwicmVjb3Zlci5yYXRlXCIsXCJoZWFsdGhjYXJlXCIsXCJQb3JuaHViXCIsXCJHRFBcIixcImF2Z190ZW1wXCIpXG5ub3JtX2RhdGFfcGxvdCAlPD4lIGdhdGhlcihrZXk9dHlwZSwgdmFsdWU9Y291bnQsIC1jKGNvdW50cnkpKVxubGV2ZWxfb3JkZXIgPC0gZmFjdG9yKG5vcm1fZGF0YV9wbG90JHR5cGUsIFxuICAgICAgICAgICAgICAgICAgICAgIGxldmVsID0gYyhcIkdEUFwiLFwiYXZnX3RlbXBcIixcImhlYWx0aGNhcmVcIixcInJlY292ZXIucmF0ZVwiLFwiZGVhdGgucmF0ZVwiLFwiY29uZmlybS5yYXRlXCIsXCJQb3JuaHViXCIpKVxuZ2dwbG90KGRhdGEgPSBub3JtX2RhdGFfcGxvdCwgYWVzKHg9Y291bnRyeSwgeT1sZXZlbF9vcmRlciwgZmlsbD1jb3VudCkpICsgXG4gIGdlb21fdGlsZSgpICtcbiAgc2NhbGVfZmlsbF9ncmFkaWVudChsb3cgPSBcInBpbmtcIiwgaGlnaCA9IFwiYmx1ZVwiKSArXG4gIHhsYWIoXCJcIikgK1xuICB5bGFiKFwiXCIpICtcbiAgdGhlbWVfYncoKSArXG4gIHRoZW1lKGF4aXMudGV4dC54ID0gZWxlbWVudF90ZXh0KGFuZ2xlID0gOTAsdmp1c3QgPSAxKSkrXG4gIHRoZW1lKFxuICAgIGF4aXMubGluZSA9IGVsZW1lbnRfYmxhbmsoKSxcbiAgICBheGlzLnRpY2tzID0gZWxlbWVudF9ibGFuaygpLFxuICAgIHBhbmVsLmdyaWQubWlub3IgPSBlbGVtZW50X2JsYW5rKCksXG4gICAgcGFuZWwuZ3JpZC5tYWpvciA9IGVsZW1lbnRfYmxhbmsoKSxcbiAgICBwYW5lbC5ib3JkZXIgPSBlbGVtZW50X2JsYW5rKCksXG4gICAgcGFuZWwuYmFja2dyb3VuZCA9IGVsZW1lbnRfYmxhbmsoKSxcbiAgICAjbGVnZW5kLnBvc2l0aW9uID0gXCJub25lXCJcbiAgKVxuYGBgIn0= -->
-<pre class="r"><code>mergcountry = function(data1,data2){
-  data &lt;- merge(x = data1, y = data2, by = &quot;country&quot;, all.x = TRUE) 
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxubWVyZ2NvdW50cnkgPSBmdW5jdGlvbihkYXRhMSxkYXRhMil7XG4gIGRhdGEgPC0gbWVyZ2UoeCA9IGRhdGExLCB5ID0gZGF0YTIsIGJ5ID0gXFxjb3VudHJ5XFwsIGFsbC54ID0gVFJVRSkgXG4gIHJldHVybihkYXRhKVxufVxuZGF0YS50b3Aud29ybGQgPC0gbWVyZ2UoeCA9IGRhdGEudG9wLCB5ID0gZGZfZ2RwMjAxOSwgYnkgPSBcXGNvdW50cnlcXCwgYWxsLnggPSBUUlVFKSAlPiUgXG4gIHNlbGVjdCgtYyhjb2RlLHJhbmssbmV3LmNvbmZpcm1lZCxuZXcuZGVhdGhzLGN1cnJlbnQuY29uZmlybWVkLHBvcHVsYXRpb24pKSAlPiUgXG4gIHJlbmFtZShHRFA9XFxHRFAgKG1pbGxpb25zIG9mIFVTIGRvbGxhcnMpXFwpXG5cbmRhdGEudG9wLndvcmxkIDwtIG1lcmdlKHggPSBkYXRhLnRvcC53b3JsZCwgeSA9IGRmX2hlYWx0LCBieSA9IFxcY291bnRyeVxcLCBhbGwueCA9IFRSVUUpICU+JVxuICByZW5hbWUoaGVhbHRoY2FyZT1cXGhlYWx0aENhcmVJbmRleFxcKVxuXG5kYXRhLnRvcC53b3JsZCA8LSBtZXJnZSh4ID0gZGF0YS50b3Aud29ybGQsIHkgPSBkZl9wb3JuaHViLCBieSA9IFxcY291bnRyeVxcLCBhbGwueCA9IFRSVUUpICU+JVxuICByZW5hbWUoUG9ybmh1YiA9IFxcUG9ybmh1YkluZGV4KCUpXFwpXG5cbmRhdGEudG9wLndvcmxkIDwtIG1lcmdjb3VudHJ5KGRhdGEudG9wLndvcmxkLCBkZl90ZW1wKVxuaW5kZXggPC0gaXMubmEoZGF0YS50b3Aud29ybGQpXG5kYXRhLnRvcC53b3JsZFtpbmRleF0gPC0gMFxuZGF0YS50b3Aud29ybGRcbiNWaWV3KGRhdGEudG9wLndvcmxkKVxuXG5ub3JtYWxpemUgPSBmdW5jdGlvbihkYXRhKXtcbiAgI3JldHVybiAoKGRhdGEgLSBtaW4oZGF0YSxuYS5ybSA9IFRSVUUpKS8obWF4KGRhdGEsbmEucm0gPSBUUlVFKSAtIG1pbihkYXRhLG5hLnJtID0gVFJVRSkpKVxuICB6IDwtIHNjYWxlKGRhdGEpO1xuICB0YW5oKHovMilcbn1cblxubm9ybV9kYXRhID0gYXMuZGF0YS5mcmFtZShhcHBseShkYXRhLnRvcC53b3JsZFssMjoxMl0sMixub3JtYWxpemUpKVxuY29ycl9kYXRhIDwtIG5vcm1fZGF0YVxubm9ybV9kYXRhJGNvdW50cnkgPC0gYyhcXEFyZ2VudGluYVxcLFxcQmFuZ2xhZGVzaFxcLFxcQnJhemlsXFwsXFxDaGlsZVxcLFxcQ29sb21iaWFcXCxcXEZyYW5jZVxcLFxcR2VybWFueVxcLFxcSW5kaWFcXCxcXElyYW5cXCxcXEl0YWx5XFwsXFxNZXhpY29cXCxcXFBha2lzdGFuXFwsXFxQZXJ1XFwsXFxSdXNzaWFcXCxcXHNhdWRpIEFyYWJpYVxcLFxcU291dGggQWZyaWNhXFwsXFxTcGFpblxcLFxcVHVya2V5XFwsXFxVbml0ZWQgS2luZ2RvbVxcLFxcVVNcXClcblZpZXcobm9ybV9kYXRhKVxubm9ybV9kYXRhX3Bsb3QgPC0gc2VsZWN0KG5vcm1fZGF0YSxcXGNvdW50cnlcXCxcXGNvbmZpcm0ucmF0ZVxcLFxcZGVhdGgucmF0ZVxcLFxccmVjb3Zlci5yYXRlXFwsXFxoZWFsdGhjYXJlXFwsXFxQb3JuaHViXFwsXFxHRFBcXCxcXGF2Z190ZW1wXFwpXG5ub3JtX2RhdGFfcGxvdCAlPD4lIGdhdGhlcihrZXk9dHlwZSwgdmFsdWU9Y291bnQsIC1jKGNvdW50cnkpKVxubGV2ZWxfb3JkZXIgPC0gZmFjdG9yKG5vcm1fZGF0YV9wbG90JHR5cGUsIFxuICAgICAgICAgICAgICAgICAgICAgIGxldmVsID0gYyhcXEdEUFxcLFxcYXZnX3RlbXBcXCxcXGhlYWx0aGNhcmVcXCxcXHJlY292ZXIucmF0ZVxcLFxcZGVhdGgucmF0ZVxcLFxcY29uZmlybS5yYXRlXFwsXFxQb3JuaHViXFwpKVxuZ2dwbG90KGRhdGEgPSBub3JtX2RhdGFfcGxvdCwgYWVzKHg9Y291bnRyeSwgeT1sZXZlbF9vcmRlciwgZmlsbD1jb3VudCkpICsgXG4gIGdlb21fdGlsZSgpICtcbiAgc2NhbGVfZmlsbF9ncmFkaWVudChsb3cgPSBcXHBpbmtcXCwgaGlnaCA9IFxcYmx1ZVxcKSArXG4gIHhsYWIoXFxcXCkgK1xuICB5bGFiKFxcXFwpICtcbiAgdGhlbWVfYncoKSArXG4gIHRoZW1lKGF4aXMudGV4dC54ID0gZWxlbWVudF90ZXh0KGFuZ2xlID0gOTAsdmp1c3QgPSAxKSkrXG4gIHRoZW1lKFxuICAgIGF4aXMubGluZSA9IGVsZW1lbnRfYmxhbmsoKSxcbiAgICBheGlzLnRpY2tzID0gZWxlbWVudF9ibGFuaygpLFxuICAgIHBhbmVsLmdyaWQubWlub3IgPSBlbGVtZW50X2JsYW5rKCksXG4gICAgcGFuZWwuZ3JpZC5tYWpvciA9IGVsZW1lbnRfYmxhbmsoKSxcbiAgICBwYW5lbC5ib3JkZXIgPSBlbGVtZW50X2JsYW5rKCksXG4gICAgcGFuZWwuYmFja2dyb3VuZCA9IGVsZW1lbnRfYmxhbmsoKSxcbiAgICAjbGVnZW5kLnBvc2l0aW9uID0gXFxub25lXFxcbiAgKVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+mergcountry = function(data1,data2){
+  data &lt;- merge(x = data1, y = data2, by = \country\, all.x = TRUE) 
   return(data)
 }
-data.top.world &lt;- merge(x = data.top, y = df_gdp2019, by = &quot;country&quot;, all.x = TRUE) %&gt;% 
+data.top.world &lt;- merge(x = data.top, y = df_gdp2019, by = \country\, all.x = TRUE) %&gt;% 
   select(-c(code,rank,new.confirmed,new.deaths,current.confirmed,population)) %&gt;% 
-  rename(GDP=&quot;GDP (millions of US dollars)&quot;)
+  rename(GDP=\GDP (millions of US dollars)\)
 
-data.top.world &lt;- merge(x = data.top.world, y = df_healt, by = &quot;country&quot;, all.x = TRUE) %&gt;%
-  rename(healthcare=&quot;healthCareIndex&quot;)
+data.top.world &lt;- merge(x = data.top.world, y = df_healt, by = \country\, all.x = TRUE) %&gt;%
+  rename(healthcare=\healthCareIndex\)
 
-data.top.world &lt;- merge(x = data.top.world, y = df_pornhub, by = &quot;country&quot;, all.x = TRUE) %&gt;%
-  rename(Pornhub = &quot;PornhubIndex(%)&quot;)
+data.top.world &lt;- merge(x = data.top.world, y = df_pornhub, by = \country\, all.x = TRUE) %&gt;%
+  rename(Pornhub = \PornhubIndex(%)\)
 
 data.top.world &lt;- mergcountry(data.top.world, df_temp)
 index &lt;- is.na(data.top.world)
@@ -1489,17 +2125,17 @@ normalize = function(data){
 
 norm_data = as.data.frame(apply(data.top.world[,2:12],2,normalize))
 corr_data &lt;- norm_data
-norm_data$country &lt;- c(&quot;Argentina&quot;,&quot;Bangladesh&quot;,&quot;Brazil&quot;,&quot;Chile&quot;,&quot;Colombia&quot;,&quot;France&quot;,&quot;Germany&quot;,&quot;India&quot;,&quot;Iran&quot;,&quot;Italy&quot;,&quot;Mexico&quot;,&quot;Pakistan&quot;,&quot;Peru&quot;,&quot;Russia&quot;,&quot;saudi Arabia&quot;,&quot;South Africa&quot;,&quot;Spain&quot;,&quot;Turkey&quot;,&quot;United Kingdom&quot;,&quot;US&quot;)
+norm_data$country &lt;- c(\Argentina\,\Bangladesh\,\Brazil\,\Chile\,\Colombia\,\France\,\Germany\,\India\,\Iran\,\Italy\,\Mexico\,\Pakistan\,\Peru\,\Russia\,\saudi Arabia\,\South Africa\,\Spain\,\Turkey\,\United Kingdom\,\US\)
 View(norm_data)
-norm_data_plot &lt;- select(norm_data,&quot;country&quot;,&quot;confirm.rate&quot;,&quot;death.rate&quot;,&quot;recover.rate&quot;,&quot;healthcare&quot;,&quot;Pornhub&quot;,&quot;GDP&quot;,&quot;avg_temp&quot;)
+norm_data_plot &lt;- select(norm_data,\country\,\confirm.rate\,\death.rate\,\recover.rate\,\healthcare\,\Pornhub\,\GDP\,\avg_temp\)
 norm_data_plot %&lt;&gt;% gather(key=type, value=count, -c(country))
 level_order &lt;- factor(norm_data_plot$type, 
-                      level = c(&quot;GDP&quot;,&quot;avg_temp&quot;,&quot;healthcare&quot;,&quot;recover.rate&quot;,&quot;death.rate&quot;,&quot;confirm.rate&quot;,&quot;Pornhub&quot;))
+                      level = c(\GDP\,\avg_temp\,\healthcare\,\recover.rate\,\death.rate\,\confirm.rate\,\Pornhub\))
 ggplot(data = norm_data_plot, aes(x=country, y=level_order, fill=count)) + 
   geom_tile() +
-  scale_fill_gradient(low = &quot;pink&quot;, high = &quot;blue&quot;) +
-  xlab(&quot;&quot;) +
-  ylab(&quot;&quot;) +
+  scale_fill_gradient(low = \pink\, high = \blue\) +
+  xlab(\\) +
+  ylab(\\) +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 90,vjust = 1))+
   theme(
@@ -1509,22 +2145,38 @@ ggplot(data = norm_data_plot, aes(x=country, y=level_order, fill=count)) +
     panel.grid.major = element_blank(),
     panel.border = element_blank(),
     panel.background = element_blank(),
-    #legend.position = &quot;none&quot;
+    #legend.position = \none\
   )</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2NvcnJlbGF0aW9uXG5jb3JyX2RhdGEgJTw+JSBzZWxlY3QoYyhHRFAsY29uZmlybS5yYXRlLGRlYXRoLnJhdGUscmVjb3Zlci5yYXRlLCBoZWFsdGhjYXJlLCBhdmdfdGVtcCwgUG9ybmh1YikpXG5oZWFkKGNvcnJfZGF0YSlcbmNvcihjb3JyX2RhdGEpXG5nZ2NvcnJwbG90KGNvcihjb3JyX2RhdGEpLGhjLm9yZGVyID0gVFJVRSxcbiAgICAgICAgICAgb3V0bGluZS5jb2xvciA9IFwid2hpdGVcIixcbiAgICAgICAgICAgY29sb3JzID0gYyhcIiM2RDlFQzFcIixcIndoaXRlXCIsXCIjRTQ2NzI2XCIpLFxuICAgICAgICAgICBsYWIgPSBUUlVFKVxuYGBgIn0= -->
-<pre class="r"><code>#correlation
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI2NvcnJlbGF0aW9uXG5jb3JyX2RhdGEgJTw+JSBzZWxlY3QoYyhHRFAsY29uZmlybS5yYXRlLGRlYXRoLnJhdGUscmVjb3Zlci5yYXRlLCBoZWFsdGhjYXJlLCBhdmdfdGVtcCwgUG9ybmh1YikpXG5oZWFkKGNvcnJfZGF0YSlcbmNvcihjb3JyX2RhdGEpXG5nZ2NvcnJwbG90KGNvcihjb3JyX2RhdGEpLGhjLm9yZGVyID0gVFJVRSxcbiAgICAgICAgICAgb3V0bGluZS5jb2xvciA9IFxcd2hpdGVcXCxcbiAgICAgICAgICAgY29sb3JzID0gYyhcXCM2RDlFQzFcXCxcXHdoaXRlXFwsXFwjRTQ2NzI2XFwpLFxuICAgICAgICAgICBsYWIgPSBUUlVFKVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+#correlation
 corr_data %&lt;&gt;% select(c(GDP,confirm.rate,death.rate,recover.rate, healthcare, avg_temp, Pornhub))
 head(corr_data)
 cor(corr_data)
 ggcorrplot(cor(corr_data),hc.order = TRUE,
-           outline.color = &quot;white&quot;,
-           colors = c(&quot;#6D9EC1&quot;,&quot;white&quot;,&quot;#E46726&quot;),
+           outline.color = \white\,
+           colors = c(\#6D9EC1\,\white\,\#E46726\),
            lab = TRUE)</code></pre>
+<p>```</p>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->

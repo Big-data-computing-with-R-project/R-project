@@ -66,7 +66,7 @@ body_overview <- dashboardBody(class = "site",
       width = 12,
       style = "padding-left: 20px; padding-right: 20px; padding-bottom: 20px;"
     )
-    ),
+    )
     
     
   )

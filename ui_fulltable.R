@@ -39,7 +39,7 @@ body_fullTable <- dashboardBody(
 
 
 page_fullTable <- dashboardPage(
-  title   = "Full Table",
+  title   = "Table",
   header  = dashboardHeader(disable = TRUE),
   sidebar = dashboardSidebar(disable = TRUE),
   body    = body_fullTable

@@ -1,5 +1,5 @@
 body_us <- dashboardBody(
-fluidRow(style = "padding-left: 40px; padding-right: 40px; padding-bottom: 40px;",
+fluidRow(style = "padding-left: 20px; padding-right: 20px; padding-bottom: 20px;",
          tags$head(
            tags$style(type = 'text/css', ".fluidRow { padding: 500px;}"),
            tags$style(type = 'text/css',".container { background-color: #F0F8FF80; padding: 20px; text-align: center; }"),
@@ -9,7 +9,7 @@ fluidRow(style = "padding-left: 40px; padding-right: 40px; padding-bottom: 40px;
            tags$style(type = 'text/css', ".normaltext { color : #000000; padding: 50px; height: 470px;  /*justify-content: center; */}"),
          ),
          fluidRow(
-           column(12, style = "padding: 40px;",
+           column(12, style = "padding: 20px;",
                   h1("United States of America", class = "topic"),
                   h3("สหรัฐอเมริกา", class = "topic"),
                   br(),
@@ -20,7 +20,7 @@ fluidRow(style = "padding-left: 40px; padding-right: 40px; padding-bottom: 40px;
                        valueBoxOutput("valueBox_deceasedUS", width = 3),
                        valueBoxOutput("valueBox_activeUS", width = 3),
                        width = 12,
-                       style = "margin-left: -20px"
+                       #style = "margin-left: -20px"
                      )         
                    ),
                   br(),

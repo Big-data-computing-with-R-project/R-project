@@ -1,5 +1,5 @@
 body_thai <- dashboardBody(
-  fluidRow(style = "padding-left: 40px; padding-right: 40px; padding-bottom: 40px;",
+  fluidRow(style = "padding-left: 20px; padding-right: 20px; padding-bottom: 20px;",
            tags$head(
              tags$style(type = 'text/css', ".fluidRow { padding: 500px;}"),
              tags$style(type = 'text/css',".container { background-color: #F0F8FF80; padding: 20px; text-align: center; }"),
@@ -10,7 +10,7 @@ body_thai <- dashboardBody(
            
              ),
            fluidRow(
-             column(12, style = "padding: 40px;",
+             column(12, style = "padding: 20px;",
                   h1("Kingdom of Thailand", class = "topic"),
                   h3("ราชอาณาจักรไทย", class = "topic"),
                   br(), 
@@ -20,8 +20,7 @@ body_thai <- dashboardBody(
                              valueBoxOutput("valueBox_recoveredTH", width = 3),
                              valueBoxOutput("valueBox_deceasedTH", width = 3),
                              valueBoxOutput("valueBox_activeTH", width = 3),
-                             width = 12,
-                             style = "margin-left: -20px"
+                             width = 12
                            ) 
                     ),
                   br(),

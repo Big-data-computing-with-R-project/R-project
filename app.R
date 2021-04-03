@@ -20,6 +20,8 @@ library(Metrics)
 library(gplots)
 library(shinyWidgets)
 library(deSolve) 
+#install.packages("shiny")
+#install.packages("shinydashboard")
 #system("defaults write org.R-project.R force.LANG en_US.UTF-8")
 Sys.setlocale("LC_ALL","thai")
 source("ui_overview.R", local = TRUE)
@@ -28,6 +30,7 @@ source("us.R", encoding = "UTF-8", local = TRUE)
 source("model.R", encoding = "UTF-8", local = TRUE)
 source("ui_fulltable.R", encoding = "UTF-8", local = TRUE)
 source("map.R",local = TRUE)
+source("fullTable.R", encoding = "UTF-8",local = TRUE)
 # ------------------------ Define UI -------------------
 ui <- fluidPage(
   title = "COVID-19 Global Cases",
@@ -52,10 +55,10 @@ ui <- fluidPage(
              collapsible = TRUE,
              fluid       = TRUE,
              tabPanel("Overview", page_overview, value = "page-overview"),
-             tabPanel("US", page_us, value = "us"),
-             tabPanel("Thai", page_thai, value = "Thai"),
+             tabPanel("US", page_us, value = "page-us"),
+             tabPanel("Thai", page_thai, value = "page-thai"),
              tabPanel("Table", page_fullTable, value = "page-fullTable" ),
-             tabPanel("Model", page_model, value = "Model")
+             tabPanel("Model", page_model, value = "page-model")
   )
 )
 # Define server logic ----
@@ -247,7 +250,7 @@ server <- function(input, output) {
   output$valueBox_recovered <- renderValueBox({
     valueBox(
       key_figures()$recovered,
-      subtitle = "Recovery",
+      subtitle = "Recovered",
       icon     = icon("heart"),
       color    = "green"
     )
@@ -279,13 +282,13 @@ server <- function(input, output) {
         valueBoxOutput("valueBox_recovered", width = 3),
         valueBoxOutput("valueBox_deceased", width = 3),
         valueBoxOutput("valueBox_countries", width = 3),
-        width = 12,
-        style = "margin-left: -20px"
+        width = 12
+        #style = "margin-left: 5px"
       )
     ),
     #div("Last updated: ", strftime(changed_date, format = "%d.%m.%Y - %R %Z")),
     width = 12
-  )
+    )
   )
   #--------- US -------------
   key_figuresus <- reactive({
@@ -310,7 +313,7 @@ server <- function(input, output) {
   output$valueBox_recoveredUS <- renderValueBox({
     valueBox(
       key_figuresus()$recovered,
-      subtitle = "Recovery",
+      subtitle = "Recovered",
       icon     = icon("heart"),
       color    = "green"
     )
@@ -337,6 +340,13 @@ server <- function(input, output) {
   output$plotuscase <- renderPlotly({
     gly.plot_us.cases
   })
+  
+#   output$plotuscase <- renderPlotly({
+#   plotus <- data_evolution %>% dplyr::filter(Country.Region == "US") %>%
+#     select(Country.Region, date, value) 
+#   
+# })
+  
   output$plotdailycaseus <- renderPlotly({
     gly.plot_us.newconf
   })
@@ -383,7 +393,7 @@ server <- function(input, output) {
   output$valueBox_recoveredTH <- renderValueBox({
     valueBox(
       key_figuresth()$recovered,
-      subtitle = "Recovery",
+      subtitle = "Recovered",
       icon     = icon("heart"),
       color    = "green"
     )
@@ -437,28 +447,27 @@ server <- function(input, output) {
   )
   #------------------------ Table ---------------------------------------------
   output$fullTable <- renderDataTable({
-    data       <- getFullTableData("Country.Region")
+    data_n       <- getFullTableData("Country.Region")
     columNames <- c(
       "Country",
       "Total Confirmed",
       "New Confirmed",
-      "Total Confirmed <br>(per 100k)",
-      "Total Estimated Recoveries",
-      "New Estimated Recoveries",
-      "Total Deceased",
-      "New Deceased",
-      "Total Active",
-      "New Active",
-      "Total Active <br>(per 100k)")
+      "Total Recovered",
+      "New Recovered",
+      "Total Deaths",
+      "New Deaths",
+      "Total Current Confirmed",
+      "New Current Confirmed"
+      )
     datatable(
-      data,
+      data_n,
       rownames  = FALSE,
       colnames  = columNames,
       escape    = FALSE,
       selection = "none",
       options   = list(
         pageLength     = -1,
-        order          = list(8, "desc"),
+        order          = list(2, "desc"),
         scrollX        = TRUE,
         scrollY        = "calc(100vh - 250px)",
         scrollCollapse = TRUE,
@@ -466,7 +475,7 @@ server <- function(input, output) {
         server         = FALSE,
         columnDefs     = list(
           list(
-            targets = c(2, 5, 7, 9),
+            targets = c(2, 4, 6, 8),
             render  = JS(
               "function(data, type, row, meta) {
               if (data != null) {
@@ -482,7 +491,7 @@ server <- function(input, output) {
           ),
           list(className = 'dt-right', targets = 1:ncol(data) - 1),
           list(width = '100px', targets = 0),
-          list(visible = FALSE, targets = 11:14)
+          list(visible = FALSE, targets = 9:12)
         )
       )
     ) %>%
@@ -696,7 +705,7 @@ server <- function(input, output) {
 
 #-----------------------------------------------------------------------------------------------------------------
 
-
+#runApp("app.R")
 
 # Run the app ----
 shinyApp(ui = ui, server = server)

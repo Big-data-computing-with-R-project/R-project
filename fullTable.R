@@ -22,14 +22,12 @@ getFullTableData <- function(groupBy) {
     summarise(
       confirmed_total     = sum(value_confirmed, na.rm = T),
       confirmed_new       = sum(value_new_confirmed, na.rm = T),
-      confirmed_totalNorm = round(sum(value_confirmed, na.rm = T) / max(population, na.rm = T) * 100000, 2),
       recovered_total     = sum(value_recovered, na.rm = T),
       recovered_new       = sum(value_new_recovered, na.rm = T),
       deceased_total      = sum(value_deceased, na.rm = T),
       deceased_new        = sum(value_new_deceased, na.rm = T),
       active_total        = sum(value_active, na.rm = T),
-      active_new          = sum(value_new_active, na.rm = T),
-      active_totalNorm    = round(sum(value_active, na.rm = T) / max(population, na.rm = T) * 100000, 2)
+      active_new          = sum(value_new_active, na.rm = T)
     ) %>%
     mutate(
       "confirmed_newPer" = confirmed_new / (confirmed_total - confirmed_new) * 100,
@@ -50,6 +48,7 @@ getFullTableData <- function(groupBy) {
                             active_new, if_else(!is.na(active_newPer), sprintf(" (%+.2f %%)", active_newPer), ""))
     ) %>%
     select(-population) %>%
+    distinct(Country.Region, .keep_all = TRUE) %>%
     as.data.frame()
 }
 
