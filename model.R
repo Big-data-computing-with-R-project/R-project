@@ -63,7 +63,7 @@ body_model <- dashboardBody(
       ),
       
       # ----------------------------------- Model US -------------------------------------------- 
-      tabPanel("US",
+      tabPanel("SEIRD (US)",
                column(12,
                h3("สหรัฐอเมริกา
                   ", class = "topic"),
@@ -129,12 +129,12 @@ body_model <- dashboardBody(
               ),
       
       # ----------------------------------- Model Thai -----------------------------------------------------
-      tabPanel("Thailand",
+      tabPanel("SEIR (Thailand)",
                column(12,
                h3("ราชอาณาจักรไทย
                   ", class = "topic"),
-               br()
-               ),
+               br(),
+               
                
                fluidRow(
                  sidebarLayout(
@@ -184,9 +184,9 @@ body_model <- dashboardBody(
                    )
                  )
                )
-      
-      )
+            )
     )
+   )
   )
 
 page_model <- dashboardPage(

@@ -467,7 +467,7 @@ server <- function(input, output) {
       selection = "none",
       options   = list(
         pageLength     = -1,
-        order          = list(2, "desc"),
+        order          = list(1, "desc"),
         scrollX        = TRUE,
         scrollY        = "calc(100vh - 250px)",
         scrollCollapse = TRUE,
@@ -531,14 +531,14 @@ server <- function(input, output) {
   observe({
     updateSliderInput(
       inputId = "obsday",
-      value = input$num_obsday,
+      value = input$num_obsday
     )
   })
   
   observe({
     updateSliderInput(
       inputId = "num_obsday",
-      value = input$obsday,
+      value = input$obsday
     )
   })  
   
@@ -622,14 +622,14 @@ server <- function(input, output) {
   observe({
     updateSliderInput(
       inputId = "obsday_th",
-      value = input$num_obsday_th,
+      value = input$num_obsday_th
     )
   })
   
   observe({
     updateSliderInput(
       inputId = "num_obsday_th",
-      value = input$obsday_th,
+      value = input$obsday_th
     )
   })  
   
