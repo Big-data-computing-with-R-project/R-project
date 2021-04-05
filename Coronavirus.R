@@ -32,7 +32,7 @@ my_db <- src_mysql(
   dbname = "covid19",
   host = "rproject.cmxpnyylhkiw.us-east-2.rds.amazonaws.com",
   user = "admin",
- password = "kmitlprojectCE-14")
+ password = "xxxxxxxx")
 
 my_db
 

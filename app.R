@@ -31,6 +31,8 @@ source("model.R", encoding = "UTF-8", local = TRUE)
 source("ui_fulltable.R", encoding = "UTF-8", local = TRUE)
 source("map.R",local = TRUE)
 source("fullTable.R", encoding = "UTF-8",local = TRUE)
+source("summarytable.R", encoding = "UTF-8",local = TRUE)
+source("global.R", encoding = "UTF-8",local = TRUE)
 # ------------------------ Define UI -------------------
 ui <- fluidPage(
   title = "COVID-19 Global Cases",
