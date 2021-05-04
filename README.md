@@ -4,3 +4,4 @@
 <p>    This  project  is  mainly  based  on  2019  Coronavirus  data  from  John  Hopkins  University.  The number of global infected, dead, recovered cases and several others are included. Top 20 most infected countries are chosen as our case studies. Gross domestic product, average temperature and public health system  rankings  are  incorporated  for  deeper  analyses.  The  results  can  be  visualized  in  line  graphs, heatmap, correlation and maps. </p><br>
     
 <b>Link Dashboard :</b>  https://kmitl-rproject-covid19.shinyapps.io/Covid19/ 
+<b>Link about project :</b>  https://www.youtube.com/watch?v=l_INOXZbIKM
